@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
-use iroh_test::{iroh, memesync};
+use chuck::{iroh, memesync};
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]

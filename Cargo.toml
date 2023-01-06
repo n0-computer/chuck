@@ -19,9 +19,9 @@ futures = "0.3.21"
 bytes = "1.1.0"
 rand = "0.8.5"
 
-iroh-api = { git = "https://github.com/n0-computer/iroh", rev = "925b6f7614d7e37b1784e3f9bce039dbb2ce0bd4"}
-iroh-util = { git = "https://github.com/n0-computer/iroh", rev = "925b6f7614d7e37b1784e3f9bce039dbb2ce0bd4"}
-iroh-share = { git = "https://github.com/n0-computer/iroh", rev = "925b6f7614d7e37b1784e3f9bce039dbb2ce0bd4"}
-iroh-one = { git = "https://github.com/n0-computer/iroh", rev = "925b6f7614d7e37b1784e3f9bce039dbb2ce0bd4"}
-iroh-rpc-types = { git = "https://github.com/n0-computer/iroh", rev = "925b6f7614d7e37b1784e3f9bce039dbb2ce0bd4", default-features = false}
-iroh-rpc-client = { git = "https://github.com/n0-computer/iroh", rev = "925b6f7614d7e37b1784e3f9bce039dbb2ce0bd4", default-features = false}
+iroh-api = { git = "https://github.com/n0-computer/iroh", rev = "f4ba4cd7fc239f97ac06dfba3c3ba819b97c0ca2"}
+iroh-util = { git = "https://github.com/n0-computer/iroh", rev = "f4ba4cd7fc239f97ac06dfba3c3ba819b97c0ca2"}
+iroh-share = { git = "https://github.com/n0-computer/iroh", rev = "f4ba4cd7fc239f97ac06dfba3c3ba819b97c0ca2"}
+iroh-one = { git = "https://github.com/n0-computer/iroh", rev = "f4ba4cd7fc239f97ac06dfba3c3ba819b97c0ca2"}
+iroh-rpc-types = { git = "https://github.com/n0-computer/iroh", rev = "f4ba4cd7fc239f97ac06dfba3c3ba819b97c0ca2", default-features = false}
+iroh-rpc-client = { git = "https://github.com/n0-computer/iroh", rev = "f4ba4cd7fc239f97ac06dfba3c3ba819b97c0ca2", default-features = false}
