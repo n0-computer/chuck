@@ -6,6 +6,7 @@ use rand::RngCore;
 use std::time::Instant;
 use tokio::io::AsyncReadExt;
 use tokio::sync::mpsc;
+use tokio::time::Duration;
 
 use service::RequestTopic;
 
@@ -20,7 +21,7 @@ impl MemesyncReceiver {
         Self { port }
     }
 
-    pub async fn run(&mut self) -> Result<()> {
+    pub async fn run(&mut self, sleep: u8) -> Result<()> {
         println!("starting memesync receiver");
         let (tx, mut rx) = mpsc::channel(32);
         let mut service =
@@ -36,7 +37,7 @@ impl MemesyncReceiver {
             match request.topic {
                 RequestTopic::MemesyncTicket => {
                     let ticket = Ticket::from_bytes(&request.data)?;
-                    self.handle_ticket(&ticket).await?;
+                    self.handle_ticket(&ticket, sleep).await?;
                 }
                 _ => {
                     println!("unknown topic: {:?}", request.topic);
@@ -47,7 +48,7 @@ impl MemesyncReceiver {
         Ok(())
     }
 
-    pub async fn handle_ticket(&self, ticket: &Ticket) -> Result<()> {
+    pub async fn handle_ticket(&self, ticket: &Ticket, sleep: u8) -> Result<()> {
         println!("handling ticket");
         let receiver_dir = tempfile::tempdir().unwrap();
         let receiver_db = receiver_dir.path().join("db");
@@ -55,6 +56,8 @@ impl MemesyncReceiver {
             .await
             .context("r: new")
             .unwrap();
+
+        tokio::time::sleep(Duration::from_secs(sleep as u64)).await;
 
         let current = Instant::now();
 
@@ -88,11 +91,12 @@ impl MemesyncSender {
         Self { target_host }
     }
 
-    pub async fn send_file(&mut self, n_bytes: u64, filename: String) -> Result<()> {
+    pub async fn send_file(&mut self, n_bytes: u64, filename: String, sleep: u8) -> Result<()> {
         let sender_dir = tempfile::tempdir().unwrap();
         let sender_db = sender_dir.path().join("db");
 
         let sender = Sender::new(9990, &sender_db).await.context("s:new")?;
+        tokio::time::sleep(Duration::from_secs(sleep as u64)).await;
         let mut bytes = vec![0u8; n_bytes as usize]; //5 * 1024 * 1024 - 8
         rand::thread_rng().fill_bytes(&mut bytes);
         let bytes = Bytes::from(bytes);

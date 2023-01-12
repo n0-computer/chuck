@@ -12,12 +12,13 @@ struct Args {
 #[derive(Debug, Subcommand)]
 enum Commands {
     #[clap(arg_required_else_help = true)]
-    MemesyncReceiver { port: u16 },
+    MemesyncReceiver { port: u16, sleep: u8 },
     #[clap(arg_required_else_help = true)]
     MemesyncSender {
         target_host: String,
         bytes: u64,
         filename: String,
+        sleep: u8,
     },
     #[clap(arg_required_else_help = true)]
     IrohServer { target_host: String },
@@ -29,18 +30,19 @@ enum Commands {
 async fn main() -> Result<()> {
     let args = Args::parse();
     match args.command {
-        Commands::MemesyncReceiver { port } => {
+        Commands::MemesyncReceiver { port,  sleep } => {
             let mut receiver = memesync::MemesyncReceiver::new(port).await;
-            receiver.run().await?;
+            receiver.run(sleep).await?;
         }
         Commands::MemesyncSender {
             target_host,
             bytes,
             filename,
+            sleep,
         } => {
             let mut sender = memesync::MemesyncSender::new(target_host).await;
             sender
-                .send_file(bytes, filename)
+                .send_file(bytes, filename, sleep)
                 .await
                 .context("failed to send file")?;
         }
