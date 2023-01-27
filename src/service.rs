@@ -5,7 +5,7 @@ use tokio::net::TcpListener;
 use tokio::sync::mpsc;
 
 pub const DEFAULT_SERVICE_SERVER_PORT: u32 = 10001;
-pub const DEFAULT_SERVICE_BUFFER_SIZE: usize = 64*1024;
+pub const DEFAULT_SERVICE_BUFFER_SIZE: usize = 64 * 1024;
 
 pub struct Server {
     listener: TcpListener,

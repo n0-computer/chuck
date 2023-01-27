@@ -3,13 +3,13 @@ use iroh_rpc_client::Client;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
 
-use iroh_api::{ChunkerConfig, Cid, IpfsPath, Multiaddr, PeerId, DEFAULT_CHUNKS_SIZE, UnixfsEntry};
+use iroh_api::{ChunkerConfig, Cid, IpfsPath, Multiaddr, PeerId, UnixfsEntry, DEFAULT_CHUNKS_SIZE};
 use iroh_one::config::{Config, CONFIG_FILE_NAME, ENV_PREFIX};
 use iroh_rpc_types::Addr;
 use iroh_util::{iroh_config_path, make_config};
 use tokio::{sync::mpsc, task::JoinHandle, time::Instant};
 
-use crate::service::{self, DEFAULT_SERVICE_SERVER_PORT, RequestTopic};
+use crate::service::{self, RequestTopic, DEFAULT_SERVICE_SERVER_PORT};
 
 pub struct Node {
     pub config: Config,
@@ -100,10 +100,15 @@ pub async fn run_server(node: &Node, target_host: String) -> Result<()> {
     api_cfg.rpc_client = node.config.rpc_client.clone();
     let api = iroh_api::Api::new(api_cfg).await?;
     let path = PathBuf::from("./fixtures/10MiB.car");
-    let entry = UnixfsEntry::from_path(&path, iroh_api::UnixfsConfig { wrap: false, chunker: Some(ChunkerConfig::Fixed(DEFAULT_CHUNKS_SIZE)) }).await?;
-    let cid = api
-        .add(entry)
-        .await?;
+    let entry = UnixfsEntry::from_path(
+        &path,
+        iroh_api::UnixfsConfig {
+            wrap: false,
+            chunker: Some(ChunkerConfig::Fixed(DEFAULT_CHUNKS_SIZE)),
+        },
+    )
+    .await?;
+    let cid = api.add(entry).await?;
     println!("cid: {:?}", cid);
 
     let p2p_rpc = Client::new(node.config.p2p.rpc_client.clone())
