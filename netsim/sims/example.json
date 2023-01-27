@@ -1,0 +1,58 @@
+{
+    "cases": [
+        {
+            "name": "simple",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": "1",
+                    "cmd": "sendme server /var/lib/netsim/128MB.bin /var/lib/netsim/1GB.bin -a 0.0.0.0:4433",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    }
+                },
+                {
+                    "name": "client",
+                    "count": "1",
+                    "cmd": "sendme client 4f4b54d1100bf714e8a8904aefb6ad702e274bf7804d15787074a0286ba23ea5 -a %s:4433 -o /dev/null",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "with_nat",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": "1",
+                    "cmd": "sendme server /var/lib/netsim/128MB.bin /var/lib/netsim/1GB.bin -a 0.0.0.0:4433",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    }
+                },
+                {
+                    "name": "client",
+                    "count": "3",
+                    "cmd": "sendme client 4f4b54d1100bf714e8a8904aefb6ad702e274bf7804d15787074a0286ba23ea5 -a %s:4433 -o /dev/null",
+                    "type": "nat",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        }
+    ]
+}
