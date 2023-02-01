@@ -15,7 +15,14 @@ class StarTopo(Topo):
             if node['type'] == 'public':
                 for i in range(int(node['count'])):
                     h = self.addHost('%s_%d' % (node['name'], i))
-                    self.addLink(interconnect, h)
+                    if 'link' in node:
+                        loss = node['link']['loss']
+                        latency = node['link']['latency']
+                        bw = node['link']['bw']
+                        self.addLink(interconnect, h, loss=loss, delay=latency, bw=bw)
+                    else:
+                        self.addLink(interconnect, h)
+                    
             if node['type'] == 'nat':
                 for i in range(int(node['count'])):
                     inetIntf = 'nat%s%d-eth0' % (node['name'], i)
@@ -34,7 +41,13 @@ class StarTopo(Topo):
                     host = self.addHost('%s_%d' % (node['name'], i),
                                         ip='192.168.%d.100/24' % i,
                                         defaultRoute='via %s' % localIP)
-                    self.addLink(host, switch)
+                    if 'link' in node:
+                        loss = node['link']['loss']
+                        latency = node['link']['latency']
+                        bw = node['link']['bw']
+                        self.addLink(host, switch, loss=loss, delay=latency, bw=bw)
+                    else:
+                        self.addLink(host, switch)
 
 
 def portForward(net, id, dport):

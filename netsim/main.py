@@ -3,6 +3,7 @@ import json
 import time
 
 from mininet.net import Mininet
+from mininet.link import TCLink
 from mininet.util import dumpNodeConnections
 from mininet.cli import CLI
 from mininet.log import setLogLevel
@@ -12,7 +13,7 @@ from network import StarTopo
     
 def run(nodes, prefix):
     topo = StarTopo(nodes=nodes)
-    net = Mininet(topo = topo, waitConnected=True)
+    net = Mininet(topo = topo, waitConnected=True, link=TCLink)
     net.start()
     print( "Dumping host connections" )
     dumpNodeConnections(net.hosts)
@@ -61,6 +62,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("cfg", help = "Input config file")
+    parser.add_argument("-r", help = "Run only report generation", action='store_true')
     args = parser.parse_args()
     config_f = open(args.cfg)
     config = json.load(config_f)
@@ -70,15 +72,6 @@ if __name__ == '__main__':
         prefix = case['name']
         nodes = case['nodes']
         print('running "%s"...' % prefix)
-        run(nodes, prefix)
+        if not args.r:
+            run(nodes, prefix)
         stats_parser(nodes, prefix)
-
-    # # n_server = 2
-    # # n_client = 6
-    # # server_cmd = 'chuck http-server 1'
-    # # client_cmd = 'hey -z 15s -c 1 -h2 -T application/octet-stream https://%s/128MB.bin'
-    # # prefix = 'axum_'
-    # # timeout = 20
-    # load_time = 3
-    
-    # run(n_server, n_client, server_cmd, client_cmd, prefix, timeout, load_time)

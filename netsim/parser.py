@@ -1,6 +1,21 @@
 import json
 import os
 
+def parse_time_output(lines, size):
+    for line in lines:
+        if line.startswith('real'):
+            k = line[5:].strip()
+            k = k.split('m')
+            mins = int(k[0])
+            sec = float(k[1][:-1])
+            d = mins * 60 + sec
+            s = {
+                'data_len': size,
+                'elapsed': d,
+                'mbits': float(size * 8) / (d * 1000 * 1000)
+            }
+            return s
+
 def parse_iperf_udp_server(lines):
     s = []
     collect = False
@@ -9,19 +24,20 @@ def parse_iperf_udp_server(lines):
             collect = True
             continue
         if collect:
-            if 'datagrams' in line:
+            if 'datagram' in line:
                 continue
             k = line.split(' ')
+            k = [x for x in k if x != '']
             p = k.index('sec')
-            transfer = float(k[p+2])
-            if k[p+3] == 'GBytes':
+            transfer = float(k[p+1])
+            if k[p+2] == 'GBytes':
                 transfer *= 1024 * 1024 * 1024
-            if k[p+3] == 'MBytes':
+            if k[p+2] == 'MBytes':
                 transfer *= 1024 * 1024
-            if k[p+3] == 'KBytes':
+            if k[p+2] == 'KBytes':
                 transfer *= 1024
-            throughput = float(k[p+5])
-            if k[p+6].strip() == 'Gbits/sec':
+            throughput = float(k[p+3])
+            if k[p+4].strip() == 'Gbits/sec':
                 throughput *= 1000
             stat = {}
             stat['data_len'] = transfer
@@ -54,16 +70,17 @@ def parse_iperf_server(lines):
             continue
         if collect:
             k = line.split(' ')
+            k = [x for x in k if x != '']
             p = k.index('sec')
-            transfer = float(k[p+2])
-            if k[p+3] == 'GBytes':
+            transfer = float(k[p+1])
+            if k[p+2] == 'GBytes':
                 transfer *= 1024 * 1024 * 1024
-            if k[p+3] == 'MBytes':
+            if k[p+2] == 'MBytes':
                 transfer *= 1024 * 1024
-            if k[p+3] == 'KBytes':
+            if k[p+2] == 'KBytes':
                 transfer *= 1024
-            throughput = float(k[p+5])
-            if k[p+6].strip() == 'Gbits/sec':
+            throughput = float(k[p+3])
+            if k[p+4].strip() == 'Gbits/sec':
                 throughput *= 1000
             stat = {}
             stat['data_len'] = transfer
@@ -87,7 +104,7 @@ def aggregate_stats(stats):
 
 def stats_parser(nodes, prefix):
     files = []
-    valid_parsers = ['sendme_client', 'iperf_server', 'iperf_udp_server']
+    valid_parsers = ['sendme_client', 'iperf_server', 'iperf_udp_server', 'time_1gb']
     for root, dirs, fs in os.walk('logs'):
         for f in fs:
             if f.startswith(prefix + '__'):
@@ -109,6 +126,9 @@ def stats_parser(nodes, prefix):
                     if node['parser'] == 'iperf_udp_server':
                         s = parse_iperf_udp_server(lines)
                         stats.extend(s)
+                    if node['parser'] == 'time_1gb':
+                        s = parse_time_output(lines, 1024*1024*1024)
+                        stats.append(s)
             (sum_stats, avg_stats) = aggregate_stats(stats)
             report = {
                 'raw': stats,

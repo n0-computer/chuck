@@ -1,0 +1,228 @@
+{
+    "cases": [
+        {
+            "name": "iperf_udp_1_to_1",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 1,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_1_to_3",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 3,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_1_to_5",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 5,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_1_to_10",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 10,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_2_to_2",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 2,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_2_to_4",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 4,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_2_to_6",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 6,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "iperf_udp_2_to_10",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "iperf -s -u",
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "parser": "iperf_udp_server"
+                },
+                {
+                    "name": "client",
+                    "count": 10,
+                    "cmd": "iperf -c %s -u -b 100G",
+                    "type": "public",
+                    "wait": 15,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "server"
+                    }
+                }
+            ]
+        }
+    ]
+}
