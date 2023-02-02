@@ -58,9 +58,9 @@ jobs:
     - name: Setup binary paths
       run: |
         echo "$(pwd)/target/release"
-        echo "$(pwd)/target/release" >> $GITHUB_ENV
+        echo "$(pwd)/target/release" >> $GITHUB_PATH
         echo "$(pwd)/sendme/target/release"
-        echo "$(pwd)/sendme/target/release" >> $GITHUB_ENV
+        echo "$(pwd)/sendme/target/release" >> $GITHUB_PATH
 
     # - name: Run tests
 
