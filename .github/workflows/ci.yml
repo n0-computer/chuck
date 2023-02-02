@@ -14,7 +14,7 @@ env:
 jobs:
   netsim:
     name: Run network simulations/benchmarks
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, X64]
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -63,11 +63,16 @@ jobs:
     - name: Run tests
       run: |
         cd netsim
+        # set -e
+        # sudo kill -9 $(pgrep ovs) || rc=$?
+        sudo kill -9 $(pgrep ovs)
+        sudo mn --clean
         sudo python3 main.py sims/standard/sendme_test.json
 
     - name: Generate report
       run: |
         cd netsim
         python3 reports_csv.py
+        cat logs/sendme_1_to_10__client_0.txt
 
     # - name: Dump report

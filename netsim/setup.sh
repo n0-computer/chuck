@@ -4,6 +4,7 @@ sudo apt install iperf
 mkdir -p logs
 mkdir -p report
 mkdir -p data
+mkdir -p keys
 cd data
 rm -f 1G.bin
 rm -f 100M.bin
