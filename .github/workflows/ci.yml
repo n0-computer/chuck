@@ -62,7 +62,11 @@ jobs:
         echo "$(pwd)/sendme/target/release"
         echo "$(pwd)/sendme/target/release" >> $GITHUB_PATH
 
-    # - name: Run tests
+    - name: Run tests
+      run: |
+        sendme -h
+        chuck -h
+        python3 -h
 
     # - name: Generate report
 
