@@ -57,17 +57,17 @@ jobs:
 
     - name: Setup binary paths
       run: |
-        echo "$(pwd)/target/release"
         echo "$(pwd)/target/release" >> $GITHUB_PATH
-        echo "$(pwd)/sendme/target/release"
         echo "$(pwd)/sendme/target/release" >> $GITHUB_PATH
 
     - name: Run tests
       run: |
-        sendme -h
-        chuck -h
-        python3 -h
+        cd netsim
+        sudo python3 main.py sims/standard/sendme_test.json
 
-    # - name: Generate report
+    - name: Generate report
+      run: |
+        cd netsim
+        python3 reports_csv.py
 
     # - name: Dump report

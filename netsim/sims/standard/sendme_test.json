@@ -7,7 +7,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae data/1GB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -17,8 +17,8 @@
                 },
                 {
                     "name": "client",
-                    "count": 5,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "count": 2,
+                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae 0267a4e2b87aa39107c3e74b663fed332de1e48c4dbae65a8b2badb89736a53a > /dev/null",
                     "type": "public",
                     "wait": 60,
                     "connect": {
