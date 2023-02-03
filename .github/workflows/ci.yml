@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+  issue_comment:
+    types: [created, edited, deleted]
 
 env:
   RUST_BACKTRACE: 1
@@ -14,6 +16,7 @@ env:
 jobs:
   netsim:
     name: Run network simulations/benchmarks
+    if: ${{ github.event.issue.pull_request }} # && contains(github.event.comment.body, '/perf')
     runs-on: [self-hosted, linux, X64]
     steps:
     - name: Checkout
