@@ -1,10 +1,10 @@
 name: CI
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  # pull_request:
+  # push:
+  #   branches:
+  #     - main
   issue_comment:
     types: [created, edited, deleted]
 
@@ -16,7 +16,11 @@ env:
 jobs:
   netsim:
     name: Run network simulations/benchmarks
-    if: ${{ github.event.issue.pull_request }} # && contains(github.event.comment.body, '/perf')
+    # if: ${{ github.event.issue.pull_request }} # && contains(github.event.comment.body, '/perf')
+    if: >-
+      github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request &&
+          github.event.comment.body == '/perf'
     runs-on: [self-hosted, linux, X64]
     steps:
     - name: Checkout
