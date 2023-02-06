@@ -16,12 +16,14 @@ env:
 jobs:
   netsim:
     name: Run network simulations/benchmarks
-    # if: ${{ github.event.issue.pull_request }} # && contains(github.event.comment.body, '/perf')
     if: >-
       (github.event_name == 'issue_comment' &&
         github.event.issue.pull_request &&
           github.event.comment.body == '/perf') || github.event_name != 'issue_comment'
     runs-on: [self-hosted, linux, X64]
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -70,16 +72,49 @@ jobs:
     - name: Run tests
       run: |
         cd netsim
-        # set -e
-        # sudo kill -9 $(pgrep ovs) || rc=$?
         sudo kill -9 $(pgrep ovs)
         sudo mn --clean
         sudo python3 main.py sims/standard/sendme_test.json
 
     - name: Generate report
+      id: generate_report
       run: |
         cd netsim
-        python3 reports_csv.py
-        cat logs/sendme_1_to_10__client_0.txt
+        python3 reports_csv.py > report.txt
+        export NETSIM_REPORT=$(cat report.txt)
+        echo "NETSIM_REPORT<<EOFMARKER" >> ${GITHUB_OUTPUT}
+        echo "${NETSIM_REPORT}" >> ${GITHUB_OUTPUT}
+        echo "EOFMARKER" >> ${GITHUB_OUTPUT}
+
+    - name: Configure vars
+      id: config_vars
+      run: |
+        git_hash=$(git rev-parse --short "${{ github.sha }}")
+        echo "REPORT_REF=${git_hash}" >> ${GITHUB_OUTPUT}
+
+    - name: Say Hi Issue
+      uses: peter-evans/create-or-update-comment@v2
+      if: github.event_name == 'issue_comment'
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        body: |
+          Hello there "issue" :wave:
+
+    - name: Say Hi PR
+      uses: peter-evans/create-or-update-comment@v2
+      if: github.event.pull_request
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          `${{ github.head_ref }}.${{ steps.config_vars.outputs.REPORT_REF }}`
+          <details>
+          <summary>Perf report</summary>
+          
+          ```json
+
+            ${{ steps.generate_report.outputs.NETSIM_REPORT }}
+
+          ```
+          </details>
 
     # - name: Dump report

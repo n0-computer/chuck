@@ -34,4 +34,4 @@ reqwest = { version = "0.11.10", default-features = false, features = ["rustls-t
 #iroh-rpc-types = { git = "https://github.com/n0-computer/iroh", rev = "0e06dd7f70e21955f735ecd54464c7527fbf72c1", default-features = false}
 #iroh-rpc-client = { git = "https://github.com/n0-computer/iroh", rev = "0e06dd7f70e21955f735ecd54464c7527fbf72c1", default-features = false}
 
-sendme = { git = "https://github.com/n0-computer/sendme", rev = "e5f807593ebf0482897be9a541848da3037ff57d"}
+sendme = { git = "https://github.com/n0-computer/sendme", rev = "909571810d5e1bf113f5673df53e0d08d8a3c234"}
