@@ -1,38 +1,51 @@
-import os
+import argparse
 import json
+import os
 
-files = []
-for root, dirs, fs in os.walk('report'):
-    for f in fs:
-        files.append(os.path.join(root,f))
+def res_to_prom(res):
+    for k, v in res.items():
+        for c, t in v.items():
+            print('throughput{name="%s",case="%s"} %f' % (k, c, t))
 
-test_map = {
-    'chuck_http': '',
-    'chuck_tls': '',
-    'iperf': '',
-    'iperf_udp': '',
-    'sendme': ''
-}
+if __name__ == '__main__':
 
-size_map = ['1_to_1', '1_to_3', '1_to_5', '1_to_10', '2_to_2', '2_to_4', '2_to_6', '2_to_10']
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--prom", help = "Run only report generation", action='store_true')
+    args = parser.parse_args()
 
-res = {}
+    files = []
+    for root, dirs, fs in os.walk('report'):
+        for f in fs:
+            files.append(os.path.join(root,f))
 
-for k, v in test_map.items():
-    res[k] = {}
-    for s in size_map:
-        res[k][s] = -1.0
+    test_map = {}
+    case_map = {}
 
-for f in files:
-    k = f.split('_')
-    p = k.index('to')
-    name = '_'.join(k[:p-1])
-    name = name[len('report/'):]
-    size = '_'.join(k[p-1:p+2])
-    json_f = open(f, 'r')
-    json_d = json.load(json_f)
-    throughput = json_d['sum']['mbits'] / 1000
-    throughput = float("{:.2f}".format(throughput))
-    res[name][size] = throughput
+    # format: testname__case__node
+    for f in files:
+        k = f.split('__')
+        name = k[0][len('report/'):]
+        test_map[name] = ''
+        case = k[1]
 
-print(json.dumps(res, indent=4))
+    res = {}
+
+    for k, v in test_map.items():
+        res[k] = {}
+        for c in case_map:
+            res[k][c] = -1.0
+
+    for f in files:
+        k = f.split('__')
+        name = k[0][len('report/'):]
+        case = k[1]
+        json_f = open(f, 'r')
+        json_d = json.load(json_f)
+        throughput = json_d['sum']['mbits'] / 1000
+        throughput = float("{:.2f}".format(throughput))
+        res[name][case] = throughput
+
+    if args.prom:
+        res_to_prom(res)
+    else:
+        print(json.dumps(res, indent=4))

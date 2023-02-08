@@ -1,7 +1,8 @@
 {
+    "name": "sendme",
     "cases": [
         {
-            "name": "sendme_1_to_10",
+            "name": "1_to_10",
             "description": "",
             "nodes": [
                 {

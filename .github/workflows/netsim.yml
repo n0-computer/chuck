@@ -36,17 +36,17 @@ jobs:
         toolchain: stable
         override: true
 
-    - name: Install Protoc
-      run: |
-        PROTOC_VERSION=3.20.1
-        PROTOC_ARCH=linux-x86_64
-        PROTOC_ZIP=protoc-$PROTOC_VERSION-$PROTOC_ARCH.zip
-        curl --retry 3 --retry-max-time 90 -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -OL https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOC_VERSION/$PROTOC_ZIP
-        sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
-        sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
-        rm -f $PROTOC_ZIP
-        echo "PROTOC=/usr/local/bin/protoc" >> $GITHUB_ENV
-        echo "PROTOC_INCLUDE=/usr/local/include" >> $GITHUB_ENV
+    # - name: Install Protoc
+    #   run: |
+    #     PROTOC_VERSION=3.20.1
+    #     PROTOC_ARCH=linux-x86_64
+    #     PROTOC_ZIP=protoc-$PROTOC_VERSION-$PROTOC_ARCH.zip
+    #     curl --retry 3 --retry-max-time 90 -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -OL https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOC_VERSION/$PROTOC_ZIP
+    #     sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
+    #     sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
+    #     rm -f $PROTOC_ZIP
+    #     echo "PROTOC=/usr/local/bin/protoc" >> $GITHUB_ENV
+    #     echo "PROTOC_INCLUDE=/usr/local/include" >> $GITHUB_ENV
       
     - name: Install netsim deps
       run: |
@@ -98,7 +98,17 @@ jobs:
       with:
         issue-number: ${{ github.event.issue.number }}
         body: |
-          Hello there "issue" :wave:
+          body: |
+          `${{ github.head_ref }}.${{ steps.config_vars.outputs.REPORT_REF }}`
+          <details>
+          <summary>Perf report</summary>
+          
+          ```json
+
+            ${{ steps.generate_report.outputs.NETSIM_REPORT }}
+
+          ```
+          </details>
 
     - name: Say Hi PR
       uses: peter-evans/create-or-update-comment@v2
@@ -117,4 +127,15 @@ jobs:
           ```
           </details>
 
-    # - name: Dump report
+    - name: Dump report
+      run: |
+        export AWS_ACCESS_KEY_ID=${{secrets.S3_ACCESS_KEY_ID}}"
+        export AWS_SECRET_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}}"
+        export AWS_DEFAULT_REGION=us-west-2
+        
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install --update
+
+        cd netsim
+        python3 reports_csv.py --prom

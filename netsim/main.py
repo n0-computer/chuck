@@ -1,6 +1,7 @@
 import argparse
 import json
 import time
+import os
 
 from mininet.net import Mininet
 from mininet.link import TCLink
@@ -64,14 +65,27 @@ if __name__ == '__main__':
     parser.add_argument("cfg", help = "Input config file")
     parser.add_argument("-r", help = "Run only report generation", action='store_true')
     args = parser.parse_args()
-    config_f = open(args.cfg)
-    config = json.load(config_f)
-    print('start test\n')
 
-    for case in config['cases']:
-        prefix = case['name']
-        nodes = case['nodes']
-        print('running "%s"...' % prefix)
-        if not args.r:
-            run(nodes, prefix)
-        stats_parser(nodes, prefix)
+    paths = []
+    is_dir = os.path.isdir(args.cfg)
+    if is_dir:
+        for root, dirs, files in os.walk(args.cfg):
+            for f in files:
+                if f.endswith('.json'):
+                    paths.append(os.path.join(root, f))
+    else:
+        paths.append(args.cfg)
+    
+    for path in paths:    
+        config_f = open(path, 'r')
+        config = json.load(config_f)
+        print('start test\n')
+        name = config['name']
+
+        for case in config['cases']:
+            prefix = name + '__' + case['name']
+            nodes = case['nodes']
+            print('running "%s"...' % prefix)
+            if not args.r:
+                run(nodes, prefix)
+            stats_parser(nodes, prefix)
