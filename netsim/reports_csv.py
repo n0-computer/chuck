@@ -2,15 +2,19 @@ import argparse
 import json
 import os
 
-def res_to_prom(res):
+def res_to_prom(res, commit):
     for k, v in res.items():
         for c, t in v.items():
-            print('throughput{name="%s",case="%s"} %f' % (k, c, t))
+            labels = 'name="%s",case="%s"' % (k, c)
+            if commit:
+                labels += ',commit="%s"' % commit
+            print('throughput{%s} %f' % (labels, t))
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prom", help = "Run only report generation", action='store_true')
+    parser.add_argument("--commit", help = "commit hash")
+    parser.add_argument("--prom", help = "generate output for prometheus", action='store_true')
     args = parser.parse_args()
 
     files = []
@@ -41,11 +45,13 @@ if __name__ == '__main__':
         case = k[1]
         json_f = open(f, 'r')
         json_d = json.load(json_f)
-        throughput = json_d['sum']['mbits'] / 1000
+        throughput = json_d['sum']['mbits']
+        if not args.prom:
+            throughput /= 1000
         throughput = float("{:.2f}".format(throughput))
         res[name][case] = throughput
 
     if args.prom:
-        res_to_prom(res)
+        res_to_prom(res, args.commit)
     else:
         print(json.dumps(res, indent=4))

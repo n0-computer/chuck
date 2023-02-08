@@ -11,6 +11,8 @@ from mininet.log import setLogLevel
 
 from parser import stats_parser
 from network import StarTopo
+
+TIMEOUT = 60 * 2
     
 def run(nodes, prefix):
     topo = StarTopo(nodes=nodes)
@@ -22,6 +24,7 @@ def run(nodes, prefix):
     net.pingAll()
 
     p_box = []
+    p_short_box = []
 
     node_counts = {}
     node_ips = {}
@@ -50,10 +53,20 @@ def run(nodes, prefix):
                 ip = node_ips[connect_to]
                 cmd = cmd % (ip, id)
             p = n.popen(cmd, stdout=f, stderr=f, shell=True)
-            p_box.append(p)
-        time.sleep(node['wait'])
+            if 'process' in node and node['process'] == 'short':
+                p_short_box.append(p)
+            else:
+                p_box.append(p)
+        if 'wait' in node:
+            time.sleep(node['wait'])
 
     # CLI(net)
+    for i in range(TIMEOUT):
+        time.sleep(1)
+        if not any(p.poll() is None for p in p_short_box):
+            break
+    for p in p_short_box:
+        p.terminate()
     for p in p_box:
         p.terminate()
     net.stop()

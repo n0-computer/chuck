@@ -112,23 +112,30 @@ def stats_parser(nodes, prefix):
     for node in nodes:
         if 'parser' in node:
             stats = []
-            if node['parser'] in valid_parsers:
-                for i in range(int(node['count'])):
-                    log_path = 'logs/%s__%s_%d.txt' %(prefix, node['name'], i)
-                    f = open(log_path, 'r')
-                    lines = f.readlines()
-                    if node['parser'] == 'sendme_client':
-                        s = parse_sendme_client(lines)
-                        stats.append(s)
-                    if node['parser'] == 'iperf_server':
-                        s = parse_iperf_server(lines)
-                        stats.extend(s)
-                    if node['parser'] == 'iperf_udp_server':
-                        s = parse_iperf_udp_server(lines)
-                        stats.extend(s)
-                    if node['parser'] == 'time_1gb':
-                        s = parse_time_output(lines, 1024*1024*1024)
-                        stats.append(s)
+            try:
+                if node['parser'] in valid_parsers:
+                    for i in range(int(node['count'])):
+                        log_path = 'logs/%s__%s_%d.txt' %(prefix, node['name'], i)
+                        f = open(log_path, 'r')
+                        lines = f.readlines()
+                        if node['parser'] == 'sendme_client':
+                            s = parse_sendme_client(lines)
+                            stats.append(s)
+                        if node['parser'] == 'iperf_server':
+                            s = parse_iperf_server(lines)
+                            stats.extend(s)
+                        if node['parser'] == 'iperf_udp_server':
+                            s = parse_iperf_udp_server(lines)
+                            stats.extend(s)
+                        if node['parser'] == 'time_1gb':
+                            s = parse_time_output(lines, 1024*1024*1024)
+                            stats.append(s)
+            except:
+                stats = [{
+                    'data_len': 0,
+                    'elapsed': 0,
+                    'mbits': -1.0
+                }]
             (sum_stats, avg_stats) = aggregate_stats(stats)
             report = {
                 'raw': stats,
@@ -136,6 +143,6 @@ def stats_parser(nodes, prefix):
                 'avg': avg_stats
             }
             report_json = json.dumps(report, indent=4)
-            f = open("report/%s_%s.json" % (prefix, node['name']), "w")
+            f = open("report/%s__%s.json" % (prefix, node['name']), "w")
             f.write(report_json)
             f.close()

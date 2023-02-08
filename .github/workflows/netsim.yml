@@ -35,18 +35,6 @@ jobs:
       with:
         toolchain: stable
         override: true
-
-    # - name: Install Protoc
-    #   run: |
-    #     PROTOC_VERSION=3.20.1
-    #     PROTOC_ARCH=linux-x86_64
-    #     PROTOC_ZIP=protoc-$PROTOC_VERSION-$PROTOC_ARCH.zip
-    #     curl --retry 3 --retry-max-time 90 -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -OL https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOC_VERSION/$PROTOC_ZIP
-    #     sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
-    #     sudo unzip -o $PROTOC_ZIP -d /usr/local 'include/*'
-    #     rm -f $PROTOC_ZIP
-    #     echo "PROTOC=/usr/local/bin/protoc" >> $GITHUB_ENV
-    #     echo "PROTOC_INCLUDE=/usr/local/include" >> $GITHUB_ENV
       
     - name: Install netsim deps
       run: |
@@ -86,11 +74,16 @@ jobs:
         echo "${NETSIM_REPORT}" >> ${GITHUB_OUTPUT}
         echo "EOFMARKER" >> ${GITHUB_OUTPUT}
 
-    - name: Configure vars
-      id: config_vars
-      run: |
-        git_hash=$(git rev-parse --short "${{ github.sha }}")
-        echo "REPORT_REF=${git_hash}" >> ${GITHUB_OUTPUT}
+    - name: Setup Environment (PR)  
+      if: ${{ github.event_name == 'pull_request' }}  
+      shell: bash  
+      run: |  
+        echo "LAST_COMMIT_SHA=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> ${GITHUB_ENV}  
+    - name: Setup Environment (Push)  
+      if: ${{ github.event_name == 'push' }}  
+      shell: bash  
+      run: |  
+        echo "LAST_COMMIT_SHA=$(git rev-parse --short ${GITHUB_SHA})" >> ${GITHUB_ENV}
 
     - name: Say Hi Issue
       uses: peter-evans/create-or-update-comment@v2
@@ -99,7 +92,7 @@ jobs:
         issue-number: ${{ github.event.issue.number }}
         body: |
           body: |
-          `${{ github.head_ref }}.${{ steps.config_vars.outputs.REPORT_REF }}`
+          `${{ github.head_ref }}.${{ env.LAST_COMMIT_SHA }}`
           <details>
           <summary>Perf report</summary>
           
@@ -116,7 +109,7 @@ jobs:
       with:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          `${{ github.head_ref }}.${{ steps.config_vars.outputs.REPORT_REF }}`
+          `${{ github.head_ref }}.${{ env.LAST_COMMIT_SHA }}`
           <details>
           <summary>Perf report</summary>
           
@@ -129,8 +122,8 @@ jobs:
 
     - name: Dump report
       run: |
-        export AWS_ACCESS_KEY_ID=${{secrets.S3_ACCESS_KEY_ID}}"
-        export AWS_SECRET_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}}"
+        export AWS_ACCESS_KEY_ID=${{secrets.S3_ACCESS_KEY_ID}}
+        export AWS_SECRET_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}}
         export AWS_DEFAULT_REGION=us-west-2
         
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -138,4 +131,13 @@ jobs:
         sudo ./aws/install --update
 
         cd netsim
-        python3 reports_csv.py --prom
+        python3 reports_csv.py --prom --commit ${{ env.LAST_COMMIT_SHA }} > report_prom.txt
+
+        tar cvzf report.tar.gz report_prom.txt report.txt logs/ report/
+        aws s3 cp ./report.tar.gz s3://${{secrets.S3_REPORT_BUCKET}}/${{ env.LAST_COMMIT_SHA }}.tar.gz --no-progress
+
+        instance=$(echo "${{ github.head_ref }}" | tr -c '[:alnum:]' '_')
+        d=$(cat report_prom.txt)
+        prom_data=$(printf "%s\n " "$d")
+        curl -X POST -H  "Content-Type: text/plain" --data "$prom_data" ${{secrets.PROM_ENDPOINT}}/metrics/job/netsim/instance/${instance}
+
