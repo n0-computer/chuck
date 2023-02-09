@@ -54,4 +54,4 @@ if __name__ == '__main__':
     if args.prom:
         res_to_prom(res, args.commit)
     else:
-        print(json.dumps(res, indent=4))
+        print(json.dumps(res, indent=4, sort_keys=True))

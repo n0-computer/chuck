@@ -52,11 +52,6 @@ jobs:
         cd sendme
         cargo build --release
 
-    # - name: Setup binary paths
-    #   run: |
-    #     echo "$(pwd)/target/release" >> $GITHUB_PATH
-    #     echo "$(pwd)/sendme/target/release" >> $GITHUB_PATH
-
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
@@ -67,7 +62,7 @@ jobs:
         cd netsim
         sudo kill -9 $(pgrep ovs)
         sudo mn --clean
-        sudo python3 main.py sims/example/sendme_test.json
+        sudo python3 main.py sims/example/sendme.json
 
     - name: Generate report
       id: generate_report
