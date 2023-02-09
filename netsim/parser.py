@@ -1,6 +1,12 @@
 import json
 import os
 
+invalid_results = {
+                    'data_len': 0,
+                    'elapsed': 0,
+                    'mbits': -1.0
+                }
+
 def parse_time_output(lines, size):
     for line in lines:
         if line.startswith('real'):
@@ -15,6 +21,7 @@ def parse_time_output(lines, size):
                 'mbits': float(size * 8) / (d * 1000 * 1000)
             }
             return s
+    return invalid_results
 
 def parse_iperf_udp_server(lines):
     s = []
@@ -59,6 +66,8 @@ def parse_sendme_client(lines):
             s['data_len'] = int(d['data_len'])
             s['elapsed'] = float(d['elapsed'])
             s['mbits'] = float(d['mbits'])
+    if not 'data_len' in s:
+        return invalid_results
     return s
 
 def parse_iperf_server(lines):
@@ -104,7 +113,7 @@ def aggregate_stats(stats):
 
 def stats_parser(nodes, prefix):
     files = []
-    valid_parsers = ['sendme_client', 'iperf_server', 'iperf_udp_server', 'time_1gb']
+    valid_parsers = ['sendme_client', 'iperf_server', 'iperf_udp_server', 'time_1gb', 'sendme_1gb']
     for root, dirs, fs in os.walk('logs'):
         for f in fs:
             if f.startswith(prefix + '__'):
@@ -128,6 +137,17 @@ def stats_parser(nodes, prefix):
                             s = parse_iperf_udp_server(lines)
                             stats.extend(s)
                         if node['parser'] == 'time_1gb':
+                            s = parse_time_output(lines, 1024*1024*1024)
+                            stats.append(s)
+                        if node['parser'] == 'sendme_1gb':
+                            is_ok = 0
+                            for line in lines:
+                                if 'Downloading collection' in line:
+                                    is_ok += 1
+                                if 'Done in' in line and 'seconds' in line:
+                                    is_ok += 1
+                            if is_ok < 2:
+                                raise Exception("bad run")
                             s = parse_time_output(lines, 1024*1024*1024)
                             stats.append(s)
             except:

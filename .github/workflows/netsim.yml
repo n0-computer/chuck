@@ -52,10 +52,15 @@ jobs:
         cd sendme
         cargo build --release
 
-    - name: Setup binary paths
+    # - name: Setup binary paths
+    #   run: |
+    #     echo "$(pwd)/target/release" >> $GITHUB_PATH
+    #     echo "$(pwd)/sendme/target/release" >> $GITHUB_PATH
+
+    - name: Copy binaries to right location
       run: |
-        echo "$(pwd)/target/release" >> $GITHUB_PATH
-        echo "$(pwd)/sendme/target/release" >> $GITHUB_PATH
+        cp target/release/chuck netsim/bins/chuck
+        cp sendme/target/release/sendme netsim/bins/sendme
 
     - name: Run tests
       run: |
@@ -85,7 +90,7 @@ jobs:
       run: |  
         echo "LAST_COMMIT_SHA=$(git rev-parse --short ${GITHUB_SHA})" >> ${GITHUB_ENV}
 
-    - name: Say Hi Issue
+    - name: Respond Issue
       uses: peter-evans/create-or-update-comment@v2
       if: github.event_name == 'issue_comment'
       with:
@@ -103,7 +108,7 @@ jobs:
           ```
           </details>
 
-    - name: Say Hi PR
+    - name: Respond PR
       uses: peter-evans/create-or-update-comment@v2
       if: github.event.pull_request
       with:
@@ -127,7 +132,7 @@ jobs:
         export AWS_DEFAULT_REGION=us-west-2
         
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
+        unzip -q awscliv2.zip
         sudo ./aws/install --update
 
         cd netsim
