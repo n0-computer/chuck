@@ -67,7 +67,7 @@ jobs:
         cd netsim
         sudo kill -9 $(pgrep ovs)
         sudo mn --clean
-        sudo python3 main.py sims/standard/sendme_test.json
+        sudo python3 main.py sims/example/sendme_test.json
 
     - name: Generate report
       id: generate_report

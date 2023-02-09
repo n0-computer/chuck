@@ -1,7 +1,8 @@
 {
+    "name": "chuck_tls",
     "cases": [
         {
-            "name": "chuck_tls_1_to_1",
+            "name": "1_to_1",
             "description": "",
             "nodes": [
                 {
@@ -19,7 +20,7 @@
                     "count": 1,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -29,7 +30,7 @@
             ]
         },
         {
-            "name": "chuck_tls_1_to_3",
+            "name": "1_to_3",
             "description": "",
             "nodes": [
                 {
@@ -47,7 +48,7 @@
                     "count": 3,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 30,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -57,7 +58,7 @@
             ]
         },
         {
-            "name": "chuck_tls_1_to_5",
+            "name": "1_to_5",
             "description": "",
             "nodes": [
                 {
@@ -75,7 +76,7 @@
                     "count": 5,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 30,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -85,7 +86,7 @@
             ]
         },
         {
-            "name": "chuck_tls_1_to_10",
+            "name": "1_to_10",
             "description": "",
             "nodes": [
                 {
@@ -103,7 +104,7 @@
                     "count": 10,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 30,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -113,7 +114,7 @@
             ]
         },
         {
-            "name": "chuck_tls_2_to_2",
+            "name": "2_to_2",
             "description": "",
             "nodes": [
                 {
@@ -131,7 +132,7 @@
                     "count": 2,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -141,7 +142,7 @@
             ]
         },
         {
-            "name": "chuck_tls_2_to_4",
+            "name": "2_to_4",
             "description": "",
             "nodes": [
                 {
@@ -159,7 +160,7 @@
                     "count": 4,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 30,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -169,7 +170,7 @@
             ]
         },
         {
-            "name": "chuck_tls_2_to_6",
+            "name": "2_to_6",
             "description": "",
             "nodes": [
                 {
@@ -187,7 +188,7 @@
                     "count": 6,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 30,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
@@ -197,7 +198,7 @@
             ]
         },
         {
-            "name": "chuck_tls_2_to_10",
+            "name": "2_to_10",
             "description": "",
             "nodes": [
                 {
@@ -215,7 +216,7 @@
                     "count": 10,
                     "cmd": "time curl -sk --tcp-nodelay --output /dev/null https://%s/1GB.bin",
                     "type": "public",
-                    "wait": 30,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
