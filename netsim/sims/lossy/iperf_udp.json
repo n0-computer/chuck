@@ -1,7 +1,8 @@
 {
+    "name": "lossy_iperf_udp",
     "cases": [
         {
-            "name": "iperf_udp_1_to_1",
+            "name": "1_to_1",
             "description": "",
             "nodes": [
                 {
@@ -20,21 +21,21 @@
                     "count": 1,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_1_to_3",
+            "name": "1_to_3",
             "description": "",
             "nodes": [
                 {
@@ -53,21 +54,21 @@
                     "count": 3,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_1_to_5",
+            "name": "1_to_5",
             "description": "",
             "nodes": [
                 {
@@ -86,21 +87,21 @@
                     "count": 5,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_1_to_10",
+            "name": "1_to_10",
             "description": "",
             "nodes": [
                 {
@@ -119,21 +120,21 @@
                     "count": 10,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_2_to_2",
+            "name": "2_to_2",
             "description": "",
             "nodes": [
                 {
@@ -152,21 +153,21 @@
                     "count": 2,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_2_to_4",
+            "name": "2_to_4",
             "description": "",
             "nodes": [
                 {
@@ -185,21 +186,21 @@
                     "count": 4,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_2_to_6",
+            "name": "2_to_6",
             "description": "",
             "nodes": [
                 {
@@ -218,21 +219,21 @@
                     "count": 6,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }
             ]
         },
         {
-            "name": "iperf_udp_2_to_10",
+            "name": "2_to_10",
             "description": "",
             "nodes": [
                 {
@@ -251,14 +252,14 @@
                     "count": 10,
                     "cmd": "iperf -c %s -u -b 100G",
                     "type": "public",
-                    "wait": 15,
+                    "process": "short",
                     "connect": {
                         "strategy": "plain",
                         "node": "server"
                     },
                     "link": {
                         "loss": 1,
-                        "latency": 20,
+                        "latency": 200,
                         "bw": 1000
                     }
                 }

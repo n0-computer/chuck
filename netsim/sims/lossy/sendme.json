@@ -1,13 +1,14 @@
 {
+    "name": "lossy_sendme",
     "cases": [
         {
-            "name": "sendme_1_to_1",
+            "name": "1_to_1",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -18,14 +19,14 @@
                 {
                     "name": "client",
                     "count": 1,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 60,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -35,13 +36,13 @@
             ]
         },
         {
-            "name": "sendme_1_to_3",
+            "name": "1_to_3",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -52,14 +53,14 @@
                 {
                     "name": "client",
                     "count": 3,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 90,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -69,13 +70,13 @@
             ]
         },
         {
-            "name": "sendme_1_to_5",
+            "name": "1_to_5",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -86,14 +87,14 @@
                 {
                     "name": "client",
                     "count": 5,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 90,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -103,13 +104,13 @@
             ]
         },
         {
-            "name": "sendme_1_to_10",
+            "name": "1_to_10",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -120,14 +121,14 @@
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 90,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -137,13 +138,13 @@
             ]
         },
         {
-            "name": "sendme_2_to_2",
+            "name": "2_to_2",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -154,14 +155,14 @@
                 {
                     "name": "client",
                     "count": 2,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 60,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -171,13 +172,13 @@
             ]
         },
         {
-            "name": "sendme_2_to_4",
+            "name": "2_to_4",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -188,14 +189,14 @@
                 {
                     "name": "client",
                     "count": 4,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 90,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -205,13 +206,13 @@
             ]
         },
         {
-            "name": "sendme_2_to_6",
+            "name": "2_to_6",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -222,14 +223,14 @@
                 {
                     "name": "client",
                     "count": 6,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 90,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -239,13 +240,13 @@
             ]
         },
         {
-            "name": "sendme_2_to_10",
+            "name": "2_to_10",
             "description": "",
             "nodes": [
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "sendme provide -a 0.0.0.0:4433 --key /var/lib/netsim/keys/server_%d.key --auth-token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae /var/lib/netsim/1GB.bin",
+                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -256,14 +257,14 @@
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time sendme get -a %s:4433 --peer $(chuck peer-id /var/lib/netsim/keys/server_%d.key) --token 5f9b7ea791c8f5354787c521f6e0f13966df0e45791447dbb794c50fd05c8bae d97f718360e4eb2a29b8bb4a1773a7058634130ac0b4d8422bf7776313063667 > /dev/null",
+                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
-                    "wait": 90,
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
-                    "parser": "time_1gb",
+                    "process": "short",
+                    "parser": "sendme_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
