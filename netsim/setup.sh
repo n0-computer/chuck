@@ -15,3 +15,5 @@ done
 for i in {1..10}; do
     cat 100M.bin >> 1G.bin
 done
+cp ../../fixtures/key.pem ../bins/key.pem
+cp ../../fixtures/cert.pem ../bins/cert.pem

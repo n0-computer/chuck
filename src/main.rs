@@ -9,7 +9,7 @@ use axum::{
 };
 use axum_server::tls_rustls::RustlsConfig;
 use sendme::{Keypair, PeerId};
-use std::{io, net::SocketAddr, path::PathBuf};
+use std::{io, net::SocketAddr, path::{PathBuf, Path}};
 use tower_http::{
     services::ServeDir,
     trace::TraceLayer,
@@ -25,7 +25,7 @@ struct Args {
 #[derive(Debug, Subcommand)]
 enum Commands {
     #[clap(arg_required_else_help = true)]
-    HttpServer { tls: u8 },
+    HttpServer { tls: u8, serve_path: PathBuf, certs: Option<PathBuf> },
     #[clap(arg_required_else_help = false)]
     HttpClient { target_host: String },
     #[clap(arg_required_else_help = true)]
@@ -36,21 +36,20 @@ enum Commands {
 async fn main() -> Result<()> {
     let args = Args::parse();
     match args.command {
-        Commands::HttpServer { tls } => {
+        Commands::HttpServer { tls, serve_path, certs } => {
             let addr = SocketAddr::from(([0, 0, 0, 0], 443));
             let serve_dir =
-                get_service(ServeDir::new("/var/lib/netsim")).handle_error(handle_error);
+                get_service(ServeDir::new(serve_path)).handle_error(handle_error);
             let router = Router::new()
                 .route("/foo", get(|| async { "Hi from /foo" }))
                 .nest_service("/assets", serve_dir.clone())
                 .fallback_service(serve_dir);
             if tls > 0 {
+                let cert_path = certs.unwrap();
                 let config = RustlsConfig::from_pem_file(
-                    PathBuf::from("/var/lib/netsim")
-                        .join("self_signed_certs")
+                    cert_path
                         .join("cert.pem"),
-                    PathBuf::from("/var/lib/netsim")
-                        .join("self_signed_certs")
+                    cert_path
                         .join("key.pem"),
                 )
                 .await
