@@ -8,7 +8,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -18,7 +18,7 @@
                 {
                     "name": "client",
                     "count": 1,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -41,7 +41,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -51,7 +51,7 @@
                 {
                     "name": "client",
                     "count": 3,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -74,7 +74,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -84,7 +84,7 @@
                 {
                     "name": "client",
                     "count": 5,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -107,7 +107,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -117,7 +117,7 @@
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -140,7 +140,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -150,7 +150,7 @@
                 {
                     "name": "client",
                     "count": 2,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -173,7 +173,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -183,7 +183,7 @@
                 {
                     "name": "client",
                     "count": 4,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -206,7 +206,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -216,7 +216,7 @@
                 {
                     "name": "client",
                     "count": 6,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
@@ -239,7 +239,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "chuck http-server 0",
+                    "cmd": "./bins/chuck http-server 0 ./data",
                     "type": "public",
                     "wait": 5,
                     "connect": {
@@ -249,7 +249,7 @@
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1GB.bin",
+                    "cmd": "time curl -s --tcp-nodelay --output /dev/null http://%s:443/1G.bin",
                     "type": "public",
                     "process": "short",
                     "connect": {
