@@ -9,7 +9,7 @@ use axum::{
 };
 use axum_server::tls_rustls::RustlsConfig;
 use sendme::{Keypair, PeerId};
-use std::{io, net::SocketAddr, path::{PathBuf, Path}};
+use std::{io, net::SocketAddr, path::PathBuf};
 use tower_http::{
     services::ServeDir,
     trace::TraceLayer,
