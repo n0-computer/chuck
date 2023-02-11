@@ -139,5 +139,5 @@ jobs:
         instance=$(echo "${{ github.head_ref }}" | tr -c '[:alnum:]' '_')
         d=$(cat report_prom.txt)
         prom_data=$(printf "%s\n " "$d")
-        curl -X POST -H  "Content-Type: text/plain" --data "$prom_data" ${{secrets.PROM_ENDPOINT}}/metrics/job/netsim/instance/${instance}
+        curl -X POST -H  "Content-Type: text/plain" --data "$prom_data" ${{secrets.PROM_ENDPOINT}}/metrics/job/chucksim/instance/${instance}
 
