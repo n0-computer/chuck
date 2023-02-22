@@ -46,16 +46,16 @@ jobs:
       run: |
         cargo build --release
 
-    - name: Fetch and build sendme
+    - name: Fetch and build iroh
       run: |
-        git clone https://github.com/n0-computer/sendme.git
-        cd sendme
+        git clone https://github.com/n0-computer/iroh.git
+        cd iroh
         cargo build --release
 
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
-        cp sendme/target/release/sendme netsim/bins/sendme
+        cp iroh/target/release/iroh netsim/bins/iroh
 
     - name: Run tests
       run: |
