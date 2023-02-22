@@ -1,5 +1,5 @@
 {
-    "name": "lossy_sendme",
+    "name": "lossy_iroh",
     "cases": [
         {
             "name": "1_to_1",
@@ -8,7 +8,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -19,14 +19,14 @@
                 {
                     "name": "client",
                     "count": 1,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -42,7 +42,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -53,14 +53,14 @@
                 {
                     "name": "client",
                     "count": 3,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -76,7 +76,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -87,14 +87,14 @@
                 {
                     "name": "client",
                     "count": 5,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -110,7 +110,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -121,14 +121,14 @@
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -144,7 +144,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -155,14 +155,14 @@
                 {
                     "name": "client",
                     "count": 2,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -178,7 +178,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -189,14 +189,14 @@
                 {
                     "name": "client",
                     "count": 4,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -212,7 +212,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -223,14 +223,14 @@
                 {
                     "name": "client",
                     "count": 6,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -246,7 +246,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/sendme provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --key keys/server_%d.key --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -257,14 +257,14 @@
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time ./bins/sendme get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "plain_with_id",
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,

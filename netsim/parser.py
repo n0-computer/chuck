@@ -53,7 +53,7 @@ def parse_iperf_udp_server(lines):
             s.append(stat)
     return s
 
-def parse_sendme_client(lines):
+def parse_iroh_client(lines):
     s = {}
     for line in lines:
         if line.startswith('Stats'):
@@ -113,7 +113,7 @@ def aggregate_stats(stats):
 
 def stats_parser(nodes, prefix):
     files = []
-    valid_parsers = ['sendme_client', 'iperf_server', 'iperf_udp_server', 'time_1gb', 'sendme_1gb']
+    valid_parsers = ['iroh_client', 'iperf_server', 'iperf_udp_server', 'time_1gb', 'iroh_1gb']
     for root, dirs, fs in os.walk('logs'):
         for f in fs:
             if f.startswith(prefix + '__'):
@@ -127,8 +127,8 @@ def stats_parser(nodes, prefix):
                         log_path = 'logs/%s__%s_%d.txt' %(prefix, node['name'], i)
                         f = open(log_path, 'r')
                         lines = f.readlines()
-                        if node['parser'] == 'sendme_client':
-                            s = parse_sendme_client(lines)
+                        if node['parser'] == 'iroh_client':
+                            s = parse_iroh_client(lines)
                             stats.append(s)
                         if node['parser'] == 'iperf_server':
                             s = parse_iperf_server(lines)
@@ -139,7 +139,7 @@ def stats_parser(nodes, prefix):
                         if node['parser'] == 'time_1gb':
                             s = parse_time_output(lines, 1024*1024*1024)
                             stats.append(s)
-                        if node['parser'] == 'sendme_1gb':
+                        if node['parser'] == 'iroh_1gb':
                             is_ok = 0
                             for line in lines:
                                 if 'Downloading collection' in line:
