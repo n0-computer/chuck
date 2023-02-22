@@ -1,5 +1,5 @@
 {
-    "name": "lossy_sendme",
+    "name": "lossy_iroh",
     "cases": [
         {
             "name": "1_to_1",
@@ -26,7 +26,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -60,7 +60,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -94,7 +94,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -128,7 +128,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -162,7 +162,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -196,7 +196,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -230,7 +230,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,
@@ -264,7 +264,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb",
+                    "parser": "iroh_1gb",
                     "link": {
                         "loss": 1,
                         "latency": 200,

@@ -1,5 +1,5 @@
 {
-    "name": "sendme",
+    "name": "iroh",
     "cases": [
         {
             "name": "1_to_1",
@@ -26,7 +26,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -55,7 +55,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -84,7 +84,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -113,7 +113,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -142,7 +142,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -171,7 +171,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -200,7 +200,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         },
@@ -229,7 +229,7 @@
                         "node": "server"
                     },
                     "process": "short",
-                    "parser": "sendme_1gb"
+                    "parser": "iroh_1gb"
                 }
             ]
         }
