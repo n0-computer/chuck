@@ -95,12 +95,7 @@ jobs:
           `${{ github.head_ref }}.${{ env.LAST_COMMIT_SHA }}`
           <details>
           <summary>Perf report</summary>
-          
-          ```json
-
             ${{ steps.generate_report.outputs.NETSIM_REPORT }}
-
-          ```
           </details>
 
     - name: Respond PR
@@ -112,12 +107,7 @@ jobs:
           `${{ github.head_ref }}.${{ env.LAST_COMMIT_SHA }}`
           <details>
           <summary>Perf report</summary>
-          
-          ```json
-
             ${{ steps.generate_report.outputs.NETSIM_REPORT }}
-
-          ```
           </details>
 
     - name: Dump report

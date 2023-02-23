@@ -11,11 +11,11 @@ def res_to_prom(res, commit):
             print('throughput{%s} %f' % (labels, t))
 
 def res_to_table(res):
-    print('| test | case | throughput |')
+    print('| test | case | throughput_gbps |')
     print('| ---- | ---- | ---------- |')
     for k, v in res.items():
         for c, t in v.items():
-            print('| %s | %s | %f |' % (k, c, t))
+            print('| %s | %s | %.2f |' % (k, c, t))
 
 if __name__ == '__main__':
 
