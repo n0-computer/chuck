@@ -93,10 +93,8 @@ jobs:
         body: |
           body: |
           `${{ github.head_ref }}.${{ env.LAST_COMMIT_SHA }}`
-          <details>
-          <summary>Perf report</summary>
-            ${{ steps.generate_report.outputs.NETSIM_REPORT }}
-          </details>
+          Perf report:
+          ${{ steps.generate_report.outputs.NETSIM_REPORT }}
 
     - name: Respond PR
       uses: peter-evans/create-or-update-comment@v2
@@ -105,10 +103,8 @@ jobs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           `${{ github.head_ref }}.${{ env.LAST_COMMIT_SHA }}`
-          <details>
-          <summary>Perf report</summary>
-            ${{ steps.generate_report.outputs.NETSIM_REPORT }}
-          </details>
+          Perf report:
+          ${{ steps.generate_report.outputs.NETSIM_REPORT }}
 
     - name: Dump report
       run: |
