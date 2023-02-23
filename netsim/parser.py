@@ -144,7 +144,7 @@ def stats_parser(nodes, prefix):
                             for line in lines:
                                 if 'Downloading collection' in line:
                                     is_ok += 1
-                                if 'Done in' in line and 'seconds' in line:
+                                if 'Transferred' in line and 'seconds' in line:
                                     is_ok += 1
                             if is_ok < 2:
                                 raise Exception("bad run")
