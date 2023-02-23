@@ -10,11 +10,19 @@ def res_to_prom(res, commit):
                 labels += ',commit="%s"' % commit
             print('throughput{%s} %f' % (labels, t))
 
+def res_to_table(res):
+    print('| test | case | throughput |')
+    print('| ---- | ---- | ---------- |')
+    for k, v in res.items():
+        for c, t in v.items():
+            print('| %s | %s | %f |' % (k, c, t))
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--commit", help = "commit hash")
     parser.add_argument("--prom", help = "generate output for prometheus", action='store_true')
+    parser.add_argument("--table", help = "generate output for github comments", action='store_true')
     args = parser.parse_args()
 
     files = []
@@ -53,5 +61,7 @@ if __name__ == '__main__':
 
     if args.prom:
         res_to_prom(res, args.commit)
+    elif args.table:
+        res_to_table(res)
     else:
         print(json.dumps(res, indent=4, sort_keys=True))

@@ -68,7 +68,7 @@ jobs:
       id: generate_report
       run: |
         cd netsim
-        python3 reports_csv.py > report.txt
+        python3 reports_csv.py --table > report.txt
         export NETSIM_REPORT=$(cat report.txt)
         echo "NETSIM_REPORT<<EOFMARKER" >> ${GITHUB_OUTPUT}
         echo "${NETSIM_REPORT}" >> ${GITHUB_OUTPUT}
