@@ -10,11 +10,23 @@ def res_to_prom(res, commit):
                 labels += ',commit="%s"' % commit
             print('throughput{%s} %f' % (labels, t))
 
+case_order = ['1_to_1', '1_to_3', '1_to_5', '1_to_10', '2_to_2', '2_to_4', '2_to_6', '2_to_10']
+
+def case_sort(x):
+    if x[0] in case_order:
+        return case_order.index(x[0])
+    else:
+        case_order.append(x[0])
+        return len(case_order) - 1
+
 def res_to_table(res):
+    
     print('| test | case | throughput_gbps |')
     print('| ---- | ---- | ---------- |')
     for k, v in res.items():
-        for c, t in v.items():
+        vl = [(g,h) for g,h in v.items()]
+        vl = sorted(vl, key=case_sort)
+        for c, t in vl:
             print('| %s | %s | %.2f |' % (k, c, t))
 
 if __name__ == '__main__':
