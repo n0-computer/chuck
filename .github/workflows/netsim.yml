@@ -60,24 +60,17 @@ jobs:
     - name: Detect commands
       # if: github.event_name == 'issue_comment'
       run: |
-        strindex() { 
-          x="${1%%"$2"*}"
-          [[ "$x" = "$1" ]] && echo -1 || echo "${#x}"
-        }
         # a="${{ github.event.comment.body }}"
-        a="/perf config ```test```"
-        if [[ $a == /perf config* ]];
+        a='/perf config ```test```'
+        if [[ $a == '/perf config'* ]];
         then
-          ps=$(strindex $a '```')
-          a=${a:ps}
-          pe=${#a}-$(strindex $a '```')
-          a=${a:pe}
-          export NETSIM_CONFIG=$a
-          echo "NETSIM_CONFIG<<EOFMARKER" >> ${GITHUB_OUTPUT}
-          echo "${NETSIM_CONFIG}" >> ${GITHUB_OUTPUT}
-          echo "EOFMARKER" >> ${GITHUB_OUTPUT}
+          a=$(echo "'$a'" | sed -e 's/.*```\(.*\)```.*/\1/')
+          export NETSIM_CONFIG="$a"
+          # echo "NETSIM_CONFIG<<EOFMARKER" >> ${GITHUB_OUTPUT}
+          # echo "${NETSIM_CONFIG}" >> ${GITHUB_OUTPUT}
+          # echo "EOFMARKER" >> ${GITHUB_OUTPUT}
         fi
-        echo $NETSIM_CONFIG
+        echo "'$NETSIM_CONFIG'"
 
     # - name: Run tests
     #   run: |
