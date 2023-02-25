@@ -1,0 +1,64 @@
+{
+    "raw": [
+        {
+            "data_len": 1868310773.76,
+            "elapsed": 10.0,
+            "mbits": 4540.0
+        },
+        {
+            "data_len": 2534030704.64,
+            "elapsed": 10.0,
+            "mbits": 4510.0
+        },
+        {
+            "data_len": 3940632494.08,
+            "elapsed": 10.0,
+            "mbits": 3430.0
+        },
+        {
+            "data_len": 4660039516.16,
+            "elapsed": 10.0,
+            "mbits": 3730.0
+        },
+        {
+            "data_len": 1964947537.92,
+            "elapsed": 10.0,
+            "mbits": 4830.0
+        },
+        {
+            "data_len": 1675037245.44,
+            "elapsed": 10.0,
+            "mbits": 4080.0
+        },
+        {
+            "data_len": 3489660928.0,
+            "elapsed": 10.0,
+            "mbits": 4230.0
+        },
+        {
+            "data_len": 1943472701.44,
+            "elapsed": 10.0,
+            "mbits": 4730.0
+        },
+        {
+            "data_len": 4456028569.6,
+            "elapsed": 10.0,
+            "mbits": 3610.0
+        },
+        {
+            "data_len": 2093796556.8,
+            "elapsed": 10.0,
+            "mbits": 4610.0
+        }
+    ],
+    "sum": {
+        "data_len": 28625957027.84,
+        "elapsed": 100.0,
+        "mbits": 42300.0
+    },
+    "avg": {
+        "data_len": 2862595702.784,
+        "elapsed": 10.0,
+        "mbits": 4230.0
+    }
+}

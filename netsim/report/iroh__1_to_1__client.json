@@ -1,0 +1,19 @@
+{
+    "raw": [
+        {
+            "data_len": 0,
+            "elapsed": 0,
+            "mbits": -1.0
+        }
+    ],
+    "sum": {
+        "data_len": 0,
+        "elapsed": 0,
+        "mbits": -1.0
+    },
+    "avg": {
+        "data_len": 0.0,
+        "elapsed": 0.0,
+        "mbits": -1.0
+    }
+}
