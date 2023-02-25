@@ -19,7 +19,7 @@ jobs:
     if: >-
       (github.event_name == 'issue_comment' &&
         github.event.issue.pull_request &&
-          github.event.comment.body == '/perf') || github.event_name != 'issue_comment'
+          startsWith(github.event.comment.body, '/perf')) || github.event_name != 'issue_comment'
     runs-on: [self-hosted, linux, X64]
     permissions:
       issues: write
