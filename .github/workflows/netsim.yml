@@ -58,15 +58,16 @@ jobs:
         cp iroh/target/release/iroh netsim/bins/iroh
 
     - name: Detect commands
-      if: github.event_name == 'issue_comment'
+      # if: github.event_name == 'issue_comment'
       run: |
         strindex() { 
           x="${1%%"$2"*}"
           [[ "$x" = "$1" ]] && echo -1 || echo "${#x}"
         }
+        # a="${{ github.event.comment.body }}"
+        a="/perf config ```test```"
         if [[ $a == /perf config* ]];
         then
-          a="${{ github.event.comment.body }}"
           ps=$(strindex $a '```')
           a=${a:ps}
           pe=${#a}-$(strindex $a '```')
