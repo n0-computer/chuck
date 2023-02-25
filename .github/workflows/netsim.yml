@@ -57,12 +57,36 @@ jobs:
         cp target/release/chuck netsim/bins/chuck
         cp iroh/target/release/iroh netsim/bins/iroh
 
+    - name: Detect comment commands
+      if: github.event_name == 'issue_comment'
+      id: detect_comment_config
+      run: |
+        a='${{ github.event.comment.body }}'
+        # a='/perf config ```test```'
+        if [[ $a == '/perf config'* ]];
+        then
+          a=$(echo "'$a'" | sed -e 's/.*```\(.*\)```.*/\1/')
+          export NETSIM_CONFIG="$a"
+          echo "NETSIM_CONFIG<<EOFMARKER" >> ${GITHUB_OUTPUT}
+          echo "${NETSIM_CONFIG}" >> ${GITHUB_OUTPUT}
+          echo "EOFMARKER" >> ${GITHUB_OUTPUT}
+        fi
+        echo "'$NETSIM_CONFIG'"
+
     - name: Run tests
       run: |
         cd netsim
         sudo kill -9 $(pgrep ovs)
         sudo mn --clean
-        sudo python3 main.py sims/standard
+        c=${{ steps.detect_comment_config.outputs.NETSIM_CONFIG }}
+        if [ -z "${c}" ];
+        then
+          sudo python3 main.py sims/standard
+        else
+          echo $c >> custom_sim.json
+          sudo python3 main.py custom_sim.json
+        fi
+        
 
     - name: Generate report
       id: generate_report
@@ -127,3 +151,11 @@ jobs:
         prom_data=$(printf "%s\n " "$d")
         curl -X POST -H  "Content-Type: text/plain" --data "$prom_data" ${{secrets.PROM_ENDPOINT}}/metrics/job/chucksim/instance/${instance}
 
+    # - name: Post metrics
+    #   # if: github.ref_name=='main'
+    #   run: |
+    #     cd netsim
+    #     python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
+    #     d=$(cat report_metro.txt)
+    #     metro_data=$(printf "%s\n " "$d")
+    #     curl -X POST -H  "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.METRO_TOKEN}}" --data "$metro_data" ${{secrets.METRO_ENDPOINT}}
