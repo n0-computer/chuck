@@ -62,7 +62,6 @@ jobs:
       id: detect_comment_config
       run: |
         a='${{ github.event.comment.body }}'
-        # a='/perf config ```test```'
         if [[ $a == '/perf config'* ]];
         then
           a=$(echo "'$a'" | tr '\n' ' ' | tr -s " " | sed -e 's/.*```\(.*\)```.*/\1/')
@@ -78,15 +77,14 @@ jobs:
         cd netsim
         sudo kill -9 $(pgrep ovs)
         sudo mn --clean
-        c=${{ steps.detect_comment_config.outputs.NETSIM_CONFIG }}
+        c='${{ steps.detect_comment_config.outputs.NETSIM_CONFIG }}'
         if [ -z "${c}" ];
         then
           sudo python3 main.py sims/standard
         else
           echo $c >> custom_sim.json
-          cat custom_sim.json
           sudo python3 main.py custom_sim.json
-        fi 
+        fi
 
     - name: Generate report
       id: generate_report
