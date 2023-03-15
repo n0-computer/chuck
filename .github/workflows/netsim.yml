@@ -65,7 +65,7 @@ jobs:
         # a='/perf config ```test```'
         if [[ $a == '/perf config'* ]];
         then
-          a=$(echo "'$a'" | sed -e 's/.*```\(.*\)```.*/\1/')
+          a=$(echo "'$a'" | tr '\n' ' ' | tr -s " " | sed -e 's/.*```\(.*\)```.*/\1/')
           export NETSIM_CONFIG="$a"
           echo "NETSIM_CONFIG<<EOFMARKER" >> ${GITHUB_OUTPUT}
           echo "${NETSIM_CONFIG}" >> ${GITHUB_OUTPUT}
@@ -86,8 +86,7 @@ jobs:
           echo $c >> custom_sim.json
           cat custom_sim.json
           sudo python3 main.py custom_sim.json
-        fi
-        
+        fi 
 
     - name: Generate report
       id: generate_report
