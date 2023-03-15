@@ -84,6 +84,7 @@ jobs:
           sudo python3 main.py sims/standard
         else
           echo $c >> custom_sim.json
+          cat custom_sim.json
           sudo python3 main.py custom_sim.json
         fi
         
@@ -142,8 +143,9 @@ jobs:
 
         cd netsim
         python3 reports_csv.py --prom --commit ${{ env.LAST_COMMIT_SHA }} > report_prom.txt
+        python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
 
-        tar cvzf report.tar.gz report_prom.txt report.txt logs/ report/
+        tar cvzf report.tar.gz report_prom.txt report.txt report_metro.txt logs/ report/
         aws s3 cp ./report.tar.gz s3://${{secrets.S3_REPORT_BUCKET}}/${{ env.LAST_COMMIT_SHA }}.tar.gz --no-progress
 
         instance=$(echo "${{ github.head_ref }}" | tr -c '[:alnum:]' '_')
@@ -151,11 +153,11 @@ jobs:
         prom_data=$(printf "%s\n " "$d")
         curl -X POST -H  "Content-Type: text/plain" --data "$prom_data" ${{secrets.PROM_ENDPOINT}}/metrics/job/chucksim/instance/${instance}
 
-    # - name: Post metrics
-    #   # if: github.ref_name=='main'
-    #   run: |
-    #     cd netsim
-    #     python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
-    #     d=$(cat report_metro.txt)
-    #     metro_data=$(printf "%s\n " "$d")
-    #     curl -X POST -H  "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.METRO_TOKEN}}" --data "$metro_data" ${{secrets.METRO_ENDPOINT}}
+    - name: Echo metrics
+      # if: github.ref_name=='main'
+      run: |
+        cd netsim
+        d=$(cat report_metro.txt)
+        metro_data=$(printf "%s\n " "$d")
+        echo "$metro_data"
+        # curl -X POST -H  "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.METRO_TOKEN}}" --data "$metro_data" ${{secrets.METRO_ENDPOINT}}

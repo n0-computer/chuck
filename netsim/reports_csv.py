@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import time
 
 def res_to_prom(res, commit):
     for k, v in res.items():
@@ -20,7 +21,6 @@ def case_sort(x):
         return len(case_order) - 1
 
 def res_to_table(res):
-    
     print('| test | case | throughput_gbps |')
     print('| ---- | ---- | ---------- |')
     for k, v in res.items():
@@ -29,12 +29,32 @@ def res_to_table(res):
         for c, t in vl:
             print('| %s | %s | %.2f |' % (k, c, t))
 
+def res_to_metro(res, commit):
+    r = {
+        "metrics": []
+    }
+    now = int( time.time() )
+    v = res["iroh"]
+    for c, t in v.items():
+        m = {
+            "commitish": commit[0:7],
+            "bucket": "netsim",
+            "name": "throughput_gbps",
+            "tag": c,
+            "value": t,
+            "timestamp": now
+        }
+        r["metrics"].append(m)
+    print(json.dumps(r, indent=4, sort_keys=True))
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--commit", help = "commit hash")
     parser.add_argument("--prom", help = "generate output for prometheus", action='store_true')
     parser.add_argument("--table", help = "generate output for github comments", action='store_true')
+    parser.add_argument("--metro", help = "generate output for perf.iroh.computer", action='store_true')
     args = parser.parse_args()
 
     files = []
@@ -75,5 +95,7 @@ if __name__ == '__main__':
         res_to_prom(res, args.commit)
     elif args.table:
         res_to_table(res)
+    elif args.metro:
+        res_to_metro(res, args.commit)
     else:
         print(json.dumps(res, indent=4, sort_keys=True))
