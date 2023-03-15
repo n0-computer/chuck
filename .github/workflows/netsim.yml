@@ -84,7 +84,7 @@ jobs:
         else
           echo $c >> custom_sim.json
           sudo python3 main.py custom_sim.json
-        fi 
+        fi
 
     - name: Generate report
       id: generate_report
@@ -96,8 +96,14 @@ jobs:
         echo "${NETSIM_REPORT}" >> ${GITHUB_OUTPUT}
         echo "EOFMARKER" >> ${GITHUB_OUTPUT}
 
+    - name: Setup Environment (Comment)  
+      if: ${{ github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request }}  
+      shell: bash  
+      run: |  
+        echo "LAST_COMMIT_SHA=$(git rev-parse --short ${{ github.event.issue.pull_request.head.sha }})" >> ${GITHUB_ENV}  
     - name: Setup Environment (PR)  
-      if: ${{ github.event_name == 'pull_request' || github.event_name == 'issue_comment' }}  
+      if: ${{ github.event_name == 'pull_request' }}  
       shell: bash  
       run: |  
         echo "LAST_COMMIT_SHA=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> ${GITHUB_ENV}  
