@@ -96,12 +96,10 @@ jobs:
         echo "${NETSIM_REPORT}" >> ${GITHUB_OUTPUT}
         echo "EOFMARKER" >> ${GITHUB_OUTPUT}
 
-    - name: Setup Environment (Comment)  
-      if: ${{ github.event_name == 'issue_comment' &&
-        github.event.issue.pull_request }}  
+    - name: Setup Environment
       shell: bash  
       run: |  
-        echo "LAST_COMMIT_SHA=$(git rev-parse --short ${{ github.event.issue.pull_request.head.sha }})" >> ${GITHUB_ENV}  
+        echo "LAST_COMMIT_SHA=unknown" >> ${GITHUB_ENV}  
     - name: Setup Environment (PR)  
       if: ${{ github.event_name == 'pull_request' }}  
       shell: bash  
@@ -134,7 +132,14 @@ jobs:
           Perf report:
           ${{ steps.generate_report.outputs.NETSIM_REPORT }}
 
-    - name: Dump report
+    - name: Generate reports
+      run: |
+        cd netsim
+        python3 reports_csv.py --prom --commit ${{ env.LAST_COMMIT_SHA }} > report_prom.txt
+        python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
+
+    - name: Dump reports
+      if: github.event_name != 'issue_comment'
       run: |
         export AWS_ACCESS_KEY_ID=${{secrets.S3_ACCESS_KEY_ID}}
         export AWS_SECRET_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}}
@@ -145,8 +150,6 @@ jobs:
         sudo ./aws/install --update
 
         cd netsim
-        python3 reports_csv.py --prom --commit ${{ env.LAST_COMMIT_SHA }} > report_prom.txt
-        python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
 
         tar cvzf report.tar.gz report_prom.txt report.txt report_metro.txt logs/ report/
         aws s3 cp ./report.tar.gz s3://${{secrets.S3_REPORT_BUCKET}}/${{ env.LAST_COMMIT_SHA }}.tar.gz --no-progress
@@ -162,5 +165,5 @@ jobs:
         cd netsim
         d=$(cat report_metro.txt)
         metro_data=$(printf "%s\n " "$d")
-        echo "$metro_data"
+        echo "$metro_data" 
         # curl -X POST -H  "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.METRO_TOKEN}}" --data "$metro_data" ${{secrets.METRO_ENDPOINT}}
