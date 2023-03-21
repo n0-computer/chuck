@@ -142,7 +142,7 @@ def stats_parser(nodes, prefix):
                         if node['parser'] == 'iroh_1gb':
                             is_ok = 0
                             for line in lines:
-                                if 'Downloading collection' in line:
+                                if 'Downloading' in line:
                                     is_ok += 1
                                 if 'Transferred' in line and 'seconds' in line:
                                     is_ok += 1
