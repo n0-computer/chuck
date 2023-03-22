@@ -49,6 +49,7 @@ def run(nodes, prefix, integration, debug=False):
 
     node_counts = {}
     node_ips = {}
+    node_params = {}
 
     for node in nodes:
         node_counts[node['name']] = int(node['count'])
@@ -73,6 +74,12 @@ def run(nodes, prefix, integration, debug=False):
                 connect_to = '%s_%d' % (node['connect']['node'], id)
                 ip = node_ips[connect_to]
                 cmd = cmd % (ip, id)
+            if node['connect']['strategy'] == 'params':
+                cnt = node_counts[node['connect']['node']]
+                id = i % cnt
+                connect_to = '%s_%d' % (node['connect']['node'], id)
+                param = node_params[connect_to]
+                cmd = cmd % (param)
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
                 p_short_box.append(p)
@@ -80,6 +87,17 @@ def run(nodes, prefix, integration, debug=False):
                 p_box.append(p)
         if 'wait' in node:
             time.sleep(node['wait'])
+        if 'param_parser' in node:
+            for i in range(int(node['count'])):
+                node_name = '%s_%d' % (node['name'], i)
+                n = net.get(node_name)
+                f = open('logs/%s__%s.txt' % (prefix, node_name), 'r')
+                lines = f.readlines()
+                for line in lines:
+                    if node['param_parser'] == 'iroh_ticket':
+                        if line.startswith('All-in-one ticket'):
+                            node_params[node_name] = line[len('All-in-one ticket: '):].strip()
+                            break
 
     # CLI(net)
     for i in range(TIMEOUT):
