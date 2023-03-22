@@ -13,8 +13,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -42,8 +41,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -71,8 +69,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -100,8 +97,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -129,8 +125,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -158,8 +153,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -187,8 +181,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
@@ -216,8 +209,7 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    },
-                    "param": "id"
+                    }
                 },
                 {
                     "name": "client",
