@@ -73,7 +73,7 @@ def run(nodes, prefix, integration, debug=False):
                 connect_to = '%s_%d' % (node['connect']['node'], id)
                 ip = node_ips[connect_to]
                 cmd = cmd % (ip, id)
-            p = n.popen(cmd, stdout=f, stderr=f, shell=True)
+            p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
                 p_short_box.append(p)
             else:
