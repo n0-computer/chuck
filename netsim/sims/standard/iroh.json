@@ -42,15 +42,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 3,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
@@ -70,15 +71,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 5,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
@@ -98,15 +100,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
@@ -126,15 +129,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 2,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
@@ -154,15 +158,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 4,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
@@ -182,15 +187,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 6,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
@@ -210,15 +216,16 @@
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
-                    }
+                    },
+                    "param_parser": "iroh_ticket"
                 },
                 {
                     "name": "client",
                     "count": 10,
-                    "cmd": "time ./bins/iroh get -a %s:4433 --peer $(./bins/chuck peer-id keys/server_%d.key) --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY bafkr4iacm6sofod2uoiqpq7hjntd73jtfxq6jdcnxltfvczlvw4jonvfhi > /dev/null",
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
                     "connect": {
-                        "strategy": "plain_with_id",
+                        "strategy": "params",
                         "node": "server"
                     },
                     "process": "short",
