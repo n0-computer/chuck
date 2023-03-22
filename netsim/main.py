@@ -31,7 +31,7 @@ def logs_on_error(nodes, prefix):
                 print('[WARN] log file missing: %s' % log_name)
     pass
     
-def run(nodes, prefix, integration):
+def run(nodes, prefix, integration, debug=False):
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
     net.start()
@@ -39,6 +39,10 @@ def run(nodes, prefix, integration):
     dumpNodeConnections(net.hosts)
     print( "Testing network connectivity" )
     net.pingAll()
+
+    env_vars = os.environ.copy()
+    if debug:
+        env_vars['RUST_LOG'] = 'debug'
 
     p_box = []
     p_short_box = []
@@ -128,5 +132,5 @@ if __name__ == '__main__':
             nodes = case['nodes']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix, args.integration)
+                run(nodes, prefix, args.integration, True)
             stats_parser(nodes, prefix)
