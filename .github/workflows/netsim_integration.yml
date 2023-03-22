@@ -1,0 +1,72 @@
+name: netsim-integration-CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -Dwarnings
+  MSRV: "1.63"
+
+jobs:
+  netsim-integration-tests:
+    name: Run network simulations/benchmarks
+    runs-on: [self-hosted, linux, X64]
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+      with:
+        submodules: recursive
+    
+    - name: Install rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+      
+    - name: Install netsim deps
+      run: |
+        cd netsim
+        sudo apt update
+        ./setup.sh
+
+    - name: Build chuck
+      run: |
+        cargo build --release
+
+    - name: Fetch and build iroh
+      run: |
+        git clone https://github.com/n0-computer/iroh.git
+        cd iroh
+        cargo build --release
+
+    - name: Copy binaries to right location
+      run: |
+        cp target/release/chuck netsim/bins/chuck
+        cp iroh/target/release/iroh netsim/bins/iroh
+
+    - name: Run tests
+      run: |
+        cd netsim
+        sudo kill -9 $(pgrep ovs)
+        sudo mn --clean
+        sudo python3 main.py --integration sims/standard/iroh.json
+
+    - name: Generate reports
+      run: |
+        cd netsim
+        python3 reports_csv.py --prom --commit ${{ env.LAST_COMMIT_SHA }} > report_prom.txt
+        python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
+
+    - name: Echo metrics
+      run: |
+        cd netsim
+        d=$(cat report_metro.txt)
+        metro_data=$(printf "%s\n " "$d")
+        echo "$metro_data" 

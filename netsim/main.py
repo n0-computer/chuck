@@ -13,8 +13,25 @@ from parser import stats_parser
 from network import StarTopo
 
 TIMEOUT = 60 * 2
+
+def logs_on_error(nodes, prefix):
+    node_counts = {}
+    for node in nodes:
+        node_counts[node['name']] = int(node['count'])
+        for i in range(int(node['count'])):
+            node_name = '%s_%d' % (node['name'], i)
+            log_name= 'logs/%s__%s.txt' % (prefix, node_name)
+            if os.path.isfile(log_name):
+                print('\n\n[INFO] Log file: %s' % log_name)
+                f = open(log_name, 'r')
+                lines = f.readlines()
+                for line in lines:
+                    print('[INFO][%s__%s] %s' % (prefix, node_name, line.rstrip()))
+            else:
+                print('[WARN] log file missing: %s' % log_name)
+    pass
     
-def run(nodes, prefix):
+def run(nodes, prefix, integration):
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
     net.start()
@@ -66,7 +83,17 @@ def run(nodes, prefix):
         if not any(p.poll() is None for p in p_short_box):
             break
     for p in p_short_box:
-        p.terminate()
+        if integration:
+            r = p.poll()
+            if r is None:
+                p.terminate()
+                logs_on_error(nodes, prefix)
+                raise Exception('Process has timed out')
+            if r != 0:
+                logs_on_error(nodes, prefix)
+                raise Exception('Process has failed')
+        else:
+            p.terminate()
     for p in p_box:
         p.terminate()
     net.stop()
@@ -77,6 +104,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("cfg", help = "Input config file")
     parser.add_argument("-r", help = "Run only report generation", action='store_true')
+    parser.add_argument("--integration", help = "Run in integration test mode", action='store_true')
     args = parser.parse_args()
 
     paths = []
@@ -100,5 +128,5 @@ if __name__ == '__main__':
             nodes = case['nodes']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix)
+                run(nodes, prefix, args.integration)
             stats_parser(nodes, prefix)
