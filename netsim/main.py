@@ -12,7 +12,7 @@ from mininet.log import setLogLevel
 from parser import stats_parser
 from network import StarTopo
 
-TIMEOUT = 60 * 2
+TIMEOUT = 60 * 5
 
 def logs_on_error(nodes, prefix):
     node_counts = {}
