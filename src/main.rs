@@ -8,7 +8,7 @@ use axum::{
     Router,
 };
 use axum_server::tls_rustls::RustlsConfig;
-use sendme::{Keypair, PeerId};
+use iroh::{Keypair, PeerId, provider::Ticket};
 use std::{io, net::SocketAddr, path::PathBuf};
 use tower_http::{
     services::ServeDir,
@@ -30,6 +30,8 @@ enum Commands {
     HttpClient { target_host: String },
     #[clap(arg_required_else_help = true)]
     PeerID { path: PathBuf },
+    #[clap(arg_required_else_help = true)]
+    Ticket { ticket: Ticket },
 }
 
 #[tokio::main(flavor = "multi_thread")]
@@ -84,6 +86,9 @@ async fn main() -> Result<()> {
             let keypair = Keypair::try_from_openssh(keystr)?;
             let pid = PeerId::from(keypair.public());
             println!("{}", pid);
+        }
+        Commands::Ticket { ticket } => {
+            println!("{:?}", ticket);
         }
     }
     Ok(())
