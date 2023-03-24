@@ -42,7 +42,7 @@ def res_to_metro(res, commit):
     for k in keys:
         v = res[k]
         suffix = k.split('_')
-        suffix = suffix[1:].join('_')
+        suffix = '_'.join(suffix[1:])
         if suffix != '':
             suffix = '.' + suffix
         for c, t in v.items():
