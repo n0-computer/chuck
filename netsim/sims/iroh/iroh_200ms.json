@@ -62,7 +62,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
@@ -96,7 +96,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
@@ -130,7 +130,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
@@ -164,7 +164,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
@@ -198,7 +198,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
@@ -232,7 +232,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
@@ -266,7 +266,7 @@
                     "process": "short",
                     "parser": "iroh_1gb",
                     "link": {
-                        "loss": 1,
+                        "loss": 0,
                         "latency": 20,
                         "bw": 100000
                     }
