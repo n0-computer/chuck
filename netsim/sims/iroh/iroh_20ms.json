@@ -1,5 +1,5 @@
 {
-    "name": "iroh_20",
+    "name": "iroh_latency_20ms",
     "cases": [
         {
             "name": "1_to_1",
