@@ -1,0 +1,277 @@
+{
+    "name": "iroh_latency_20ms",
+    "cases": [
+        {
+            "name": "1_to_1",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 1,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "1_to_3",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 3,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "1_to_5",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 5,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "1_to_10",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 1,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 10,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2_to_2",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 2,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2_to_4",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 4,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2_to_6",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 6,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2_to_10",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "server",
+                    "count": 2,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "client",
+                    "count": 10,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "server"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "link": {
+                        "loss": 0,
+                        "latency": 20,
+                        "bw": 100000
+                    }
+                }
+            ]
+        }
+    ]
+}

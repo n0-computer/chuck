@@ -34,17 +34,27 @@ def res_to_metro(res, commit):
         "metrics": []
     }
     now = int( time.time() )
-    v = res["iroh"]
-    for c, t in v.items():
-        m = {
-            "commitish": commit[0:7],
-            "bucket": "netsim",
-            "name": "throughput_gbps",
-            "tag": c,
-            "value": t,
-            "timestamp": now
-        }
-        r["metrics"].append(m)
+    keys = []
+    for k, v in res.items():
+        if k.startswith('iroh'):
+            keys.append(k)
+
+    for k in keys:
+        v = res[k]
+        suffix = k.split('_')
+        suffix = '_'.join(suffix[1:])
+        if suffix != '':
+            suffix = '.' + suffix
+        for c, t in v.items():
+            m = {
+                "commitish": commit[0:7],
+                "bucket": "netsim",
+                "name": "throughput_gbps",
+                "tag": '%s%s' % (c, suffix),
+                "value": t,
+                "timestamp": now
+            }
+            r["metrics"].append(m)
     print(json.dumps(r, indent=4, sort_keys=True))
 
 

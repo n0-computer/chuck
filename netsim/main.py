@@ -4,7 +4,7 @@ import time
 import os
 
 from mininet.net import Mininet
-from mininet.link import TCLink
+from link import TCLink
 from mininet.util import dumpNodeConnections
 from mininet.cli import CLI
 from mininet.log import setLogLevel
