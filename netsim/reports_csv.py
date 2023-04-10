@@ -23,7 +23,12 @@ def case_sort(x):
 def res_to_table(res):
     print('| test | case | throughput_gbps |')
     print('| ---- | ---- | ---------- |')
+    ot = []
     for k, v in res.items():
+        ot.append(k)
+    ot = sorted(ot)
+    for k in ot:
+        v = res[k]
         vl = [(g,h) for g,h in v.items()]
         vl = sorted(vl, key=case_sort)
         for c, t in vl:
