@@ -50,12 +50,12 @@ jobs:
       run: |
         git clone https://github.com/n0-computer/iroh.git
         cd iroh
-        cargo build --release
+        cargo build --profile optimized-release
 
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
-        cp iroh/target/release/iroh netsim/bins/iroh
+        cp iroh/target/optimized-release/iroh netsim/bins/iroh
 
     - name: Detect comment commands
       if: github.event_name == 'issue_comment'
@@ -80,7 +80,7 @@ jobs:
         c='${{ steps.detect_comment_config.outputs.NETSIM_CONFIG }}'
         if [ -z "${c}" ];
         then
-          sudo python3 main.py sims/iroh
+          sudo python3 main.py sims/standard
         else
           echo $c >> custom_sim.json
           sudo python3 main.py custom_sim.json
