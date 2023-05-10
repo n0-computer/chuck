@@ -8,7 +8,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -42,7 +42,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -76,7 +76,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -110,7 +110,7 @@
                 {
                     "name": "server",
                     "count": 1,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -144,7 +144,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -178,7 +178,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -212,7 +212,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -246,7 +246,7 @@
                 {
                     "name": "server",
                     "count": 2,
-                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 --auth-token gu2-RPLM7g86T66_qsib5xvAX7n_Wso6C51A5EL8qDY data/1G.bin",
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
