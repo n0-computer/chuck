@@ -10,7 +10,7 @@
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -39,7 +39,7 @@
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -68,7 +68,7 @@
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -97,7 +97,7 @@
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -126,7 +126,7 @@
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -155,7 +155,7 @@
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -184,7 +184,7 @@
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
@@ -213,7 +213,7 @@
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 30,
                     "connect": {
                         "strategy": "none"
                     },
