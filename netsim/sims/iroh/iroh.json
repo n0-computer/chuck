@@ -6,7 +6,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -17,7 +17,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 1,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -35,7 +35,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -46,7 +46,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 3,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -64,7 +64,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -75,7 +75,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 5,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -93,7 +93,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 1,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -104,7 +104,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 10,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -122,7 +122,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -133,7 +133,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 2,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -151,7 +151,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -162,7 +162,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 4,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -180,7 +180,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -191,7 +191,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 6,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",
@@ -209,7 +209,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "server",
+                    "name": "iroh_srv",
                     "count": 2,
                     "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1G.bin",
                     "type": "public",
@@ -220,7 +220,7 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "client",
+                    "name": "iroh_get",
                     "count": 10,
                     "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
                     "type": "public",

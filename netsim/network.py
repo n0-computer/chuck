@@ -11,6 +11,7 @@ class StarTopo(Topo):
     "Single switch connected to n hosts."
     def build(self, nodes=[{'name': 'hx', 'count': 1, 'type': 'public'}, {'name': 'h', 'count': 1, 'type': 'public'}], interconnect='s1'):
         interconnect = self.addSwitch(interconnect)
+
         for node in nodes:
             if node['type'] == 'public':
                 for i in range(int(node['count'])):
@@ -25,13 +26,13 @@ class StarTopo(Topo):
                     
             if node['type'] == 'nat':
                 for i in range(int(node['count'])):
-                    inetIntf = 'nat%s%d-eth0' % (node['name'], i)
-                    localIntf = 'nat%s%d-eth1' % (node['name'], i)
+                    inetIntf = 'n_%s%d-e0' % (node['name'], i)
+                    localIntf = 'n_%s%d-e1' % (node['name'], i)
                     localIP = '192.168.%d.1' % i
                     localSubnet = '192.168.%d.0/24' % i
                     natParams = { 'ip' : '%s/24' % localIP }
                     # add NAT to topology
-                    nat = self.addNode('nat_%s_%d' % (node['name'], i), cls=NAT, subnet=localSubnet,
+                    nat = self.addNode('n_%s%d' % (node['name'], i), cls=NAT, subnet=localSubnet,
                                     inetIntf=inetIntf, localIntf=localIntf)
                     switch = self.addSwitch('natsw%s%d' % (node['name'][:2], i))
                     # connect NAT to inet and local switches

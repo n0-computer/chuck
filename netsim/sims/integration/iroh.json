@@ -1,0 +1,123 @@
+{
+    "name": "iroh",
+    "cases": [
+        {
+            "name": "1_to_1",
+            "description": "",
+            "visualize": true,
+            "nodes": [
+                {
+                    "name": "iroh_srv",
+                    "count": 1,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1MB.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "iroh_get",
+                    "count": 1,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb",
+                    "integration": "magic_iroh_client"
+                }
+            ]
+        },
+        {
+            "name": "1_to_3",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "iroh_srv",
+                    "count": 1,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1MB.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "iroh_get",
+                    "count": 3,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+            ]
+        },
+        {
+            "name": "2_to_2",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "iroh_srv",
+                    "count": 2,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1MB.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "iroh_get",
+                    "count": 2,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+            ]
+        },
+        {
+            "name": "2_to_4",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "iroh_srv",
+                    "count": 2,
+                    "cmd": "./bins/iroh provide -a 0.0.0.0:4433 data/1MB.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "iroh_get",
+                    "count": 4,
+                    "cmd": "time ./bins/iroh get-ticket %s > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+            ]
+        }
+    ]
+}

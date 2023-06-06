@@ -2,3 +2,9 @@
 Cargo.lock
 __pycache__
 sendme
+netsim/logs
+netsim/report
+netsim/data
+netsim/keys
+netsim/bins
+netsim/viz
