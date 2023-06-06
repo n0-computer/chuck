@@ -23,7 +23,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -52,7 +52,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -81,7 +81,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -110,7 +110,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -139,7 +139,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -168,7 +168,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -197,7 +197,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
@@ -226,7 +226,7 @@
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "server"
+                        "node": "iroh_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb"
