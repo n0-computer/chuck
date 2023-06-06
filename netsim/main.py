@@ -1,16 +1,18 @@
 import argparse
 import json
+import subprocess
 import time
 import os
 
 from mininet.net import Mininet
+from sniff import Sniffer
 from link import TCLink
-from mininet.util import dumpNodeConnections
-from mininet.cli import CLI
 from mininet.log import setLogLevel
 
-from parser import stats_parser
+from netsim_parser import stats_parser
+from netsim_parser import integration_parser
 from network import StarTopo
+from process_sniff import run_viz
 
 TIMEOUT = 60 * 5
 
@@ -29,16 +31,28 @@ def logs_on_error(nodes, prefix):
                     print('[INFO][%s__%s] %s' % (prefix, node_name, line.rstrip()))
             else:
                 print('[WARN] log file missing: %s' % log_name)
-    pass
-    
-def run(nodes, prefix, integration, debug=False):
+
+def run(nodes, prefix, args, debug=False, visualize=False):
+    integration = args
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
     net.start()
-    print( "Dumping host connections" )
-    dumpNodeConnections(net.hosts)
+
+    sniffer = Sniffer(net=net, output="logs/" + prefix + ".pcap")
+    ti = sniffer.get_topoinfo()
+
     print( "Testing network connectivity" )
     net.pingAll()
+    
+    print("Topo:", json.dumps(ti, indent=4))
+    if args.sniff or visualize:
+        print( "Attaching sniffer" )
+        sniffer.start()
+        f = open("logs/" + prefix + ".topo.json", "w+")
+        f.write(json.dumps(ti, indent=4))
+        f.close()
+
+    time.sleep(1)
 
     env_vars = os.environ.copy()
     if debug:
@@ -80,6 +94,9 @@ def run(nodes, prefix, integration, debug=False):
                 connect_to = '%s_%d' % (node['connect']['node'], id)
                 param = node_params[connect_to]
                 cmd = cmd % (param)
+            cleanup_run = subprocess.run("sudo rm -rf /root/.local/share/iroh", shell=True, capture_output=True)
+            time.sleep(1)
+            env_vars['SSLKEYLOGFILE']= './logs/keylog_%s_%s.txt' % (prefix, node_name)
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
                 p_short_box.append(p)
@@ -110,15 +127,16 @@ def run(nodes, prefix, integration, debug=False):
             if r is None:
                 p.terminate()
                 logs_on_error(nodes, prefix)
-                raise Exception('Process has timed out')
+                raise Exception('Process has timed out:', prefix)
             if r != 0:
                 logs_on_error(nodes, prefix)
-                raise Exception('Process has failed')
+                raise Exception('Process has failed:', prefix)
         else:
             p.terminate()
     for p in p_box:
         p.terminate()
     net.stop()
+    sniffer.close()
 
 if __name__ == '__main__':
     setLogLevel('info')
@@ -127,7 +145,13 @@ if __name__ == '__main__':
     parser.add_argument("cfg", help = "Input config file")
     parser.add_argument("-r", help = "Run only report generation", action='store_true')
     parser.add_argument("--integration", help = "Run in integration test mode", action='store_true')
+    parser.add_argument("--sniff", help = "Run sniffer to record all traffic", action='store_true')
+    parser.add_argument("--skip", help = "Comma separated list of tests to skip")
     args = parser.parse_args()
+
+    skiplist = []
+    if args.skip:
+        skiplist = args.skip.split(',')
 
     paths = []
     is_dir = os.path.isdir(args.cfg)
@@ -147,8 +171,23 @@ if __name__ == '__main__':
 
         for case in config['cases']:
             prefix = name + '__' + case['name']
+            if prefix in skiplist:
+                print("Skipping:", prefix)
+                continue
             nodes = case['nodes']
+            viz = False
+            if 'visualize' in case:
+                viz = case['visualize']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix, args.integration, True)
+                run(nodes, prefix, args, True, viz)
             stats_parser(nodes, prefix)
+            integration_parser(nodes, prefix)
+            if viz:
+                viz_args = {
+                    'path': 'logs/' + prefix + '.viz.pcap',
+                    'keylog': 'logs/keylog_' + prefix +'_iroh_srv_0.txt',
+                    'topo': 'logs/' + prefix + '.topo.json',
+                    'output': 'viz/' + prefix + '.svg'
+                }
+                run_viz(viz_args)

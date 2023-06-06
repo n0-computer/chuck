@@ -23,12 +23,7 @@ def case_sort(x):
 def res_to_table(res):
     print('| test | case | throughput_gbps |')
     print('| ---- | ---- | ---------- |')
-    ot = []
     for k, v in res.items():
-        ot.append(k)
-    ot = sorted(ot)
-    for k in ot:
-        v = res[k]
         vl = [(g,h) for g,h in v.items()]
         vl = sorted(vl, key=case_sort)
         for c, t in vl:
@@ -75,6 +70,8 @@ if __name__ == '__main__':
     files = []
     for root, dirs, fs in os.walk('report'):
         for f in fs:
+            if f.startswith('integration_'):
+                continue
             files.append(os.path.join(root,f))
 
     test_map = {}

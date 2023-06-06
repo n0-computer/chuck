@@ -166,3 +166,46 @@ def stats_parser(nodes, prefix):
             f = open("report/%s__%s.json" % (prefix, node['name']), "w")
             f.write(report_json)
             f.close()
+
+def parse_magic_iroh_client(lines):
+    s = {}
+    is_ok = 0
+    for line in lines:
+        if 'Downloading' in line:
+            is_ok += 1
+        if 'Transferred' in line and 'seconds' in line:
+            is_ok += 1
+        if 'sending UDP: true, DERP: false' in line:
+            s['conn_upgrade'] = 'true'
+    s['transfer_success'] = 'true' if is_ok == 2 else 'false'
+    return s
+
+def integration_parser(nodes, prefix):
+    files = []
+    valid_parsers = ['magic_iroh_client']
+    for root, dirs, fs in os.walk('logs'):
+        for f in fs:
+            if f.startswith(prefix + '__'):
+                files.append(os.path.join(root,f))
+    for node in nodes:
+        if 'integration' in node:
+            stats = []
+            try:
+                if node['integration'] in valid_parsers:
+                    for i in range(int(node['count'])):
+                        log_path = 'logs/%s__%s_%d.txt' % (prefix, node['name'], i)
+                        f = open(log_path, 'r')
+                        lines = f.readlines()
+                        if node['integration'] == 'magic_iroh_client':
+                            s = parse_magic_iroh_client(lines)
+                            s['node'] = '%s__%s_%d' % (prefix, node['name'], i)
+                            print(s)
+                            stats.append(s)
+            except:
+                print("Integration error")
+                stats = []
+
+            report_json = json.dumps(stats, indent=4)
+            f = open("report/integration_%s__%s.json" % (prefix, node['name']), "w")
+            f.write(report_json)
+            f.close()
