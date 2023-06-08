@@ -168,7 +168,10 @@ def stats_parser(nodes, prefix):
             f.close()
 
 def parse_magic_iroh_client(lines):
-    s = {}
+    s = {
+        'conn_upgrade': 'false',
+        'transfer_success': 'false',
+    }
     is_ok = 0
     for line in lines:
         if 'Downloading' in line:

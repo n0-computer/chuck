@@ -29,27 +29,38 @@ def res_to_table(res):
         for c, t in vl:
             print('| %s | %s | %.2f |' % (k, c, t))
 
-def res_to_metro(res, commit):
+def res_to_metro(res, commit, integration):
     r = {
         "metrics": []
     }
     now = int( time.time() )
     keys = []
+    prefix = 'iroh'
+    if integration:
+        prefix = 'integration'
     for k, v in res.items():
-        if k.startswith('iroh'):
+        if k.startswith(prefix):
             keys.append(k)
 
     for k in keys:
         v = res[k]
-        suffix = k.split('_')
-        suffix = '_'.join(suffix[1:])
+        suffix_p = k.split('_')
+        suffix = '_'.join(suffix_p[1:])
+        if integration:
+            suffix = '_'.join(suffix_p[2:])
         if suffix != '':
             suffix = '.' + suffix
+        nm = "throughput_gbps"
+        if integration:
+            nm = '_'.join(suffix_p[1:])
+        bkt = "netsim"
+        if integration:
+            bkt = "integration"
         for c, t in v.items():
             m = {
                 "commitish": commit[0:7],
-                "bucket": "netsim",
-                "name": "throughput_gbps",
+                "bucket": bkt,
+                "name": nm,
                 "tag": '%s%s' % (c, suffix),
                 "value": t,
                 "timestamp": now
@@ -65,12 +76,13 @@ if __name__ == '__main__':
     parser.add_argument("--prom", help = "generate output for prometheus", action='store_true')
     parser.add_argument("--table", help = "generate output for github comments", action='store_true')
     parser.add_argument("--metro", help = "generate output for perf.iroh.computer", action='store_true')
+    parser.add_argument("--integration", help = "generate output for integration files", action='store_true')
     args = parser.parse_args()
 
     files = []
     for root, dirs, fs in os.walk('report'):
         for f in fs:
-            if f.startswith('integration_'):
+            if args.integration != f.startswith('integration_'):
                 continue
             files.append(os.path.join(root,f))
 
@@ -97,17 +109,30 @@ if __name__ == '__main__':
         case = k[1]
         json_f = open(f, 'r')
         json_d = json.load(json_f)
-        throughput = json_d['sum']['mbits']
-        if not args.prom:
-            throughput /= 1000
-        throughput = float("{:.2f}".format(throughput))
-        res[name][case] = throughput
-
+        if args.integration:
+            for itg in json_d:
+                for ik, iv in itg.items():
+                    if ik == 'node':
+                        continue
+                    vv = iv == 'true'
+                    if vv:
+                        vv = 1
+                    else:
+                        vv = 0
+                    if not name + "_" + str(ik) in res:
+                        res[name + "_" + str(ik)] = {}
+                    res[name + "_" + str(ik)][case] = vv
+        else:
+            throughput = json_d['sum']['mbits']
+            if not args.prom:
+                throughput /= 1000
+            throughput = float("{:.2f}".format(throughput))
+            res[name][case] = throughput
     if args.prom:
         res_to_prom(res, args.commit)
     elif args.table:
         res_to_table(res)
     elif args.metro:
-        res_to_metro(res, args.commit)
+        res_to_metro(res, args.commit, args.integration)
     else:
         print(json.dumps(res, indent=4, sort_keys=True))
