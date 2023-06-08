@@ -26,8 +26,6 @@ class Sniffer():
 
     def __init__(self, net, output="netsim.pcap"):
         self.output=output
-        self.output_f = open(output, 'wb')
-        self.output_f_viz = open(output.replace('.pcap', '.viz.pcap'), 'wb')
 
         self.net = net
         self.nodes = []
@@ -39,6 +37,8 @@ class Sniffer():
         self.TopoInfo()
 
     def start(self):
+        self.output_f = open(self.output, 'wb')
+        self.output_f_viz = open(self.output.replace('.pcap', '.viz.pcap'), 'wb')
         self.kill = False
         #Start siniffing packets on Mininet interfaces
         self.snifferd = threading.Thread( target=self.sniff )

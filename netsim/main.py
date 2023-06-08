@@ -102,19 +102,33 @@ def run(nodes, prefix, args, debug=False, visualize=False):
                 p_short_box.append(p)
             else:
                 p_box.append(p)
-        if 'wait' in node:
-            time.sleep(node['wait'])
         if 'param_parser' in node:
-            for i in range(int(node['count'])):
-                node_name = '%s_%d' % (node['name'], i)
-                n = net.get(node_name)
-                f = open('logs/%s__%s.txt' % (prefix, node_name), 'r')
-                lines = f.readlines()
-                for line in lines:
-                    if node['param_parser'] == 'iroh_ticket':
-                        if line.startswith('All-in-one ticket'):
-                            node_params[node_name] = line[len('All-in-one ticket: '):].strip()
-                            break
+            done_wait = False
+            if not 'wait' in node:
+                node['wait'] = 1
+            for z in range(node['wait']):
+                if done_wait:
+                    break
+                time.sleep(1)
+                for zz in range(int(node['count'])):
+                    found = 0
+                    node_name = '%s_%d' % (node['name'], zz)
+                    n = net.get(node_name)
+                    f = open('logs/%s__%s.txt' % (prefix, node_name), 'r')
+                    lines = f.readlines()
+                    for line in lines:
+                        if node['param_parser'] == 'iroh_ticket':
+                            if line.startswith('All-in-one ticket'):
+                                node_params[node_name] = line[len('All-in-one ticket: '):].strip()
+                                found+=1
+                                break
+                    f.close()
+                    if found == int(node['count']):
+                        done_wait = True
+                        break
+        else:
+            if 'wait' in node:
+                time.sleep(int(node['wait']))
 
     # CLI(net)
     for i in range(TIMEOUT):
@@ -180,7 +194,7 @@ if __name__ == '__main__':
                 viz = case['visualize']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix, args, True, viz)
+                run(nodes, prefix, args, False, viz)
             stats_parser(nodes, prefix)
             integration_parser(nodes, prefix)
             if viz:
