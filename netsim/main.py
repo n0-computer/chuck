@@ -33,7 +33,7 @@ def logs_on_error(nodes, prefix):
                 print('[WARN] log file missing: %s' % log_name)
 
 def run(nodes, prefix, args, debug=False, visualize=False):
-    integration = args
+    integration = args.integration
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
     net.start()
