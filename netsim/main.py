@@ -56,7 +56,9 @@ def run(nodes, prefix, args, debug=False, visualize=False):
 
     env_vars = os.environ.copy()
     if debug:
-        env_vars['RUST_LOG'] = 'debug'
+        # reduce logging, track only those of interest
+        # magicsock::endpoint required for iroh integration tests
+        env_vars['RUST_LOG'] = 'error,iroh::hp::magicsock::endpoint=debug' 
 
     p_box = []
     p_short_box = []
@@ -194,7 +196,7 @@ if __name__ == '__main__':
                 viz = case['visualize']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix, args, False, viz)
+                run(nodes, prefix, args, True, viz)
             stats_parser(nodes, prefix)
             integration_parser(nodes, prefix)
             if viz:
