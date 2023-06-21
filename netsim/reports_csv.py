@@ -42,6 +42,8 @@ def res_to_metro(res, commit, integration):
     for k, v in res.items():
         if k.startswith(prefix):
             keys.append(k)
+    
+    # print(json.dumps(res, indent=4))
 
     for k in keys:
         v = res[k]
@@ -58,16 +60,26 @@ def res_to_metro(res, commit, integration):
         if integration:
             bkt = "integration"
         for c, t in v.items():
-            m = {
-                "commitish": commit[0:7],
-                "bucket": bkt,
-                "name": nm,
-                "tag": '%s%s' % (c, suffix),
-                "value": t['throughput'],
-                "timestamp": now
-            }
-            r["metrics"].append(m)
-            if not integration:
+            if integration:
+                m = {
+                    "commitish": commit[0:7],
+                    "bucket": bkt,
+                    "name": nm,
+                    "tag": '%s%s' % (c, suffix),
+                    "value": t,
+                    "timestamp": now
+                }
+                r["metrics"].append(m)
+            else:
+                m = {
+                    "commitish": commit[0:7],
+                    "bucket": bkt,
+                    "name": nm,
+                    "tag": '%s%s' % (c, suffix),
+                    "value": t['throughput'],
+                    "timestamp": now
+                }
+                r["metrics"].append(m)
                 n = {
                     "commitish": commit[0:7],
                     "bucket": bkt,
