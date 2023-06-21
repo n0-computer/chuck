@@ -1,10 +1,13 @@
 import json
 import os
+import humanfriendly
 
 invalid_results = {
                     'data_len': 0,
                     'elapsed': 0,
-                    'mbits': -1.0
+                    'mbits': -1.0,
+                    'reported_mbits': 0,
+                    'reported_time': 0,
                 }
 
 def parse_time_output(lines, size):
@@ -18,10 +21,18 @@ def parse_time_output(lines, size):
             s = {
                 'data_len': size,
                 'elapsed': d,
-                'mbits': float(size * 8) / (d * 1000 * 1000)
+                'mbits': float(size * 8) / (d * 1000 * 1000),
+                'reported_mbits': 0,
+                'reported_time': 0,
             }
             return s
     return invalid_results
+
+def parse_humanized_output(line):
+    p = line.split(', ')[-1]
+    v_bytes = humanfriendly.parse_size(p)
+    v_mbits = float(v_bytes*8) / (1024*1024)
+    return v_mbits
 
 def parse_iperf_udp_server(lines):
     s = []
@@ -139,16 +150,25 @@ def stats_parser(nodes, prefix):
                         if node['parser'] == 'time_1gb':
                             s = parse_time_output(lines, 1024*1024*1024)
                             stats.append(s)
-                        if node['parser'] == 'iroh_1gb':
+                        if node['parser'] in ['iroh_1gb', 'iroh_1mb']:
                             is_ok = 0
+                            reported = 0
+                            reported_time = 0
+                            f_size = 1024*1024*1024
+                            if node['parser'] == 'iroh_1mb':
+                                f_size = 1024*1024
                             for line in lines:
                                 if 'Downloading' in line:
                                     is_ok += 1
-                                if 'Transferred' in line and 'seconds' in line:
+                                if 'Transferred' in line and 'in' in line and '/s' in line:
                                     is_ok += 1
+                                    reported = parse_humanized_output(line)
+                                    reported_time = (f_size*8) / (reported*1000*1000)
                             if is_ok < 2:
                                 raise Exception("bad run")
-                            s = parse_time_output(lines, 1024*1024*1024)
+                            s = parse_time_output(lines, f_size)
+                            s['reported_mbits'] = reported
+                            s['reported_time'] = reported_time
                             stats.append(s)
             except:
                 stats = [{
