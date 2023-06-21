@@ -124,6 +124,8 @@ if __name__ == '__main__':
         for f in fs:
             if args.integration != f.startswith('integration_'):
                 continue
+            if f.startswith('intg_'):
+                continue
             files.append(os.path.join(root,f))
 
     test_map = {}
@@ -147,6 +149,7 @@ if __name__ == '__main__':
         k = f.split('__')
         name = k[0][len('report/'):]
         case = k[1]
+        # print("parsing", f)
         json_f = open(f, 'r')
         json_d = json.load(json_f)
         if args.integration:
