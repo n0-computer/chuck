@@ -27,7 +27,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb",
+                    "parser": "iroh_1mb",
                     "integration": "magic_iroh_client"
                 }
             ]
@@ -57,7 +57,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_1mb"
                 }
             ]
         },
@@ -86,7 +86,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_1mb"
                 }
             ]
         },
@@ -115,7 +115,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_1mb"
                 }
             ]
         }

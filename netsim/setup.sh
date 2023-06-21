@@ -6,6 +6,7 @@ sudo apt install tshark
 sudo pip3 install pyshark
 sudo pip3 install drawsvg
 sudo pip3 install dpkt
+sudo pip3 install humanfriendly
 mkdir -p logs
 mkdir -p report
 mkdir -p data
