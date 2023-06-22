@@ -58,7 +58,7 @@ def run(nodes, prefix, args, debug=False, visualize=False):
     if debug:
         # reduce logging, track only those of interest
         # magicsock::endpoint required for iroh integration tests
-        env_vars['RUST_LOG'] = 'error,iroh::hp::magicsock::endpoint=debug' 
+        env_vars['RUST_LOG'] = 'error,iroh_net::hp::magicsock::endpoint=debug'
 
     p_box = []
     p_short_box = []
