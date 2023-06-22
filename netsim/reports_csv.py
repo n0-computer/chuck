@@ -90,34 +90,35 @@ def res_to_metro(res, commit, integration):
                 }
                 r["metrics"].append(n)
                 
-                # report time
-                n = {
-                    "commitish": commit[0:7],
-                    "bucket": bkt,
-                    "name": 'time',
-                    "tag": '%s%s%s' % (c, suffix, '.total'),
-                    "value": t['elapsed'],
-                    "timestamp": now
-                }
-                r["metrics"].append(n)
-                n = {
-                    "commitish": commit[0:7],
-                    "bucket": bkt,
-                    "name": 'time',
-                    "tag": '%s%s%s' % (c, suffix, '.transfer'),
-                    "value": t['reported_time'],
-                    "timestamp": now
-                }
-                r["metrics"].append(n)
-                n = {
-                    "commitish": commit[0:7],
-                    "bucket": bkt,
-                    "name": 'time',
-                    "tag": '%s%s%s' % (c, suffix, '.setup'),
-                    "value": t['elapsed'] - t['reported_time'],
-                    "timestamp": now
-                }
-                r["metrics"].append(n)
+                if suffix == '':
+                    # report time
+                    n = {
+                        "commitish": commit[0:7],
+                        "bucket": bkt,
+                        "name": 'time',
+                        "tag": '%s%s%s' % (c, suffix, '.total'),
+                        "value": t['elapsed'],
+                        "timestamp": now
+                    }
+                    r["metrics"].append(n)
+                    n = {
+                        "commitish": commit[0:7],
+                        "bucket": bkt,
+                        "name": 'time',
+                        "tag": '%s%s%s' % (c, suffix, '.transfer'),
+                        "value": t['reported_time'],
+                        "timestamp": now
+                    }
+                    r["metrics"].append(n)
+                    n = {
+                        "commitish": commit[0:7],
+                        "bucket": bkt,
+                        "name": 'time',
+                        "tag": '%s%s%s' % (c, suffix, '.setup'),
+                        "value": t['elapsed'] - t['reported_time'],
+                        "timestamp": now
+                    }
+                    r["metrics"].append(n)
     print(json.dumps(r, indent=4, sort_keys=True))
 
 
