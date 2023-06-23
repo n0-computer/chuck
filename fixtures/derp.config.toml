@@ -7,7 +7,7 @@ region_code = "default"
 [[derp_regions.nodes]]
 name = "default-1"
 region_id = 1
-host_name = "derp.invalid"
+host_name = "http://10.0.0.1"
 stun_only = false
 stun_port = 3478
 ipv4 = { Some = "10.0.0.1" }
