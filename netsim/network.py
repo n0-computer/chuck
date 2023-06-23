@@ -11,7 +11,7 @@ class StarTopo(Topo):
     "Single switch connected to n hosts."
     def build(self, nodes=[{'name': 'hx', 'count': 1, 'type': 'public'}, {'name': 'h', 'count': 1, 'type': 'public'}], interconnect='s1'):
         interconnect = self.addSwitch(interconnect)
-
+        kk = 0
         for node in nodes:
             if node['type'] == 'public':
                 for i in range(int(node['count'])):
@@ -25,6 +25,7 @@ class StarTopo(Topo):
                         self.addLink(interconnect, h)
                     
             if node['type'] == 'nat':
+                kk+=1
                 for i in range(int(node['count'])):
                     inetIntf = 'n_%s%d-e0' % (node['name'], i)
                     localIntf = 'n_%s%d-e1' % (node['name'], i)
@@ -40,7 +41,7 @@ class StarTopo(Topo):
                     self.addLink(nat, switch, intfName1=localIntf, params1=natParams)
                     # add host and connect to local switch
                     host = self.addHost('%s_%d' % (node['name'], i),
-                                        ip='192.168.%d.100/24' % i,
+                                        ip='192.168.%d.10%d/24' % (i, kk),
                                         defaultRoute='via %s' % localIP)
                     if 'link' in node:
                         loss = node['link']['loss']
