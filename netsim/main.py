@@ -32,7 +32,7 @@ def logs_on_error(nodes, prefix):
             else:
                 print('[WARN] log file missing: %s' % log_name)
 
-def run(nodes, prefix, args, debug=False, visualize=False):
+def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
     integration = args.integration
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
@@ -59,6 +59,8 @@ def run(nodes, prefix, args, debug=False, visualize=False):
         # reduce logging, track only those of interest
         # magicsock::endpoint required for iroh integration tests
         env_vars['RUST_LOG'] = 'error,iroh_net::hp::magicsock::endpoint=debug'
+        if full_debug:
+            env_vars['RUST_LOG'] = 'debug'
 
     p_box = []
     p_short_box = []
@@ -163,6 +165,7 @@ if __name__ == '__main__':
     parser.add_argument("--integration", help = "Run in integration test mode", action='store_true')
     parser.add_argument("--sniff", help = "Run sniffer to record all traffic", action='store_true')
     parser.add_argument("--skip", help = "Comma separated list of tests to skip")
+    parser.add_argument("--debug", help = "Enable full debug logging", action='store_true')
     args = parser.parse_args()
 
     skiplist = []
@@ -178,6 +181,8 @@ if __name__ == '__main__':
                     paths.append(os.path.join(root, f))
     else:
         paths.append(args.cfg)
+
+    full_debug = args.debug
     
     for path in paths:    
         config_f = open(path, 'r')
@@ -196,7 +201,7 @@ if __name__ == '__main__':
                 viz = case['visualize']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix, args, True, viz)
+                run(nodes, prefix, args, True, full_debug, viz)
             stats_parser(nodes, prefix)
             integration_parser(nodes, prefix)
             if viz:
