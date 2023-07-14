@@ -11,4 +11,4 @@ url = "http://10.0.0.1:3340"
 stun_only = false
 stun_port = 3478
 ipv4 = { Some = "10.0.0.1" }
-ipv6 = "None"
+ipv6 = "TryDns"
