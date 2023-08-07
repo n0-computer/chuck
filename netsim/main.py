@@ -98,7 +98,7 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
                 connect_to = '%s_%d' % (node['connect']['node'], id)
                 param = node_params[connect_to]
                 cmd = cmd % (param)
-            cleanup_run = subprocess.run("sudo rm -rf /root/.local/share/iroh", shell=True, capture_output=True)
+            # cleanup_run = subprocess.run("sudo rm -rf /root/.local/share/iroh", shell=True, capture_output=True)
             time.sleep(1)
             env_vars['SSLKEYLOGFILE']= './logs/keylog_%s_%s.txt' % (prefix, node_name)
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
