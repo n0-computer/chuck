@@ -1,6 +1,7 @@
 import argparse
 import json
 import subprocess
+import tempfile
 import time
 import os
 
@@ -69,6 +70,8 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
     node_ips = {}
     node_params = {}
 
+    temp_dirs = []
+
     for node in nodes:
         node_counts[node['name']] = int(node['count'])
         for i in range(int(node['count'])):
@@ -99,8 +102,13 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
                 param = node_params[connect_to]
                 cmd = cmd % (param)
             # cleanup_run = subprocess.run("sudo rm -rf /root/.local/share/iroh", shell=True, capture_output=True)
-            time.sleep(1)
+            time.sleep(0.1)
             env_vars['SSLKEYLOGFILE']= './logs/keylog_%s_%s.txt' % (prefix, node_name)
+
+            temp_dir = tempfile.TemporaryDirectory(prefix='netsim', suffix='{}_{}'.format(prefix, node_name))
+            temp_dirs.append(temp_dir)
+            env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir)
+            
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
                 p_short_box.append(p)
@@ -145,9 +153,11 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
             if r is None:
                 p.terminate()
                 logs_on_error(nodes, prefix)
+                cleanup_tmp_dirs(temp_dirs)
                 raise Exception('Process has timed out:', prefix)
             if r != 0:
                 logs_on_error(nodes, prefix)
+                cleanup_tmp_dirs(temp_dirs)
                 raise Exception('Process has failed:', prefix)
         else:
             p.terminate()
@@ -155,6 +165,13 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
         p.terminate()
     net.stop()
     sniffer.close()
+
+    cleanup_tmp_dirs(temp_dirs)
+
+def cleanup_tmp_dirs(temp_dirs):
+    for temp_dir in temp_dirs:
+        temp_dir.cleanup()
+
 
 if __name__ == '__main__':
     setLogLevel('info')
