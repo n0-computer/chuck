@@ -158,13 +158,11 @@ def stats_parser(nodes, prefix):
                             if node['parser'] == 'iroh_1mb':
                                 f_size = 1024*1024
                             for line in lines:
-                                if 'Downloading' in line:
-                                    is_ok += 1
                                 if 'Transferred' in line and 'in' in line and '/s' in line:
                                     is_ok += 1
                                     reported = parse_humanized_output(line)
                                     reported_time = (f_size*8) / (reported*1000*1000)
-                            if is_ok < 2:
+                            if is_ok == 0:
                                 raise Exception("bad run")
                             s = parse_time_output(lines, f_size)
                             s['reported_mbits'] = reported
