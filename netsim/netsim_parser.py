@@ -192,13 +192,11 @@ def parse_magic_iroh_client(lines):
     }
     is_ok = 0
     for line in lines:
-        if 'Downloading' in line:
-            is_ok += 1
-        if 'Transferred' in line and 'seconds' in line:
+        if 'Transferred' in line and 'in' in line and '/s' in line:
             is_ok += 1
         if 'sending UDP: Some(' in line and 'DERP:' in line:
             s['conn_upgrade'] = 'true'
-    s['transfer_success'] = 'true' if is_ok == 2 else 'false'
+    s['transfer_success'] = 'true' if is_ok == 1 else 'false'
     return s
 
 def integration_parser(nodes, prefix):
