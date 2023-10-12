@@ -33,7 +33,35 @@ def logs_on_error(nodes, prefix):
             else:
                 print('[WARN] log file missing: %s' % log_name)
 
+def build_cmd(node, i, node_ips, node_params, node_counts):
+    cmd = node['cmd']
+    if 'param' in node:
+        if node['param'] == 'id':
+            cmd = cmd % i
+    if node['connect']['strategy'] == 'plain':
+        cnt = node_counts[node['connect']['node']]
+        id = i % cnt
+        connect_to = '%s_%d' % (node['connect']['node'], id)
+        ip = node_ips[connect_to]
+        cmd = cmd % ip
+    if node['connect']['strategy'] == 'plain_with_id':
+        cnt = node_counts[node['connect']['node']]
+        id = i % cnt
+        connect_to = '%s_%d' % (node['connect']['node'], id)
+        ip = node_ips[connect_to]
+        cmd = cmd % (ip, id)
+    if node['connect']['strategy'] == 'params':
+        cnt = node_counts[node['connect']['node']]
+        id = i % cnt
+        connect_to = '%s_%d' % (node['connect']['node'], id)
+        param = node_params[connect_to]
+        cmd = cmd % (param)
+    return cmd
+
+
 def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
+    nodes = sorted(nodes, key=lambda k: (k.get('position', 1000000), k['name']))
+    print(nodes)
     integration = args.integration
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
@@ -72,42 +100,39 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
 
     temp_dirs = []
 
+    ftc = []
+
     for node in nodes:
         node_counts[node['name']] = int(node['count'])
         for i in range(int(node['count'])):
             node_name = '%s_%d' % (node['name'], i)
             f = open('logs/%s__%s.txt' % (prefix, node_name), 'w+')
+            ftc.append(f)
             n = net.get(node_name)
             node_ips[node_name] = n.IP()
-            cmd = node['cmd']
-            if 'param' in node:
-                if node['param'] == 'id':
-                    cmd = cmd % i
-            if node['connect']['strategy'] == 'plain':
-                cnt = node_counts[node['connect']['node']]
-                id = i % cnt
-                connect_to = '%s_%d' % (node['connect']['node'], id)
-                ip = node_ips[connect_to]
-                cmd = cmd % ip
-            if node['connect']['strategy'] == 'plain_with_id':
-                cnt = node_counts[node['connect']['node']]
-                id = i % cnt
-                connect_to = '%s_%d' % (node['connect']['node'], id)
-                ip = node_ips[connect_to]
-                cmd = cmd % (ip, id)
-            if node['connect']['strategy'] == 'params':
-                cnt = node_counts[node['connect']['node']]
-                id = i % cnt
-                connect_to = '%s_%d' % (node['connect']['node'], id)
-                param = node_params[connect_to]
-                cmd = cmd % (param)
+            cmd = ""
+            if 'cmd' in node:
+                cmd = build_cmd(node, i, node_ips, node_params, node_counts)
+            elif 'playbook' in node:
+                requirements_path = node['playbook']['requirements']
+                playbook_path = node['playbook']['path']
+                cmd = f"source venv/bin/activate && pip install -r playbooks/{requirements_path} && python3 playbooks/{playbook_path}"
+                if node['connect']['strategy'] == 'plain':
+                    cnt = node_counts[node['connect']['node']]
+                    id = i % cnt
+                    connect_to = '%s_%d' % (node['connect']['node'], id)
+                    ip = node_ips[connect_to]
+                    cmd = cmd + ' ' + ip
+            else:
+                print("error: no command or playbook specified")
+                exit(1)
             # cleanup_run = subprocess.run("sudo rm -rf /root/.local/share/iroh", shell=True, capture_output=True)
             time.sleep(0.1)
             env_vars['SSLKEYLOGFILE']= './logs/keylog_%s_%s.txt' % (prefix, node_name)
 
             temp_dir = tempfile.TemporaryDirectory(prefix='netsim', suffix='{}_{}'.format(prefix, node_name))
             temp_dirs.append(temp_dir)
-            env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir)
+            env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir.name)
             
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
@@ -126,15 +151,15 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
                     found = 0
                     node_name = '%s_%d' % (node['name'], zz)
                     n = net.get(node_name)
-                    f = open('logs/%s__%s.txt' % (prefix, node_name), 'r')
-                    lines = f.readlines()
+                    fx = open('logs/%s__%s.txt' % (prefix, node_name), 'r')
+                    lines = fx.readlines()
                     for line in lines:
                         if node['param_parser'] == 'iroh_ticket':
                             if line.startswith('All-in-one ticket'):
                                 node_params[node_name] = line[len('All-in-one ticket: '):].strip()
                                 found+=1
                                 break
-                    f.close()
+                    fx.close()
                     if found == int(node['count']):
                         done_wait = True
                         break
@@ -163,6 +188,9 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
             p.terminate()
     for p in p_box:
         p.terminate()
+    for f in ftc:
+        f.flush()
+        f.close()
     net.stop()
     sniffer.close()
 

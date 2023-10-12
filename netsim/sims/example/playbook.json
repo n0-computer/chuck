@@ -1,0 +1,55 @@
+{
+    "name": "iroh",
+    "cases": [
+        {
+            "name": "1_to_1",
+            "description": "",
+            "nodes": [
+                {
+                    "position": 0,
+                    "name": "syncer",
+                    "count": 1,
+                    "playbook": {
+                        "requirements": "requirements.txt",
+                        "path": "playbook_engine.py"
+                    },
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param": "id"
+                },
+                {
+                    "position": 1,
+                    "name": "iroh_srv",
+                    "count": 1,
+                    "playbook": {
+                        "requirements": "requirements.txt",
+                        "path": "serve.py --syncer"
+                    },
+                    "type": "public",
+                    "wait": 5,
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "syncer"
+                    }
+                },
+                {
+                    "name": "iroh_get",
+                    "count": 1,
+                    "playbook": {
+                        "requirements": "requirements.txt",
+                        "path": "get.py --syncer"
+                    },
+                    "type": "public",
+                    "connect": {
+                        "strategy": "plain",
+                        "node": "syncer"
+                    },
+                    "process": "short"
+                }
+            ]
+        }
+    ]
+}
