@@ -60,8 +60,6 @@ def build_cmd(node, i, node_ips, node_params, node_counts):
 
 
 def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
-    nodes = sorted(nodes, key=lambda k: (k.get('position', 1000000), k['name']))
-    print(nodes)
     integration = args.integration
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
