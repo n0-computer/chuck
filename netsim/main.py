@@ -114,7 +114,7 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
             elif 'playbook' in node:
                 requirements_path = node['playbook']['requirements']
                 playbook_path = node['playbook']['path']
-                cmd = f"source venv/bin/activate && pip install -r playbooks/{requirements_path} && python3 playbooks/{playbook_path}"
+                cmd = f"source venv/bin/activate && python3 playbooks/{playbook_path}"
                 if node['connect']['strategy'] == 'plain':
                     cnt = node_counts[node['connect']['node']]
                     id = i % cnt
