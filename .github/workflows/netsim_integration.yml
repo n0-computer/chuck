@@ -45,11 +45,27 @@ jobs:
         git clone https://github.com/n0-computer/iroh.git
         cd iroh
         cargo build --release
+    
+    - name: Fetch and build iroh-ffi
+      run: |
+        git clone https://github.com/n0-computer/iroh-ffi.git
+        cd iroh-ffi
+        echo "iroh = { path = \"../iroh\" }" >> Cargo.toml
+        pip3 install maturin uniffi-bindgen
+        maturin build --release
 
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
         cp iroh/target/release/iroh netsim/bins/iroh
+        cp iroh-ffi/target/wheels/iroh-*-py3-none-manylinux_2_34_x86_64.whl ./netsim/bins/
+
+    - name: Setup python venv
+      run: |
+        cd netsim
+        python3 -m venv venv
+        source venv/bin/activate
+        pip3 install bins/iroh-*.whl
 
     - name: Run tests
       run: |
@@ -57,6 +73,7 @@ jobs:
         sudo kill -9 $(pgrep ovs)
         sudo mn --clean
         sudo python3 main.py --integration sims/standard/iroh.json
+        sudo python3 main.py --integration sims/example/playbook.json
 
     - name: Setup Environment (PR)  
       if: ${{ github.event_name == 'pull_request' }}  

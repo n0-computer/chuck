@@ -1,5 +1,5 @@
 {
-    "name": "iroh",
+    "name": "iroh_playbook",
     "cases": [
         {
             "name": "1_to_1",
