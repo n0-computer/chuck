@@ -19,7 +19,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -60,7 +60,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
@@ -101,7 +101,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -142,7 +142,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh --keylog --cfg data/derp.config.toml start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
