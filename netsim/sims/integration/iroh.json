@@ -9,7 +9,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -39,7 +39,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -68,7 +68,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -97,7 +97,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 data/1MB.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
