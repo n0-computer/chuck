@@ -8,7 +8,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -19,7 +19,7 @@
                 {
                     "name": "iroh_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -37,7 +37,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -48,7 +48,7 @@
                 {
                     "name": "iroh_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -66,7 +66,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -77,7 +77,7 @@
                 {
                     "name": "iroh_get",
                     "count": 5,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -95,7 +95,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -106,7 +106,7 @@
                 {
                     "name": "iroh_get",
                     "count": 10,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -124,7 +124,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -135,7 +135,7 @@
                 {
                     "name": "iroh_get",
                     "count": 2,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -153,7 +153,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -164,7 +164,7 @@
                 {
                     "name": "iroh_get",
                     "count": 4,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -182,7 +182,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -193,7 +193,7 @@
                 {
                     "name": "iroh_get",
                     "count": 6,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -211,7 +211,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --source data/1G.bin",
+                    "cmd": "./bins/iroh start -a 0.0.0.0:4433 --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -222,7 +222,7 @@
                 {
                     "name": "iroh_get",
                     "count": 10,
-                    "cmd": "time ./bins/iroh get --ticket %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
