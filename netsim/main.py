@@ -202,7 +202,6 @@ if __name__ == '__main__':
         paths.append(args.cfg)
 
     full_debug = args.debug
-    full_debug = True # TODO: remove this line; temporary to force debug logs
     
     for path in paths:    
         config_f = open(path, 'r')
