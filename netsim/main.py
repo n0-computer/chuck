@@ -109,6 +109,8 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
             temp_dirs.append(temp_dir)
             env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir)
             
+            f.write('cmd: %s\n\n' % cmd)
+            f.flush()
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
                 p_short_box.append(p)
