@@ -1,14 +1,4 @@
-[[derp_regions]]
-region_id = 1
-avoid = false
-region_code = "default"
-
-
-[[derp_regions.nodes]]
-name = "default-1"
-region_id = 1
+[[derp_nodes]]
 url = "http://10.0.0.1:3340"
 stun_only = false
 stun_port = 3478
-ipv4 = { Some = "10.0.0.1" }
-ipv6 = "TryDns"
