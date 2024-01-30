@@ -44,12 +44,13 @@ jobs:
       run: |
         git clone https://github.com/n0-computer/iroh.git
         cd iroh
-        cargo build --release
+        cargo build --release --all-features
 
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
         cp iroh/target/release/iroh netsim/bins/iroh
+        cp iroh/target/release/derper netsim/bins/derper
 
     - name: Run tests
       run: |
