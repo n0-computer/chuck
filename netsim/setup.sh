@@ -25,5 +25,7 @@ done
 cp ../../fixtures/key.pem ../bins/key.pem
 cp ../../fixtures/cert.pem ../bins/cert.pem
 cp ../../fixtures/derp.config.toml derp.config.toml
+cp ../../fixtures/direct_derp.cfg direct_derp.cfg
+cp ../../fixtures/derp.direct.config.toml derp.direct.config.toml
 cp ../../fixtures/1MB.bin 1MB.bin
 cp ../../fixtures/hello.bin hello.bin
