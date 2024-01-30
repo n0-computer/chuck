@@ -194,7 +194,7 @@ def parse_magic_iroh_client(lines):
     for line in lines:
         if 'Transferred' in line and 'in' in line and '/s' in line:
             is_ok += 1
-        if 'sending UDP: Some(' in line and 'DERP:' in line:
+        if 'found send address' in line:
             s['conn_upgrade'] = 'true'
     s['transfer_success'] = 'true' if is_ok == 1 else 'false'
     return s
