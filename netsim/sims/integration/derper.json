@@ -11,7 +11,7 @@
                     "count": 1,
                     "cmd": "./bins/derper --dev --config-path ./derper.cfg",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 2,
                     "connect": {
                         "strategy": "none"
                     }
@@ -52,7 +52,7 @@
                     "count": 1,
                     "cmd": "./bins/derper --dev --config-path ./derper.cfg",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 2,
                     "connect": {
                         "strategy": "none"
                     }
@@ -93,7 +93,7 @@
                     "count": 1,
                     "cmd": "./bins/derper --dev --config-path ./derper.cfg",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 2,
                     "connect": {
                         "strategy": "none"
                     }
@@ -134,7 +134,7 @@
                     "count": 1,
                     "cmd": "./bins/derper --dev --config-path ./derper.cfg",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 2,
                     "connect": {
                         "strategy": "none"
                     }

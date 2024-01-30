@@ -9,9 +9,9 @@
                 {
                     "name": "derper",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/derper --dev --config-path data/direct_derp.cfg",
                     "type": "public",
-                    "wait": 10,
+                    "wait": 2,
                     "connect": {
                         "strategy": "none"
                     }
@@ -50,7 +50,7 @@
                 {
                     "name": "derper",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/derper --dev --config-path data/direct_derp.cfg",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -91,7 +91,7 @@
                 {
                     "name": "derper",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/derper --dev --config-path data/direct_derp.cfg",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -132,7 +132,7 @@
                 {
                     "name": "derper",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/derper --dev --config-path data/direct_derp.cfg",
                     "type": "public",
                     "wait": 10,
                     "connect": {
