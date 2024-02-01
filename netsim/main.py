@@ -106,7 +106,7 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
             env_vars['SSLKEYLOGFILE']= './logs/keylog_%s_%s.txt' % (prefix, node_name)
 
             temp_dir = tempfile.TemporaryDirectory(prefix='netsim', suffix='{}_{}'.format(prefix, node_name))
-            temp_dirs.append(temp_dir.name)
+            temp_dirs.append(temp_dir)
             env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir.name)
             
             f.write('cmd: %s\n\n' % cmd)
