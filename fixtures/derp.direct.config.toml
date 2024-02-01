@@ -1,0 +1,4 @@
+[[derp_nodes]]
+url = "http://10.0.0.1:3340"
+stun_only = true
+stun_port = 3478

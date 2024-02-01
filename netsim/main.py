@@ -59,7 +59,7 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
     if debug:
         # reduce logging, track only those of interest
         # magicsock::endpoint required for iroh integration tests
-        env_vars['RUST_LOG'] = 'error,iroh_net::magicsock::endpoint=debug'
+        env_vars['RUST_LOG'] = 'error,iroh_net::magicsock::peer_map::endpoint=trace'
         if full_debug:
             env_vars['RUST_LOG'] = 'debug'
 
@@ -107,7 +107,7 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
 
             temp_dir = tempfile.TemporaryDirectory(prefix='netsim', suffix='{}_{}'.format(prefix, node_name))
             temp_dirs.append(temp_dir)
-            env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir)
+            env_vars['IROH_DATA_DIR'] = '{}'.format(temp_dir.name)
             
             f.write('cmd: %s\n\n' % cmd)
             f.flush()
@@ -182,7 +182,7 @@ if __name__ == '__main__':
     parser.add_argument("cfg", help = "Input config file")
     parser.add_argument("-r", help = "Run only report generation", action='store_true')
     parser.add_argument("--integration", help = "Run in integration test mode", action='store_true')
-    parser.add_argument("--sniff", help = "Run sniffer to record all traffic", action='store_true')
+    parser.add_argument("--sniff", help = "Run sniffer to record all traffic", action='store_false')
     parser.add_argument("--skip", help = "Comma separated list of tests to skip")
     parser.add_argument("--debug", help = "Enable full debug logging", action='store_true')
     args = parser.parse_args()
@@ -216,8 +216,9 @@ if __name__ == '__main__':
                 continue
             nodes = case['nodes']
             viz = False
-            if 'visualize' in case:
-                viz = case['visualize']
+            # ignore any viz config as we really don't use it
+            # if 'visualize' in case:
+            #     viz = case['visualize']
             print('running "%s"...' % prefix)
             if not args.r:
                 run(nodes, prefix, args, True, full_debug, viz)
