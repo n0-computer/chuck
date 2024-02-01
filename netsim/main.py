@@ -46,12 +46,12 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
     net.pingAll()
     
     print("Topo:", json.dumps(ti, indent=4))
-    if args.sniff or visualize:
-        print( "Attaching sniffer" )
-        sniffer.start()
-        f = open("logs/" + prefix + ".topo.json", "w+")
-        f.write(json.dumps(ti, indent=4))
-        f.close()
+    # if args.sniff or visualize:
+    #     print( "Attaching sniffer" )
+    #     sniffer.start()
+    #     f = open("logs/" + prefix + ".topo.json", "w+")
+    #     f.write(json.dumps(ti, indent=4))
+    #     f.close()
 
     time.sleep(1)
 
