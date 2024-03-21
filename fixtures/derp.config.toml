@@ -1,4 +1,4 @@
-[[derp_nodes]]
+[[relay_nodes]]
 url = "http://10.0.0.1:3340"
 stun_only = false
 stun_port = 3478
