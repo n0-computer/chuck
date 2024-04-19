@@ -7,7 +7,7 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "iroh-relay",
+                    "name": "relay",
                     "count": 1,
                     "cmd": "./bins/iroh-relay --dev --config-path ./relay.cfg",
                     "type": "public",
@@ -48,7 +48,7 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "iroh-relay",
+                    "name": "relay",
                     "count": 1,
                     "cmd": "./bins/iroh-relay --dev --config-path ./relay.cfg",
                     "type": "public",
@@ -89,7 +89,7 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "iroh-relay",
+                    "name": "relay",
                     "count": 1,
                     "cmd": "./bins/iroh-relay --dev --config-path ./relay.cfg",
                     "type": "public",
@@ -130,7 +130,7 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "iroh-relay",
+                    "name": "relay",
                     "count": 1,
                     "cmd": "./bins/iroh-relay --dev --config-path ./relay.cfg",
                     "type": "public",
