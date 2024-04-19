@@ -50,7 +50,7 @@ jobs:
       run: |
         cp target/release/chuck netsim/bins/chuck
         cp iroh/target/release/iroh netsim/bins/iroh
-        cp iroh/target/release/derper netsim/bins/derper
+        cp iroh/target/release/iroh-relay netsim/bins/iroh-relay
 
     - name: Run tests
       run: |
@@ -84,3 +84,6 @@ jobs:
         d=$(cat report_metro.txt)
         metro_data=$(printf "%s\n " "$d")
         echo "$metro_data" 
+
+
+        arminhajro@gmail.com

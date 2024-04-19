@@ -1,5 +1,5 @@
 {
-    "name": "intg_derper",
+    "name": "intg_relay_direct",
     "cases": [
         {
             "name": "1_to_1",
@@ -7,9 +7,9 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "derper",
+                    "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
                     "wait": 2,
                     "connect": {
@@ -19,7 +19,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/derp.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh --config data/relay.direct.config.toml start --add data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -30,7 +30,7 @@
                 {
                     "name": "iroh_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/derp.config.toml blob get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh --config data/relay.direct.config.toml blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -48,11 +48,11 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "derper",
+                    "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
-                    "wait": 2,
+                    "wait": 10,
                     "connect": {
                         "strategy": "none"
                     }
@@ -60,7 +60,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/derp.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh --config data/relay.direct.config.toml start --add data/1MB.bin",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
@@ -71,7 +71,7 @@
                 {
                     "name": "iroh_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/derp.config.toml blob get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh --config data/relay.direct.config.toml blob get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -89,11 +89,11 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "derper",
+                    "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
-                    "wait": 2,
+                    "wait": 10,
                     "connect": {
                         "strategy": "none"
                     }
@@ -101,7 +101,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/derp.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh --config data/relay.direct.config.toml start --add data/1MB.bin",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -112,7 +112,7 @@
                 {
                     "name": "iroh_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/derp.config.toml blob get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh --config data/relay.direct.config.toml blob get --start %s --out STDOUT > /dev/null",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
@@ -130,11 +130,11 @@
             "visualize": true,
             "nodes": [
                 {
-                    "name": "derper",
+                    "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/derper --dev --config-path ./derper.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
-                    "wait": 2,
+                    "wait": 10,
                     "connect": {
                         "strategy": "none"
                     }
@@ -142,7 +142,7 @@
                 {
                     "name": "iroh_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/derp.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh --config data/relay.direct.config.toml start --add data/1MB.bin",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
@@ -153,7 +153,7 @@
                 {
                     "name": "iroh_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/derp.config.toml blob get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh --config data/relay.direct.config.toml blob get --start %s --out STDOUT > /dev/null",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
