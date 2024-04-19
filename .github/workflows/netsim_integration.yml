@@ -84,6 +84,3 @@ jobs:
         d=$(cat report_metro.txt)
         metro_data=$(printf "%s\n " "$d")
         echo "$metro_data" 
-
-
-        arminhajro@gmail.com
