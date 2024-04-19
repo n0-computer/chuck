@@ -88,7 +88,7 @@ def load_pcap(path, keylog=None, topo_path=None):
         }
         if ip in topo_node_ip_map:
             tn = topo_nodes[topo_node_ip_map[ip]]
-            if tn['name'].startswith('iroh-relay'):
+            if tn['name'].startswith('1_relay'):
                 n['type'] = 'relay'
                 n['id'] = tn['name']
             if tn['name'].startswith('iroh'):
