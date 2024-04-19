@@ -50,7 +50,7 @@ jobs:
       run: |
         cp target/release/chuck netsim/bins/chuck
         cp iroh/target/release/iroh netsim/bins/iroh
-        cp iroh/target/release/derper netsim/bins/derper
+        cp iroh/target/release/iroh-relay netsim/bins/iroh-relay
 
     - name: Run tests
       run: |

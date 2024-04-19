@@ -88,12 +88,12 @@ def load_pcap(path, keylog=None, topo_path=None):
         }
         if ip in topo_node_ip_map:
             tn = topo_nodes[topo_node_ip_map[ip]]
+            if tn['name'].startswith('1_relay'):
+                n['type'] = 'relay'
+                n['id'] = tn['name']
             if tn['name'].startswith('iroh'):
                 n['type'] = 'iroh'
                 n['id'] = tn['name'].replace('iroh_', '')
-            elif tn['name'].startswith('derper'):
-                n['type'] = 'derper'
-                n['id'] = tn['name']
             elif tn['name'].startswith('n_'):
                 n['type'] = 'nat'
                 n['id'] = tn['name']
@@ -191,7 +191,7 @@ class NetsimViz():
 
         self.node_color_map = {
             'iroh': '#7c7cff',
-            'derper': '#ff7c7c',
+            'relay': '#ff7c7c',
             'node': '#7cff7c',
             'nat': '#ff7cff',
         }
@@ -222,7 +222,7 @@ class NetsimViz():
 
         self.draw_background()
         self.draw_legend(-self.size_x/2 + 50, -self.size_y/2 + 120)
-        self.draw_title('derper__1_to_1', 0, -self.size_y/2 + 50) # TODO correct title
+        self.draw_title('relay__1_to_1', 0, -self.size_y/2 + 50) # TODO correct title
         self.draw_ttx()
 
         nodes = []
