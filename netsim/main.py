@@ -17,7 +17,7 @@ from process_sniff import run_viz
 
 TIMEOUT = 60 * 5
 
-def logs_on_error(nodes, prefix):
+def logs_on_error(nodes, prefix, code=1, message=None):
     node_counts = {}
     for node in nodes:
         node_counts[node['name']] = int(node['count'])
@@ -32,6 +32,9 @@ def logs_on_error(nodes, prefix):
                     print('[INFO][%s__%s] %s' % (prefix, node_name, line.rstrip()))
             else:
                 print('[WARN] log file missing: %s' % log_name)
+    print('[ERROR] Process has failed with code:', code)
+    if message:
+        print('[ERROR] Message:', message)
 
 def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
     integration = args.integration
@@ -158,7 +161,7 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
                 cleanup_tmp_dirs(temp_dirs)
                 raise Exception('Process has timed out:', prefix)
             if r != 0:
-                logs_on_error(nodes, prefix)
+                logs_on_error(nodes, prefix, r)
                 cleanup_tmp_dirs(temp_dirs)
                 raise Exception('Process has failed:', prefix)
         else:
