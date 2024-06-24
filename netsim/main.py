@@ -61,7 +61,7 @@ def run(nodes, prefix, args, debug=False, visualize=False):
     env_vars = os.environ.copy()
     if debug:
         env_vars['RUST_LOG'] = 'debug'
-    if !env_vars.get['RUST_LOG']:
+    if not env_vars['RUST_LOG']:
         env_vars['RUST_LOG'] = 'warn'
     # magicsock::endpoint required for iroh integration tests
     env_vars['RUST_LOG'] += ",iroh_net::magicsock::node_map::endpoint=trace"
