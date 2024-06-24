@@ -149,6 +149,8 @@ def run(nodes, prefix, args, debug=False, visualize=False):
                 time.sleep(int(node['wait']))
 
     # CLI(net)
+
+    process_errors = []
     for i in range(TIMEOUT):
         time.sleep(1)
         if not any(p.poll() is None for p in p_short_box):
@@ -158,15 +160,19 @@ def run(nodes, prefix, args, debug=False, visualize=False):
             r = p.poll()
             if r is None:
                 p.terminate()
-                logs_on_error(nodes, prefix)
-                cleanup_tmp_dirs(temp_dirs)
-                raise Exception('Process has timed out:', prefix)
+                process_errors.append('Process has timed out: %s' % prefix)
             if r != 0:
-                logs_on_error(nodes, prefix, r)
-                cleanup_tmp_dirs(temp_dirs)
-                raise Exception('Process has failed:', prefix)
+                process_errors.append('Process has failed: %s with exit code: %d' % (prefix, r))
         else:
             p.terminate()
+
+    if process_errors:
+        for error in process_errors:
+            print(error)
+        logs_on_error(nodes, prefix)
+        cleanup_tmp_dirs(temp_dirs)
+        raise Exception('Netsim run failed')
+
     for p in p_box:
         p.terminate()
     net.stop()
