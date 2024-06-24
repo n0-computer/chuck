@@ -36,7 +36,7 @@ def logs_on_error(nodes, prefix, code=1, message=None):
     if message:
         print('[ERROR] Message:', message)
 
-def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
+def run(nodes, prefix, args, debug=False, visualize=False):
     integration = args.integration
     topo = StarTopo(nodes=nodes)
     net = Mininet(topo = topo, waitConnected=True, link=TCLink)
@@ -60,11 +60,12 @@ def run(nodes, prefix, args, debug=False, full_debug=False, visualize=False):
 
     env_vars = os.environ.copy()
     if debug:
-        # reduce logging, track only those of interest
-        # magicsock::endpoint required for iroh integration tests
-        env_vars['RUST_LOG'] = 'error,iroh_net::magicsock::node_map::endpoint=trace'
-        if full_debug:
-            env_vars['RUST_LOG'] = 'debug'
+        env_vars['RUST_LOG'] = 'debug'
+    if !env_vars.get['RUST_LOG']:
+        env_vars['RUST_LOG'] = 'warn'
+    # magicsock::endpoint required for iroh integration tests
+    env_vars['RUST_LOG'] += ",iroh_net::magicsock::node_map::endpoint=trace"
+    
 
     p_box = []
     p_short_box = []
@@ -204,8 +205,6 @@ if __name__ == '__main__':
     else:
         paths.append(args.cfg)
 
-    full_debug = args.debug
-    
     for path in paths:    
         config_f = open(path, 'r')
         config = json.load(config_f)
@@ -224,7 +223,7 @@ if __name__ == '__main__':
             #     viz = case['visualize']
             print('running "%s"...' % prefix)
             if not args.r:
-                run(nodes, prefix, args, True, full_debug, viz)
+                run(nodes, prefix, args, args.debug, viz)
             stats_parser(nodes, prefix)
             integration_parser(nodes, prefix)
             if viz:
