@@ -164,7 +164,7 @@ def run(nodes, prefix, args, debug=False, visualize=False):
                 some_error = True
                 break
 
-        if not any(p.poll() is None for p in p_short_box) or some_error:
+        if not any(p.poll() is None for (_, p) in p_short_box) or some_error:
             break
             
     for (node_name, p) in p_short_box:
