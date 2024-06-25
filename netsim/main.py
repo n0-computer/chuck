@@ -161,7 +161,7 @@ def run(nodes, prefix, args, debug=False, visualize=False):
             if r is None:
                 p.terminate()
                 process_errors.append('Process has timed out: %s' % prefix)
-            if r != 0:
+            elif r != 0:
                 process_errors.append('Process has failed: %s with exit code: %d' % (prefix, r))
         else:
             p.terminate()
