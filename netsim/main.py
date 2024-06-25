@@ -117,7 +117,7 @@ def run(nodes, prefix, args, debug=False, visualize=False):
             f.flush()
             p = n.popen(cmd, stdout=f, stderr=f, shell=True, env=env_vars)
             if 'process' in node and node['process'] == 'short':
-                p_short_box.append(p)
+                p_short_box.append((node_name, p))
             else:
                 p_box.append(p)
         if 'param_parser' in node:
@@ -153,16 +153,16 @@ def run(nodes, prefix, args, debug=False, visualize=False):
     process_errors = []
     for i in range(TIMEOUT):
         time.sleep(1)
-        if not any(p.poll() is None for p in p_short_box):
+        if not any(p.poll() is None for (n, p) in p_short_box):
             break
-    for p in p_short_box:
+    for (node_name, p) in p_short_box:
         if integration:
             r = p.poll()
             if r is None:
                 p.terminate()
-                process_errors.append('Process has timed out: %s' % prefix)
+                process_errors.append('Process has timed out: %s for node: %s' % (prefix, node_name))
             elif r != 0:
-                process_errors.append('Process has failed: %s with exit code: %d' % (prefix, r))
+                process_errors.append('Process has failed: %s with exit code: %d for node: %s' % (prefix, r, node_name))
         else:
             p.terminate()
 
