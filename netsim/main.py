@@ -153,18 +153,17 @@ def run(nodes, prefix, args, debug=False, visualize=False):
     process_errors = []
     for i in range(TIMEOUT):
         time.sleep(1)
+        
+        r = p.poll()
+        if r is None:
+            p.terminate()
+            process_errors.append('Process has timed out: %s' % prefix)
+        elif r != 0:
+            process_errors.append('Process has failed: %s with exit code: %d' % (prefix, r))
+            break
+
         if not any(p.poll() is None for p in p_short_box):
             break
-    for p in p_short_box:
-        if integration:
-            r = p.poll()
-            if r is None:
-                p.terminate()
-                process_errors.append('Process has timed out: %s' % prefix)
-            if r != 0:
-                process_errors.append('Process has failed: %s with exit code: %d' % (prefix, r))
-        else:
-            p.terminate()
 
     if process_errors:
         for error in process_errors:
