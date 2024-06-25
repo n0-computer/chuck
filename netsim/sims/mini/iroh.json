@@ -2,12 +2,12 @@
     "name": "iroh",
     "cases": [
         {
-            "name": "1_to_10-1",
+            "name": "2_to_10-1",
             "description": "",
             "nodes": [
                 {
                     "name": "iroh_srv",
-                    "count": 1,
+                    "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
@@ -31,12 +31,12 @@
             ]
         },
         {
-            "name": "1_to_10-2",
+            "name": "2_to_10-2",
             "description": "",
             "nodes": [
                 {
                     "name": "iroh_srv",
-                    "count": 1,
+                    "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
@@ -60,12 +60,12 @@
             ]
         },
         {
-            "name": "1_to_10-3",
+            "name": "2_to_10-3",
             "description": "",
             "nodes": [
                 {
                     "name": "iroh_srv",
-                    "count": 1,
+                    "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
                     "wait": 10,
