@@ -91,18 +91,33 @@ def run(nodes, prefix, args, debug=False, visualize=False):
                 cnt = node_counts[node['connect']['node']]
                 id = i % cnt
                 connect_to = '%s_%d' % (node['connect']['node'], id)
+                if not (connect_to in node_ips):
+                    logs_on_error(nodes, prefix)
+                    cleanup_tmp_dirs(temp_dirs)
+                    print('Node not found for node: %s' % connect_to)
+                    raise Exception('Netsim run failed')
                 ip = node_ips[connect_to]
                 cmd = cmd % ip
             if node['connect']['strategy'] == 'plain_with_id':
                 cnt = node_counts[node['connect']['node']]
                 id = i % cnt
                 connect_to = '%s_%d' % (node['connect']['node'], id)
+                if not (connect_to in node_ips):
+                    logs_on_error(nodes, prefix)
+                    cleanup_tmp_dirs(temp_dirs)
+                    print('Node not found for node: %s' % connect_to)
+                    raise Exception('Netsim run failed')
                 ip = node_ips[connect_to]
                 cmd = cmd % (ip, id)
             if node['connect']['strategy'] == 'params':
                 cnt = node_counts[node['connect']['node']]
                 id = i % cnt
                 connect_to = '%s_%d' % (node['connect']['node'], id)
+                if not (connect_to in node_params):
+                    logs_on_error(nodes, prefix)
+                    cleanup_tmp_dirs(temp_dirs)
+                    print('Node not found for node: %s' % connect_to)
+                    raise Exception('Netsim run failed')
                 param = node_params[connect_to]
                 cmd = cmd % (param)
             # cleanup_run = subprocess.run("sudo rm -rf /root/.local/share/iroh", shell=True, capture_output=True)
