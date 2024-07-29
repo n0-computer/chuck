@@ -12,6 +12,7 @@ env:
   RUST_BACKTRACE: 1
   RUSTFLAGS: -Dwarnings
   MSRV: "1.63"
+  IROH_FORCE_STAGING_RELAYS: "1"
 
 jobs:
   netsim:
