@@ -15,7 +15,7 @@ OUTPUT_FOLDER=$3
 mkdir -p "$OUTPUT_FOLDER"
 
 # Generate a random 4-character string
-RANDOM_STRING=$(LC_ALL=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 4)
+RANDOM_STRING=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 4)
 
 # Generate the files
 for (( i=1; i<=$NUMBER_OF_FILES; i++ ))
