@@ -30,7 +30,7 @@ def parse_time_output(lines, size):
 
 def parse_humanized_output(line):
     p = line.split(', ')[-1]
-    v_bytes = humanfriendly.parse_size(p)
+    v_bytes = humanfriendly.parse_size(p, binary=True)
     v_mbits = float(v_bytes*8) / (1024*1024)
     return v_mbits
 
@@ -124,7 +124,7 @@ def aggregate_stats(stats):
 
 def stats_parser(nodes, prefix):
     files = []
-    valid_parsers = ['iroh_client', 'iperf_server', 'iperf_udp_server', 'time_1gb', 'iroh_1gb']
+    valid_parsers = ['iroh_client', 'iperf_server', 'iperf_udp_server', 'time_1gb', 'iroh_1gb', 'iroh_cust_']
     for root, dirs, fs in os.walk('logs'):
         for f in fs:
             if f.startswith(prefix + '__'):
@@ -133,7 +133,7 @@ def stats_parser(nodes, prefix):
         if 'parser' in node:
             stats = []
             try:
-                if node['parser'] in valid_parsers:
+                if any(node['parser'].startswith(prefix) for prefix in valid_parsers):
                     for i in range(int(node['count'])):
                         log_path = 'logs/%s__%s_%d.txt' %(prefix, node['name'], i)
                         f = open(log_path, 'r')
@@ -150,13 +150,16 @@ def stats_parser(nodes, prefix):
                         if node['parser'] == 'time_1gb':
                             s = parse_time_output(lines, 1024*1024*1024)
                             stats.append(s)
-                        if node['parser'] in ['iroh_1gb', 'iroh_1mb']:
+                        if node['parser'] in ['iroh_1gb', 'iroh_1mb'] or node['parser'].startswith('iroh_cust_'):
                             is_ok = 0
                             reported = 0
                             reported_time = 0
                             f_size = 1024*1024*1024
                             if node['parser'] == 'iroh_1mb':
                                 f_size = 1024*1024
+                            if node['parser'].startswith('iroh_cust_'):
+                                f_size_str = node['parser'].split('_')[-1]
+                                f_size = humanfriendly.parse_size(f_size_str, binary=True)
                             for line in lines:
                                 if 'Transferred' in line and 'in' in line and '/s' in line:
                                     is_ok += 1

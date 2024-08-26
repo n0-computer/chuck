@@ -26,7 +26,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_10mb"
                 }
             ]
         },
@@ -55,7 +55,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_10mb"
                 }
             ]
         },
@@ -84,7 +84,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_50mb"
                 }
             ]
         },
@@ -113,7 +113,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_50mb"
                 }
             ]
         },
@@ -147,7 +147,7 @@
             ]
         },
         {
-            "name": "1_to_3_5k_10k",
+            "name": "1_to_3_1k_1m",
             "description": "",
             "nodes": [
                 {
@@ -200,7 +200,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_4.01gb"
                 }
             ]
         },
@@ -229,7 +229,7 @@
                         "node": "iroh_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_4.01gb"
                 }
             ]
         }
