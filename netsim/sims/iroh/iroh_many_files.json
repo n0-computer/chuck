@@ -1,5 +1,5 @@
 {
-    "name": "iroh_mf",
+    "name": "iroh_many_files",
     "cases": [
         {
             "name": "1_to_1_1k_10k",
