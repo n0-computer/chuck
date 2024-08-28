@@ -1,0 +1,89 @@
+{
+    "name": "iq10_v_iq11_mix",
+    "cases": [
+        {
+            "name": "iq10_v_iq11_mix",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "iroh_srv",
+                    "count": 1,
+                    "cmd": "./bins/iroh-q-10 start --add data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "iroh_get_q10",
+                    "count": 3,
+                    "cmd": "time ./bins/iroh-q-10 blobs get --start %s --out STDOUT > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+                ,
+                {
+                    "name": "iroh_get_q11",
+                    "count": 3,
+                    "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+            ]
+        },
+        {
+            "name": "iq11_v_iq10_mix",
+            "description": "",
+            "nodes": [
+                {
+                    "name": "iroh_srv",
+                    "count": 1,
+                    "cmd": "./bins/iroh start --add data/1G.bin",
+                    "type": "public",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "iroh_get_q10",
+                    "count": 3,
+                    "cmd": "time ./bins/iroh-q-10 blobs get --start %s --out STDOUT > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+                ,
+                {
+                    "name": "iroh_get_q11",
+                    "count": 3,
+                    "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
+                    "type": "public",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "iroh_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1gb"
+                }
+            ]
+        }
+    ]
+}
