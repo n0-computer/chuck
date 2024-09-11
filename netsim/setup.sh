@@ -1,12 +1,12 @@
-sudo apt install mininet
-sudo apt install openvswitch-testcontroller
-sudo apt install iperf
-# sudo apt install wireshark
-sudo apt install tshark
-sudo pip3 install pyshark
-sudo pip3 install drawsvg
-sudo pip3 install dpkt
-sudo pip3 install humanfriendly
+# sudo apt install mininet
+# sudo apt install openvswitch-testcontroller
+# sudo apt install iperf
+# # sudo apt install wireshark
+# sudo apt install tshark
+# pip3 install pyshark
+# pip3 install drawsvg
+# pip3 install dpkt
+# pip3 install humanfriendly
 mkdir -p logs
 mkdir -p report
 mkdir -p data

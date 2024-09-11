@@ -15,7 +15,7 @@ from netsim_parser import integration_parser
 from network import StarTopo
 from process_sniff import run_viz
 
-TIMEOUT = 60 * 5
+TIMEOUT = 20 # 60 * 5
 
 def logs_on_error(nodes, prefix, code=1, message=None):
     node_counts = {}
@@ -166,10 +166,22 @@ def run(nodes, prefix, args, debug=False, visualize=False):
     # CLI(net)
 
     process_errors = []
+    some_error = False
     for i in range(TIMEOUT):
         time.sleep(1)
-        if not any(p.poll() is None for (n, p) in p_short_box):
+        
+        for (node_name, p) in p_short_box:
+            r = p.poll()
+            print('Supervisor(%s): Process still running after %d seconds.' % (node_name, i + 1))
+            if r is not None and r != 0:
+                print('Supervisor(%s): Process finished %s with exit code %d' % (node_name, prefix, r))
+                process_errors.append('Process has failed: %s with exit code: %d for node: %s' % (prefix, r, node_name))
+                some_error = True
+                break
+
+        if not any(p.poll() is None for (_, p) in p_short_box) or some_error:
             break
+            
     for (node_name, p) in p_short_box:
         if integration:
             r = p.poll()
@@ -182,9 +194,9 @@ def run(nodes, prefix, args, debug=False, visualize=False):
             p.terminate()
 
     if process_errors:
+        logs_on_error(nodes, prefix)
         for error in process_errors:
             print(error)
-        logs_on_error(nodes, prefix)
         cleanup_tmp_dirs(temp_dirs)
         raise Exception('Netsim run failed')
 
