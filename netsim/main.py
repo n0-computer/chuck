@@ -3,6 +3,7 @@ import concurrent.futures
 import glob
 import json
 import os
+import sys
 import tempfile
 import time
 
@@ -207,7 +208,7 @@ def run_parallel(cases, name, skiplist, args, max_workers=4):
                     r.append(rx)
                 except Exception as e:
                     print('Exception:', e)
-                    return
+                    sys.exit(1)
             for (n, s) in r:
                 if n: n.stop()
                 if s: s.close()
