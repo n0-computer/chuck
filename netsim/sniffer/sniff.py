@@ -5,7 +5,7 @@ import dpkt
 from struct import unpack
 from ipaddress import ip_address
 
-HOST_TYPES = ['Host', 'CPULimitedHost', 'NAT']
+HOST_TYPES = ['Host', 'CPULimitedHost', 'NAT', 'EdgeNode', 'LinuxRouter']
 SWITCH_TYPES = ['UserSwitch', 'OVSSwitch', 'OVSBridge', 'OVSSwitch', 'IVSSwitch', 'LinuxBridge', 'OVSSwitch']
 CONTROLLER_TYPES = ['Controller', 'OVSController', 'NOX', 'RemoteController', 'Ryu', 'DefaultController', 'NullController']
 
@@ -167,11 +167,11 @@ class Sniffer():
             smisnode = self.nodeExists(smi['node'])
             dmisnode = self.nodeExists(dmi['node'])
 
-        
-            if not src_node['type'] in SWITCH_TYPES:
-                pcapw.writepkt(packet)
-                wpkt = self.pkt_src_dest_rewrite(packet, sip, smisnode, dip, dmisnode)
-                pcapw_viz.writepkt(wpkt)
+            if src_node:        
+                if not src_node['type'] in SWITCH_TYPES:
+                    pcapw.writepkt(packet)
+                    wpkt = self.pkt_src_dest_rewrite(packet, sip, smisnode, dip, dmisnode)
+                    pcapw_viz.writepkt(wpkt)
 
     def close(self):
         if self.snifferd:

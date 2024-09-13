@@ -1,4 +1,9 @@
 """
+Moved into the repo to allow for higher bandwidth limits and 
+more control over the link parameters.
+
+###############################################################################
+
 link.py: interface and link abstractions for mininet
 
 It seems useful to bundle functionality for interfaces into a single
@@ -482,7 +487,7 @@ class Link( object ):
         "Construct a canonical interface name node-ethN for interface n."
         # Leave this as an instance method for now
         assert self
-        return node.name + '-eth' + repr( n )
+        return  node.name + '-e' + repr( n )
 
     @classmethod
     def makeIntfPair( cls, intfname1, intfname2, addr1=None, addr2=None,
