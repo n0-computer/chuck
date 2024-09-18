@@ -6,7 +6,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 1,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -17,13 +17,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 1,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -40,7 +40,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 1,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -51,13 +51,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 3,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -74,7 +74,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 1,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -85,13 +85,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 5,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -108,7 +108,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 1,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -119,13 +119,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 10,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -142,7 +142,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -153,13 +153,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 2,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -176,7 +176,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -187,13 +187,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 4,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -210,7 +210,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -221,13 +221,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 6,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
@@ -244,7 +244,7 @@
             "description": "",
             "nodes": [
                 {
-                    "name": "iroh_srv",
+                    "name": "i_srv",
                     "count": 2,
                     "cmd": "./bins/iroh start --add data/1G.bin",
                     "type": "public",
@@ -255,13 +255,13 @@
                     "param_parser": "iroh_ticket"
                 },
                 {
-                    "name": "iroh_get",
+                    "name": "i_get",
                     "count": 10,
                     "cmd": "time ./bins/iroh blobs get --start %s --out STDOUT > /dev/null",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
-                        "node": "iroh_srv"
+                        "node": "i_srv"
                     },
                     "process": "short",
                     "parser": "iroh_1gb",
