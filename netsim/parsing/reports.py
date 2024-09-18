@@ -84,6 +84,10 @@ def res_to_metro(res, commit, integration):
             )
             tag = f"{case}{suffix}"
 
+            val = metrics
+            if not integration:
+                val = metrics["throughput"]
+
             r["metrics"].append(
                 create_metric(commit, bucket, name, tag, metrics, now)
             )
