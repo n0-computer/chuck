@@ -22,7 +22,7 @@ You can also do this locally on a linux machine.  With a few modifications you d
 - Run `./scripts/project_deps` to configure the project structure and generate fixtures
 - Continue with in the iroh repo, build iroh and copy it into chuck/netsim/bins. I found building in release mode to be sufficient, not release-optimized like what CI does. `cargo build --release && cp ./target/release/iroh ../chuck/netsim/bins/`
     - Do not run kill, these are services managed by systemd
-    - Run [`main.py`](http://main.py) as root, using the python from your virtualenv:
+    - Run `main.py` as root, using the python from your virtualenv:
         - `./venv/bin/python main.py --integrations sims/mini`
 
 ## Run
