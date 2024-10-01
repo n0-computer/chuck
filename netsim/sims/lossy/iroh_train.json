@@ -68,6 +68,52 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "1_to_1_NAT_both",
+            "description": "",
+            "visualize": true,
+            "nodes": [
+                {
+                    "name": "1_r",
+                    "count": 1,
+                    "cmd": "./bins/iroh-relay --dev --config-path ./relay.cfg",
+                    "type": "public",
+                    "wait": 2,
+                    "connect": {
+                        "strategy": "none"
+                    }
+                },
+                {
+                    "name": "i_srv",
+                    "count": 1,
+                    "cmd": "./bins/iroh --config data/relay.config.toml start --add data/1MB.bin",
+                    "type": "nat",
+                    "wait": 10,
+                    "connect": {
+                        "strategy": "none"
+                    },
+                    "param_parser": "iroh_ticket"
+                },
+                {
+                    "name": "i_get",
+                    "count": 1,
+                    "cmd": "time ./bins/iroh --config data/relay.config.toml blobs get --start %s --out STDOUT > /dev/null",
+                    "type": "nat",
+                    "connect": {
+                        "strategy": "params",
+                        "node": "i_srv"
+                    },
+                    "process": "short",
+                    "parser": "iroh_1mb",
+                    "integration": "magic_iroh_client",
+                    "link": {
+                        "loss": 2,
+                        "latency": 5000,
+                        "bw": 1000
+                    }
+                }
+            ]
         }
     ]
 }
