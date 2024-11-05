@@ -258,7 +258,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--skip", help="Comma separated list of tests to skip")
     parser.add_argument(
-        "--debug", help="Enable full debug logging", action="store_true", default=False
+        "--debug", help="Enable full debug logging", action="store_true", default=True
     )
     parser.add_argument(
         "--visualize", help="Enable visualization", action="store_true", default=False
