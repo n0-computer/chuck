@@ -49,6 +49,13 @@ def parse_node_params(node, prefix, node_params, runner_id):
                             len("All-in-one ticket: ") :
                         ].strip()
                         break
+                    if node["param_parser"] == "iroh_ticket_v2" and line.startswith(
+                        "NodeTicket"
+                    ):
+                        node_params[node_name] = line[
+                            len("NodeTicket: ") :
+                        ].strip()
+                        break
     return node_params
 
 
