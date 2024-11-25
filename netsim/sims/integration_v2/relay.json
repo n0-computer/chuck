@@ -30,7 +30,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --ticket %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -71,7 +71,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --ticket %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -112,7 +112,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --ticket %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
@@ -153,7 +153,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --ticket %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
