@@ -19,18 +19,18 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/relay.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh-transfer provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/relay.config.toml blobs get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -60,18 +60,18 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/relay.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh-transfer provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/relay.config.toml blobs get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -101,18 +101,18 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/relay.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh-transfer provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/relay.config.toml blobs get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
@@ -142,18 +142,18 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh --config data/relay.config.toml start --add data/1MB.bin",
+                    "cmd": "./bins/iroh-transfer provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh --config data/relay.config.toml blobs get --start %s --out STDOUT > /dev/null",
+                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",

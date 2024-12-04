@@ -1,235 +1,235 @@
 {
-    "name": "iroh_many_files",
+    "name": "iroh_cust_10gb",
     "cases": [
         {
-            "name": "1_to_1_1k_10k",
+            "name": "1_to_1",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_1k_x_10k",
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_10mb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_3_1k_10k",
+            "name": "1_to_3",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_1k_x_10k",
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_10mb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_1_5k_10k",
+            "name": "1_to_5",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_5k_x_10k",
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
-                    "count": 1,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "count": 5,
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_50mb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_3_5k_10k",
+            "name": "1_to_10",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_5k_x_10k",
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
-                    "count": 3,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "count": 10,
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_50mb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_1_1k_1m",
+            "name": "2_to_2",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
-                    "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_1k_x_1m",
+                    "count": 2,
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
-                    "count": 1,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "count": 2,
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_3_1k_1m",
+            "name": "2_to_4",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
-                    "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_1k_x_1m",
+                    "count": 2,
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
-                    "count": 3,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "count": 4,
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_1_mix",
+            "name": "2_to_6",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
-                    "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_mix",
+                    "count": 2,
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
-                    "count": 1,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "count": 6,
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_4.01gb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         },
         {
-            "name": "1_to_3_mix",
+            "name": "2_to_10",
             "description": "",
             "nodes": [
                 {
                     "name": "i_srv",
-                    "count": 1,
-                    "cmd": "./bins/iroh start --add data/bulk_mix",
+                    "count": 2,
+                    "cmd": "./bins/iroh-transfer provide --size=10G",
                     "type": "public",
                     "wait": 10,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket"
+                    "param_parser": "iroh_ticket_v2"
                 },
                 {
                     "name": "i_get",
-                    "count": 3,
-                    "cmd": "time ./bins/iroh blobs get --start %s",
+                    "count": 10,
+                    "cmd": "time ./bins/iroh-transfer fetch %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_4.01gb"
+                    "parser": "iroh_cust_10gb"
                 }
             ]
         }

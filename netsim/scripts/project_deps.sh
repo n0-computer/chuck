@@ -20,6 +20,3 @@ cp ../../fixtures/direct_relay.cfg direct_relay.cfg
 cp ../../fixtures/relay.direct.config.toml relay.direct.config.toml
 cp ../../fixtures/1MB.bin 1MB.bin
 cp ../../fixtures/hello.bin hello.bin
-cp ../../fixtures/generate_files.sh generate_files.sh
-cp ../../fixtures/bulk_files_test_setup.sh bulk_files_test_setup.sh
-./bulk_files_test_setup.sh
