@@ -18,12 +18,9 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -32,11 +29,8 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -63,12 +57,9 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -77,11 +68,8 @@
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -108,12 +96,9 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -122,11 +107,8 @@
                 {
                     "name": "i_get",
                     "count": 5,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -153,12 +135,9 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -167,11 +146,8 @@
                 {
                     "name": "i_get",
                     "count": 10,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -198,12 +174,9 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -212,11 +185,8 @@
                 {
                     "name": "i_get",
                     "count": 2,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -243,12 +213,9 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -257,11 +224,8 @@
                 {
                     "name": "i_get",
                     "count": 4,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -288,12 +252,9 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -302,11 +263,8 @@
                 {
                     "name": "i_get",
                     "count": 6,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
@@ -333,12 +291,9 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "none"
                     },
@@ -347,11 +302,8 @@
                 {
                     "name": "i_get",
                     "count": 10,
-                    "cmd": "time ./bins/iroh-transfer fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" %s",
                     "type": "public",
-                    "env": {
-                        "DEV_RELAY_ONLY": "1"
-                    },
                     "connect": {
                         "strategy": "params",
                         "node": "i_srv"
