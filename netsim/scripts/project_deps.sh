@@ -20,5 +20,6 @@ cp ../../fixtures/direct_relay.cfg direct_relay.cfg
 cp ../../fixtures/relay.direct.config.toml relay.direct.config.toml
 cp ../../fixtures/1MB.bin 1MB.bin
 cp ../../fixtures/dns.test.cfg dns.test.cfg
+cp ../../fixtures/relay.cfg relay.cfg
 cp ../../fixtures/n_runs.sh ../bins/n_runs.sh
 cp ../../fixtures/hello.bin hello.bin
