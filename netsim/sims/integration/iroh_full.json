@@ -8,7 +8,7 @@
                 {
                     "name": "1_r",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path ./data/relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path ./data/relay.cfg",
                     "type": "public",
                     "wait": 2,
                     "connect": {
@@ -57,7 +57,7 @@
                 {
                     "name": "1_r",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path ./data/relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path ./data/relay.cfg",
                     "type": "public",
                     "wait": 2,
                     "connect": {
@@ -106,7 +106,7 @@
                 {
                     "name": "1_r",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path ./data/relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path ./data/relay.cfg",
                     "type": "public",
                     "wait": 2,
                     "connect": {
@@ -155,7 +155,7 @@
                 {
                     "name": "1_r",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path ./data/relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path ./data/relay.cfg",
                     "type": "public",
                     "wait": 2,
                     "connect": {

@@ -9,7 +9,7 @@
                 {
                     "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path data/direct_relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
                     "wait": 2,
                     "connect": {
@@ -50,7 +50,7 @@
                 {
                     "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path data/direct_relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -91,7 +91,7 @@
                 {
                     "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path data/direct_relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -132,7 +132,7 @@
                 {
                     "name": "iroh_relay",
                     "count": 1,
-                    "cmd": "./bins/iroh-relay --dev-quic --config-path data/direct_relay.cfg",
+                    "cmd": "./bins/iroh-relay --dev --config-path data/direct_relay.cfg",
                     "type": "public",
                     "wait": 10,
                     "connect": {
