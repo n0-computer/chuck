@@ -67,7 +67,7 @@ class StarTopo(Topo):
                         localIntf=localIntf,
                     )
                     switch = self.addSwitch(
-                        "natsw%s%dr%d" % (node["name"][:2], i, runner_id)
+                        "ns%s%dr%d" % (node["name"], i, runner_id)
                     )
                     # connect NAT to inet and local switches
                     self.addLink(nat, interconnect, intfName1=inetIntf)
