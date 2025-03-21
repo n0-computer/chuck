@@ -89,7 +89,7 @@ def parse_magic_iroh_client(lines):
         else "false"
     )
     s["conn_upgrade"] = (
-        "true" if any("found send address" in line for line in lines) else "false"
+        "true" if any(("conn_type::changed" in line and "Direct" in line) for line in lines) else "false"
     )
     return s
 
