@@ -55,7 +55,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
                         "Ticket with our home relay and direct addresses:"
                     ):
                         next_line = next(f)
-                        node_params[node_name] = next_line
+                        node_params[node_name] = next_line.strip()
                         break
     return node_params
 
