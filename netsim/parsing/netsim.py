@@ -1,4 +1,5 @@
 import json
+import re
 import os
 import humanfriendly
 
@@ -51,7 +52,12 @@ def parse_iroh_output(lines, size):
 
 def parse_humanized_output(line):
     """Convert human-readable size to megabits."""
-    bytes_size = humanfriendly.parse_size(line.split(", ")[-1], binary=True)
+    x = re.search("\((.*)\/s", line)
+    if x is None:
+        raise Exception("Line does not match bytesize pattern")
+
+    match = x.groups()[0]
+    bytes_size = humanfriendly.parse_size(match, binary=True)
     return bytes_size * 8 / 1e6
 
 
