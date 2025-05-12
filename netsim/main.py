@@ -52,11 +52,10 @@ def parse_node_params(node, prefix, node_params, runner_id):
                         ].strip()
                         break
                     if node["param_parser"] == "iroh_ticket_v2" and line.startswith(
-                        "NodeTicket"
+                        "Ticket with our home relay and direct addresses:"
                     ):
-                        node_params[node_name] = line[
-                            len("NodeTicket: ") :
-                        ].strip()
+                        next_line = next(f)
+                        node_params[node_name] = next_line.strip()
                         break
     return node_params
 
