@@ -35,7 +35,7 @@ def parse_iroh_output(lines, size):
     transfer_lines = [
         line
         for line in lines
-        if "Transferred" in line and "in" in line and "/s" in line
+        if ("Transferred" in line or "Received" in line) and "in" in line and "/s" in line
     ]
     if not transfer_lines:
         raise Exception("bad run")
@@ -84,7 +84,7 @@ def parse_magic_iroh_client(lines):
     s["transfer_success"] = (
         "true"
         if any(
-            "Transferred" in line and "in" in line and "/s" in line for line in lines
+            "Received" in line and "in" in line and "/s" in line for line in lines
         )
         else "false"
     )
