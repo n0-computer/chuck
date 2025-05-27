@@ -28,7 +28,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1G --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1G --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -39,7 +39,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -77,7 +77,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1G --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1G --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -88,7 +88,7 @@
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -126,7 +126,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1G --relay-only --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1G --relay-only --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -137,7 +137,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch --relay-only --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  --relay-only --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -175,7 +175,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1G --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1G --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -186,7 +186,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/n_runs.sh 3 ./bins/iroh-transfer --env dev fetch --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
+                    "cmd": "time ./bins/n_runs.sh 3 ./bins/iroh-transfer fetch --env dev  --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params",

@@ -19,7 +19,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -30,7 +30,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -60,7 +60,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
@@ -71,7 +71,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "connect": {
                         "strategy": "params",
@@ -101,7 +101,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -112,7 +112,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
@@ -142,7 +142,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --env dev provide --size=1M --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev  --size=1M --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "wait": 10,
                     "connect": {
@@ -153,7 +153,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer --env dev fetch %s --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "time ./bins/iroh-transfer fetch --env dev  %s --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "nat",
                     "connect": {
                         "strategy": "params",
