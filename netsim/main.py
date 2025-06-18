@@ -62,6 +62,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
 
 def terminate_processes(p_box):
     for p in p_box:
+        info("Terminating process:", p.pid, p.args)
         p.terminate()
 
 
