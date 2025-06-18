@@ -7,7 +7,7 @@ import sys
 import tempfile
 import time
 
-from mininet.log import setLogLevel, info
+from mininet.log import setLogLevel, info, error
 from mininet.net import Mininet
 
 from net.link import TCLink
@@ -62,7 +62,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
 
 def terminate_processes(p_box):
     for p in p_box:
-        info("Terminating process:", p.pid, p.args)
+        error("Terminating process:", p.pid, p.args)
         p.terminate()
 
 
