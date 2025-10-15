@@ -1,4 +1,2 @@
-[[relay_nodes]]
+[[relay_endpoints]]
 url = "http://10.0.0.1:3340"
-stun_only = false
-stun_port = 3478
