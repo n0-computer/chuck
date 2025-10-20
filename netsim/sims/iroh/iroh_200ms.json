@@ -14,7 +14,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -48,7 +48,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -82,7 +82,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -116,7 +116,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -150,7 +150,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -184,7 +184,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -218,7 +218,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",
@@ -252,7 +252,7 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_id"
                 },
                 {
                     "name": "i_get",

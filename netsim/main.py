@@ -57,6 +57,12 @@ def parse_node_params(node, prefix, node_params, runner_id):
                         next_line = next(f)
                         node_params[node_name] = next_line.strip()
                         break
+                    if node["param_parser"] == "iroh_endpoint_id" and line.startswith(
+                        "Endpoint id:"
+                    ):
+                        next_line = next(f)
+                        node_params[node_name] = next_line.strip()
+                        break
     return node_params
 
 
