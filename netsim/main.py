@@ -64,24 +64,46 @@ def parse_node_params(node, prefix, node_params, runner_id):
                         if idx + 1 < len(lines):
                             node_params[node_name] = lines[idx + 1].strip()
                         break
-                    if node["param_parser"] == "iroh_endpoint_with_addrs" and line.startswith(
-                        "Our endpoint id:"
-                    ):
-                        if idx + 1 >= len(lines):
-                            break
-                        endpoint_id = lines[idx + 1].strip()
-                        direct_addrs = []
-                        j = idx + 2
-                        if j < len(lines) and lines[j].startswith("Our direct addresses:"):
-                            j += 1
-                            while j < len(lines) and lines[j].startswith("\t"):
-                                direct_addrs.append(lines[j].strip())
+                    if node["param_parser"] == "iroh_endpoint_with_addrs":
+                        # Handle both "Our endpoint id:" (from bind_endpoint) and "Endpoint id:" (from provide)
+                        if line.startswith("Our endpoint id:"):
+                            if idx + 1 >= len(lines):
+                                break
+                            endpoint_id = lines[idx + 1].strip()
+                            direct_addrs = []
+                            j = idx + 2
+                            if j < len(lines) and lines[j].startswith("Our direct addresses:"):
                                 j += 1
-                        node_params[node_name] = {
-                            "endpoint_id": endpoint_id,
-                            "direct_addrs": direct_addrs
-                        }
-                        break
+                                while j < len(lines) and lines[j].startswith("\t"):
+                                    direct_addrs.append(lines[j].strip())
+                                    j += 1
+                            node_params[node_name] = {
+                                "endpoint_id": endpoint_id,
+                                "direct_addrs": direct_addrs
+                            }
+                            break
+                        elif line.startswith("Endpoint id:") and node_name not in node_params:
+                            # Fallback for simple "Endpoint id:" output (no "Our")
+                            # Format: "Endpoint id:\n<id>\n"
+                            if idx + 1 < len(lines):
+                                endpoint_id = lines[idx + 1].strip()
+                                # Try to find direct addresses from debug logs
+                                direct_addrs = []
+                                # Look backwards and forwards for direct_addrs debug line
+                                for search_idx in range(max(0, idx - 20), min(len(lines), idx + 20)):
+                                    search_line = lines[search_idx]
+                                    if "direct_addrs:" in search_line and "DirectAddr" in search_line:
+                                        # Extract address from: addrs={DirectAddr { addr: 10.0.0.2:47103, typ: Local }}
+                                        import re
+                                        match = re.search(r'addr:\s*([0-9.]+:\d+)', search_line)
+                                        if match:
+                                            direct_addrs.append(match.group(1))
+                                            break
+                                node_params[node_name] = {
+                                    "endpoint_id": endpoint_id,
+                                    "direct_addrs": direct_addrs
+                                }
+                                break
     return node_params
 
 
@@ -145,7 +167,15 @@ def handle_connection_strategy(node, node_counts, i, runner_id, node_ips, node_p
             if isinstance(param_data, dict):
                 endpoint_id = param_data["endpoint_id"]
                 direct_addrs = param_data.get("direct_addrs", [])
-                first_addr = direct_addrs[0] if direct_addrs else ""
+                # Use parsed direct address if available, otherwise construct from node IP
+                if direct_addrs:
+                    first_addr = direct_addrs[0]
+                else:
+                    # Fallback: use the node's IP from mininet (need to find the port)
+                    # For now, return just endpoint ID and let discovery work
+                    ip = node_ips[connect_to]
+                    # Default QUIC port for iroh-transfer
+                    first_addr = f"{ip}:11204"
                 return cmd % (first_addr, endpoint_id)
             else:
                 return cmd % param_data
