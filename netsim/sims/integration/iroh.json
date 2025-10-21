@@ -15,15 +15,15 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_with_addrs"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
-                        "strategy": "params",
+                        "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
@@ -45,15 +45,15 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_with_addrs"
                 },
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh-transfer fetch %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
-                        "strategy": "params",
+                        "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
@@ -74,15 +74,15 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_with_addrs"
                 },
                 {
                     "name": "i_get",
                     "count": 2,
-                    "cmd": "time ./bins/iroh-transfer fetch %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
-                        "strategy": "params",
+                        "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
@@ -103,15 +103,15 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_ticket_v2"
+                    "param_parser": "iroh_endpoint_with_addrs"
                 },
                 {
                     "name": "i_get",
                     "count": 4,
-                    "cmd": "time ./bins/iroh-transfer fetch %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
-                        "strategy": "params",
+                        "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
