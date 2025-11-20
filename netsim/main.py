@@ -85,12 +85,12 @@ def parse_node_params(node, prefix, node_params, runner_id):
     # Validate that all expected parameters were found
     missing_params = [n for n in expected_nodes if n not in parsed_params]
     if missing_params:
-        error("\n" + "=" * 80)
-        error(f"ERROR: Failed to parse required parameters using '{parser_type}'")
-        error(f"Missing parameters for nodes: {', '.join(missing_params)}")
-        error(f"Check the log files to ensure nodes are outputting expected format:")
+        error("\n" + "=" * 80 + "\n")
+        error(f"ERROR: Failed to parse required parameters using '{parser_type}'\n")
+        error(f"Missing parameters for nodes: {', '.join(missing_params)}\n")
+        error(f"Check the log files to ensure nodes are outputting expected format:\n")
         for node_name in missing_params:
-            error(f"  - logs/{prefix}__{node_name}.txt")
+            error(f"  - logs/{prefix}__{node_name}.txt\n")
         error("=" * 80 + "\n")
 
     return parsed_params
@@ -99,7 +99,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
 def terminate_processes(p_box):
     """Gracefully terminate processes, then forcefully kill if needed."""
     for p, cmd in p_box:
-        error("Terminating process:", p.pid, cmd[:100])
+        error(f"Terminating process: {p.pid} {cmd[:100]}\n")
         p.terminate()
 
     # Wait for processes to terminate gracefully
@@ -108,7 +108,7 @@ def terminate_processes(p_box):
     # Force kill any remaining processes
     for p, cmd in p_box:
         if p.poll() is None:
-            error("Force killing hung process:", p.pid, cmd[:100])
+            error(f"Force killing hung process: {p.pid} {cmd[:100]}\n")
             p.kill()
 
 
@@ -130,12 +130,12 @@ def monitor_short_processes(p_short_box, prefix):
         result = p.poll()
         if result is None:
             # Process timed out
-            error(f"Process timed out after {elapsed_time:.1f}s for node {node_name}")
-            error(f"Command was: {cmd}")
+            error(f"\nProcess timed out after {elapsed_time:.1f}s for node {node_name}\n")
+            error(f"Command was: {cmd}\n")
             p.terminate()
             time.sleep(1)
             if p.poll() is None:
-                error(f"Force killing timed out process for node {node_name}")
+                error(f"Force killing timed out process for node {node_name}\n")
                 p.kill()
             process_errors.append(
                 f"TIMEOUT: Process '{node_name}' timed out after {elapsed_time:.1f}s. "
@@ -143,10 +143,10 @@ def monitor_short_processes(p_short_box, prefix):
             )
         elif result != 0:
             # Process failed
-            error(f"Process failed with exit code {result} for node {node_name}")
-            error(f"Command was: {cmd}")
+            error(f"\nProcess failed with exit code {result} for node {node_name}\n")
+            error(f"Command was: {cmd}\n")
             log_file = f"logs/{prefix}__{node_name}.txt"
-            error(f"Check log file for details: {log_file}")
+            error(f"Check log file for details: {log_file}\n")
             process_errors.append(
                 f"FAILED: Process '{node_name}' exited with code {result}. "
                 f"Command: {cmd[:200]}. "
@@ -313,16 +313,16 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
 
     process_errors = monitor_short_processes(p_short_box, prefix)
     if process_errors:
-        error("\n" + "=" * 80)
-        error("PROCESS ERRORS DETECTED:")
-        error("=" * 80)
+        error("\n" + "=" * 80 + "\n")
+        error("PROCESS ERRORS DETECTED:\n")
+        error("=" * 80 + "\n")
         for err_msg in process_errors:
-            error(err_msg)
+            error(err_msg + "\n")
         error("=" * 80 + "\n")
         if args.integration:
             eject(nodes, prefix, runner_id, temp_dirs)
         else:
-            error("WARNING: Continuing despite errors (not in integration mode)")
+            error("WARNING: Continuing despite errors (not in integration mode)\n")
 
     terminate_processes(p_box)
     cleanup_tmp_dirs(temp_dirs)
