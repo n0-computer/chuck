@@ -36,95 +36,154 @@ def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False):
 
 
 def parse_node_params(node, prefix, node_params, runner_id):
-    node_params = {}
+    """Parse parameters from node logs with validation."""
+    parsed_params = {}
     wait_time = node.get("wait", 1)
+    parser_type = node["param_parser"]
+    expected_nodes = []
+
+    # Wait for parameters to be available
     for _ in range(wait_time):
         time.sleep(1)
         for i in range(int(node["count"])):
             node_name = f'{node["name"]}_{i}_r{runner_id}'
-            with open(f"logs/{prefix}__{node_name}.txt", "r") as f:
-                lines = f.readlines()
-                for idx, line in enumerate(lines):
-                    if node["param_parser"] == "iroh_ticket" and line.startswith(
-                        "All-in-one ticket"
-                    ):
-                        node_params[node_name] = line[
-                            len("All-in-one ticket: ") :
-                        ].strip()
-                        break
-                    if node["param_parser"] == "iroh_ticket_v2" and line.startswith(
-                        "Ticket with our home relay and direct addresses:"
-                    ):
-                        if idx + 1 < len(lines):
-                            node_params[node_name] = lines[idx + 1].strip()
-                        break
-                    if node["param_parser"] == "iroh_endpoint_id" and line.startswith(
-                        "Endpoint id:"
-                    ):
-                        if idx + 1 < len(lines):
-                            node_params[node_name] = lines[idx + 1].strip()
-                        break
-                    if node["param_parser"] == "iroh_endpoint_with_addrs":
-                        # Look for "Endpoint id:" followed by direct addresses
-                        if line.startswith("Endpoint id:"):
+            expected_nodes.append(node_name)
+            log_file = f"logs/{prefix}__{node_name}.txt"
+
+            if not os.path.exists(log_file):
+                error(f"Warning: Log file not found: {log_file}")
+                continue
+
+            try:
+                with open(log_file, "r") as f:
+                    lines = f.readlines()
+                    for idx, line in enumerate(lines):
+                        # Parser 1: Simple ticket (used in lossy/standard sims)
+                        if parser_type == "iroh_ticket" and line.startswith("All-in-one ticket"):
+                            parsed_params[node_name] = line[len("All-in-one ticket: "):].strip()
+                            break
+                        # Parser 2: Endpoint with addresses (used in iroh/integration sims)
+                        if parser_type == "iroh_endpoint_with_addrs" and line.startswith("Endpoint id:"):
                             if idx + 1 >= len(lines):
                                 break
                             endpoint_id = lines[idx + 1].strip()
                             direct_addrs = []
-                            # Look for "Direct addresses:" after the endpoint ID
                             j = idx + 2
                             if j < len(lines) and lines[j].startswith("Direct addresses:"):
                                 j += 1
                                 while j < len(lines) and lines[j].startswith("\t"):
                                     direct_addrs.append(lines[j].strip())
                                     j += 1
-                            node_params[node_name] = {
+                            parsed_params[node_name] = {
                                 "endpoint_id": endpoint_id,
                                 "direct_addrs": direct_addrs
                             }
                             break
-    return node_params
+            except Exception as e:
+                error(f"Error parsing parameters from {log_file}: {e}")
+
+    # Validate that all expected parameters were found
+    missing_params = [n for n in expected_nodes if n not in parsed_params]
+    if missing_params:
+        error("\n" + "=" * 80)
+        error(f"ERROR: Failed to parse required parameters using '{parser_type}'")
+        error(f"Missing parameters for nodes: {', '.join(missing_params)}")
+        error(f"Check the log files to ensure nodes are outputting expected format:")
+        for node_name in missing_params:
+            error(f"  - logs/{prefix}__{node_name}.txt")
+        error("=" * 80 + "\n")
+
+    return parsed_params
 
 
 def terminate_processes(p_box):
-    for p in p_box:
-        error("Terminating process:", p.pid, p.args)
+    """Gracefully terminate processes, then forcefully kill if needed."""
+    for p, cmd in p_box:
+        error("Terminating process:", p.pid, cmd[:100])
         p.terminate()
+
+    # Wait for processes to terminate gracefully
+    time.sleep(2)
+
+    # Force kill any remaining processes
+    for p, cmd in p_box:
+        if p.poll() is None:
+            error("Force killing hung process:", p.pid, cmd[:100])
+            p.kill()
 
 
 def monitor_short_processes(p_short_box, prefix):
+    """Monitor short-lived processes with timeout and detailed error reporting."""
     process_errors = []
+    start_time = time.time()
+
+    # Monitor processes until all complete or timeout
     for _ in range(TIMEOUT):
         time.sleep(1)
-        if not any(p.poll() is None for (_, p) in p_short_box):
+        if not any(p.poll() is None for (_, p, _) in p_short_box):
             break
-    for node_name, p in p_short_box:
+
+    elapsed_time = time.time() - start_time
+
+    # Check results and handle timeouts
+    for node_name, p, cmd in p_short_box:
         result = p.poll()
         if result is None:
+            # Process timed out
+            error(f"Process timed out after {elapsed_time:.1f}s for node {node_name}")
+            error(f"Command was: {cmd}")
             p.terminate()
-            process_errors.append(f"Process timeout: {prefix} for node {node_name}")
-        elif result != 0:
+            time.sleep(1)
+            if p.poll() is None:
+                error(f"Force killing timed out process for node {node_name}")
+                p.kill()
             process_errors.append(
-                f"Process failed: {prefix} with exit code {result} for node {node_name}"
+                f"TIMEOUT: Process '{node_name}' timed out after {elapsed_time:.1f}s. "
+                f"Command: {cmd[:200]}"
             )
+        elif result != 0:
+            # Process failed
+            error(f"Process failed with exit code {result} for node {node_name}")
+            error(f"Command was: {cmd}")
+            log_file = f"logs/{prefix}__{node_name}.txt"
+            error(f"Check log file for details: {log_file}")
+            process_errors.append(
+                f"FAILED: Process '{node_name}' exited with code {result}. "
+                f"Command: {cmd[:200]}. "
+                f"Check log: {log_file}"
+            )
+
     return process_errors
 
 
 def handle_connection_strategy(node, node_counts, i, runner_id, node_ips, node_params):
+    """Build command with connection strategy, validating all required parameters."""
     cmd = node["cmd"]
     if "param" in node:
         if node["param"] == "id":
             cmd = cmd % i
+
+    if "connect" not in node:
+        return cmd
+
     strategy = node["connect"]["strategy"]
     if strategy in ("plain", "plain_with_id", "params", "params_with_direct_addr", "params_with_parsed_addrs"):
         node_name = node["connect"]["node"]
         if not (node_name in node_counts):
-            raise ValueError(f"Node not found for: {node_name}")
+            raise ValueError(
+                f"Connection target node '{node_name}' not found in simulation. "
+                f"Available nodes: {', '.join(node_counts.keys())}"
+            )
         cnt = node_counts[node_name]
         id = i % cnt
         connect_to = f"{node_name}_{id}_r{runner_id}"
+
         if connect_to not in node_ips:
-            raise ValueError(f"Connecting node not found for: {connect_to}")
+            raise ValueError(
+                f"Cannot connect to node '{connect_to}': node IP not found. "
+                f"Node may have failed to start."
+            )
+
         if strategy == "plain":
             ip = node_ips[connect_to]
             return cmd % ip
@@ -132,16 +191,31 @@ def handle_connection_strategy(node, node_counts, i, runner_id, node_ips, node_p
             ip = node_ips[connect_to]
             return cmd % (ip, id)
         if strategy == "params":
+            if connect_to not in node_params:
+                raise ValueError(
+                    f"Cannot connect to node '{connect_to}': required parameters not available. "
+                    f"Node may have failed to output expected parameters."
+                )
             param = node_params[connect_to]
             # Handle both string (old parsers) and dict (new iroh_endpoint_with_addrs parser)
             if isinstance(param, dict):
                 param = param["endpoint_id"]
             return cmd % param
         if strategy == "params_with_direct_addr":
+            if connect_to not in node_params:
+                raise ValueError(
+                    f"Cannot connect to node '{connect_to}': required parameters not available. "
+                    f"Node may have failed to output expected parameters."
+                )
             param = node_params[connect_to]
             ip = node_ips[connect_to]
             return cmd % (ip, param)
         if strategy == "params_with_parsed_addrs":
+            if connect_to not in node_params:
+                raise ValueError(
+                    f"Cannot connect to node '{connect_to}': required parameters not available. "
+                    f"Node may have failed to output expected parameters."
+                )
             param_data = node_params[connect_to]
             if isinstance(param_data, dict):
                 endpoint_id = param_data["endpoint_id"]
@@ -226,9 +300,9 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
 
             p = execute_node_command(cmd, prefix, node_name, n, env_vars)
             if "process" in node and node["process"] == "short":
-                p_short_box.append((node_name, p))
+                p_short_box.append((node_name, p, cmd))
             else:
-                p_box.append(p)
+                p_box.append((p, cmd))
 
         if "param_parser" in node:
             node_params.update(parse_node_params(node, prefix, node_params, runner_id))
@@ -238,10 +312,17 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     # CLI(net)
 
     process_errors = monitor_short_processes(p_short_box, prefix)
-    if process_errors and args.integration:
-        for error in process_errors:
-            print(error)
-        eject(nodes, prefix, runner_id, temp_dirs)
+    if process_errors:
+        error("\n" + "=" * 80)
+        error("PROCESS ERRORS DETECTED:")
+        error("=" * 80)
+        for err_msg in process_errors:
+            error(err_msg)
+        error("=" * 80 + "\n")
+        if args.integration:
+            eject(nodes, prefix, runner_id, temp_dirs)
+        else:
+            error("WARNING: Continuing despite errors (not in integration mode)")
 
     terminate_processes(p_box)
     cleanup_tmp_dirs(temp_dirs)

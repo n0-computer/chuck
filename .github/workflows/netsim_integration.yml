@@ -45,20 +45,22 @@ jobs:
       run: |
         git clone https://github.com/n0-computer/iroh.git
         cd iroh
-        cargo build --release --all-features
+        cargo build --release --all-features -p iroh-relay -p iroh-dns-server
+        cargo build --release --all-features -p iroh --examples
 
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
-        cp iroh/target/release/iroh netsim/bins/iroh
         cp iroh/target/release/iroh-relay netsim/bins/iroh-relay
+        cp iroh/target/release/iroh-dns-server netsim/bins/iroh-dns-server
+        cp iroh/target/release/examples/transfer netsim/bins/iroh-transfer
 
     - name: Run tests
       run: |
         cd netsim
-        sudo kill -9 $(pgrep ovs)
+        sudo kill -9 $(pgrep ovs) || true
         sudo mn --clean
-        sudo python3 main.py --integration sims/iroh/iroh_many_files.json
+        sudo python3 main.py --integration sims/integration
 
     - name: Setup Environment (PR)  
       if: ${{ github.event_name == 'pull_request' }}  
