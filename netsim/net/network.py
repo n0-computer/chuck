@@ -143,24 +143,3 @@ class LinuxRouter(Node):
         self.cmd("sysctl net.ipv4.ip_forward=0")
         self.cmd("smcroutectl -I smcroute-" + self.name + " kill")
         super(LinuxRouter, self).terminate()
-
-
-def portForward(net, id, dport):
-    nat = net.get("nat%d" % id)
-    h = net.get("h%d" % id)
-    destIP = h.IP()
-    dest = str(destIP) + ":" + str(dport)
-    fport = dport
-    intf = "nat%d-eth0" % id
-    nat.cmd(
-        "iptables -A PREROUTING",
-        "-t nat -i",
-        intf,
-        "-p tcp --dport",
-        fport,
-        "-j DNAT --to",
-        dest,
-    )
-    nat.cmd(
-        "iptables -A FORWARD", "-p tcp", "-d", destIP, "--dport", dport, "-j ACCEPT"
-    )

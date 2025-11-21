@@ -51,12 +51,15 @@ jobs:
       run: |
         git clone https://github.com/n0-computer/iroh.git
         cd iroh
-        cargo build --release
+        cargo build --release --all-features -p iroh-relay -p iroh-dns-server
+        cargo build --release --all-features -p iroh --examples
 
     - name: Copy binaries to right location
       run: |
         cp target/release/chuck netsim/bins/chuck
-        cp iroh/target/release/iroh netsim/bins/iroh
+        cp iroh/target/release/iroh-relay netsim/bins/iroh-relay
+        cp iroh/target/release/iroh-dns-server netsim/bins/iroh-dns-server
+        cp iroh/target/release/examples/transfer netsim/bins/iroh-transfer
 
     - name: Detect comment commands
       if: github.event_name == 'issue_comment'
@@ -76,7 +79,7 @@ jobs:
     - name: Run tests
       run: |
         cd netsim
-        sudo kill -9 $(pgrep ovs)
+        sudo kill -9 $(pgrep ovs) || true
         sudo mn --clean
         c='${{ steps.detect_comment_config.outputs.NETSIM_CONFIG }}'
         if [ -z "${c}" ];
@@ -146,6 +149,7 @@ jobs:
         cd netsim
         python3 reports_csv.py --prom --commit ${{ env.LAST_COMMIT_SHA }} > report_prom.txt
         python3 reports_csv.py --metro --commit ${{ env.LAST_COMMIT_SHA }} > report_metro.txt
+        python3 reports_csv.py --metro --integration --commit ${{ env.LAST_COMMIT_SHA }} > report_metro_integration.txt
 
     - name: Dump reports
       if: github.event_name != 'issue_comment'
@@ -153,14 +157,14 @@ jobs:
         export AWS_ACCESS_KEY_ID=${{secrets.S3_ACCESS_KEY_ID}}
         export AWS_SECRET_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}}
         export AWS_DEFAULT_REGION=us-west-2
-        
+
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip -q awscliv2.zip
         sudo ./aws/install --update
 
         cd netsim
 
-        tar cvzf report.tar.gz report_prom.txt report.txt report_metro.txt logs/ report/
+        tar cvzf report.tar.gz report_prom.txt report.txt report_metro.txt report_metro_integration.txt logs/ report/
         aws s3 cp ./report.tar.gz s3://${{secrets.S3_REPORT_BUCKET}}/${{ env.LAST_COMMIT_SHA }}.tar.gz --no-progress
 
         instance=$(echo "${{ env.HEAD_REF }}" | tr -c '[:alnum:]' '_')
@@ -172,7 +176,13 @@ jobs:
       # if: github.ref_name=='main'
       run: |
         cd netsim
+        echo "=== Performance Metrics ==="
         d=$(cat report_metro.txt)
         metro_data=$(printf "%s\n " "$d")
-        echo "$metro_data" 
+        echo "$metro_data"
+        echo ""
+        echo "=== Integration Metrics ==="
+        d=$(cat report_metro_integration.txt)
+        metro_data=$(printf "%s\n " "$d")
+        echo "$metro_data"
         # curl -X POST -H  "Content-Type: application/json" -H "Authorization: Bearer ${{secrets.METRO_TOKEN}}" --data "$metro_data" ${{secrets.METRO_ENDPOINT}}

@@ -33,13 +33,3 @@ def eject(nodes, prefix, runner_id, temp_dirs):
     logs_on_error(nodes, prefix, runner_id)
     cleanup_tmp_dirs(temp_dirs)
     raise Exception("Netsim run failed: %s" % prefix)
-
-
-def print_route_table(net, runner_id):
-    router_name = "r0_" + str(runner_id)
-    print("*** Routing Table on Router:\n")
-    print(net[router_name].cmd("route"))
-    print("*** r0 smcroute:\n")
-    print(net[router_name].cmd("smcroutectl -I smcroute-" + router_name + " show"))
-    print("*** Multicast ping:\n")
-    print(net["zbox1-r" + str(runner_id)].cmd("ping -c 3 239.0.0.1"))
