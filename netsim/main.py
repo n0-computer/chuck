@@ -20,16 +20,18 @@ from util import cleanup_tmp_dirs, eject
 TIMEOUT = 60 * 5
 
 
-def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False):
+def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False, json_logs=False):
     env_vars = os.environ.copy()
     env_vars["RUST_LOG_STYLE"] = "never"
     env_vars["SSLKEYLOGFILE"] = f"./logs/keylog_{prefix}_{node_name}.txt"
     env_vars["IROH_DATA_DIR"] = f"{temp_dir}"
+
     if debug:
         env_vars["RUST_LOG"] = "debug"
     if not "RUST_LOG" in env_vars:
         env_vars["RUST_LOG"] = "warn"
     env_vars["RUST_LOG"] += ",iroh::_events::conn_type=trace"
+
     for key, value in node_env.items():
         env_vars[key] = value
     return env_vars
@@ -334,6 +336,8 @@ def run(case, runner_id, name, skiplist, args):
     if prefix in skiplist:
         print("Skipping:", prefix)
         return
+    if args.filter and case["name"] != args.filter:
+        return
     nodes = case["nodes"]
     viz = False
     if "visualize" in case:
@@ -399,6 +403,7 @@ if __name__ == "__main__":
         default=False,
     )
     parser.add_argument("--skip", help="Comma separated list of tests to skip")
+    parser.add_argument("--filter", help="Filter to specific test case name")
     parser.add_argument(
         "--debug", help="Enable full debug logging", action="store_true", default=True
     )
