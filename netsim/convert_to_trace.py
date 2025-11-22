@@ -12,24 +12,33 @@ import uuid
 
 def extract_node_id_from_log(log_file):
     with open(log_file) as f:
-        for line in f:
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            # Check if line contains the NodeId directly
             match = re.search(r'(?:Node ID|Endpoint id):\s*([a-z0-9]{52})', line, re.IGNORECASE)
             if match:
                 return match.group(1)
+            # Check if line has "endpoint id:" and next line has the NodeId
+            if re.search(r'(?:endpoint id|node id):\s*$', line, re.IGNORECASE):
+                if i + 1 < len(lines):
+                    next_line = lines[i + 1].strip()
+                    if re.match(r'^[a-z0-9]{52,}$', next_line, re.IGNORECASE):
+                        return next_line[:64] if len(next_line) > 64 else next_line
     return None
 
 def convert_logs_to_jsonnd(prefix, output_path):
     log_files = list(Path("logs").glob(f"{prefix}__*.txt"))
+    total_lines = 0
 
     with open(output_path, 'w') as outfile:
         for log_file in log_files:
             node_name = log_file.stem.replace(f"{prefix}__", "")
             node_id = extract_node_id_from_log(log_file)
 
-            with open(log_file, 'r') as infile:
+            with open(log_file) as infile:
                 for line in infile:
                     line = line.strip()
-                    if not line or line.startswith('cmd:') or line.startswith('METRICS:'):
+                    if not line or line.startswith('cmd:') or line.startswith('METRICS:') or line.startswith('PROGRESS:'):
                         continue
 
                     log_entry = {
@@ -44,6 +53,9 @@ def convert_logs_to_jsonnd(prefix, output_path):
                         log_entry["fields"]["node_id"] = node_id
 
                     outfile.write(json.dumps(log_entry) + '\n')
+                    total_lines += 1
+
+    return total_lines
 
 def create_summary_json(prefix, trace_id, session_id, nodes_info):
     return {
@@ -95,9 +107,11 @@ def convert_to_trace(prefix, output_dir):
     session_id = str(uuid.uuid4())
 
     nodes_info = extract_nodes_info(prefix)
+    print(f"Converting {prefix}: found {len(nodes_info)} nodes")
 
     # Logs
-    convert_logs_to_jsonnd(prefix, output_path / "logs.jsonnd")
+    log_count = convert_logs_to_jsonnd(prefix, output_path / "logs.jsonnd")
+    print(f"  Logs: {log_count} lines")
 
     # Summary
     summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info)
