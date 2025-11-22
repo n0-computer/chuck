@@ -80,8 +80,10 @@ def insert_metrics(conn, trace_id, metrics_list):
             metric_key = (trace_id, metric_name, node_id_hex)
             if metric_key not in metrics_created:
                 metric_id = uuid.uuid5(uuid.NAMESPACE_DNS, f"{trace_id}:{metric_name}:{node_id_hex}").bytes
+                # Prefix metric name with group for UI compatibility
+                full_name = f"transfer_{metric_name}"
                 cursor.execute("INSERT OR IGNORE INTO metrics (id, name, group_name, project_id, node_id, description) VALUES (?, ?, ?, ?, ?, ?)",
-                    (metric_id, metric_name, "transfer", trace_id_bytes, node_id_bytes, metric_name))
+                    (metric_id, full_name, "transfer", trace_id_bytes, node_id_bytes, full_name))
                 metrics_created.add(metric_key)
             else:
                 metric_id = uuid.uuid5(uuid.NAMESPACE_DNS, f"{trace_id}:{metric_name}:{node_id_hex}").bytes
