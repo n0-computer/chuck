@@ -80,7 +80,7 @@ def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
 
     return total_lines
 
-def create_summary_json(prefix, trace_id, session_id, nodes_info):
+def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time):
     return {
         "session_id": session_id,
         "trace_id": trace_id,
@@ -96,10 +96,10 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info):
             "events": 0
         },
         "nodes": nodes_info,
-        "start_time": datetime.utcnow().isoformat() + "Z",
+        "start_time": start_time,
         "checkpoints": [],
         "outcome": {
-            "end_time": datetime.utcnow().isoformat() + "Z",
+            "end_time": end_time,
             "result": {"Ok": None}
         }
     }
@@ -122,6 +122,29 @@ def extract_nodes_info(prefix):
             nodes.append({"idx": idx, "label": node_name, "node_id": node_id, "name": node_name})
     return nodes
 
+def get_time_range_from_logs(prefix):
+    """Extract min/max timestamps from log files"""
+    log_files = list(Path("logs").glob(f"{prefix}__*.txt"))
+    min_time = None
+    max_time = None
+
+    for log_file in log_files:
+        with open(log_file) as f:
+            for line in f:
+                ts = extract_timestamp_from_log_line(line)
+                if ts:
+                    if min_time is None or ts < min_time:
+                        min_time = ts
+                    if max_time is None or ts > max_time:
+                        max_time = ts
+
+    if min_time and max_time:
+        return (min_time, max_time)
+
+    # Fallback to now
+    now = datetime.utcnow().isoformat() + "Z"
+    return (now, now)
+
 def convert_to_trace(prefix, output_dir):
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -132,12 +155,15 @@ def convert_to_trace(prefix, output_dir):
     nodes_info = extract_nodes_info(prefix)
     print(f"Converting {prefix}: found {len(nodes_info)} nodes")
 
+    # Get time range from actual log timestamps
+    start_time, end_time = get_time_range_from_logs(prefix)
+
     # Logs
     log_count = convert_logs_to_jsonnd(prefix, output_path / "logs.jsonnd", nodes_info)
     print(f"  Logs: {log_count} lines")
 
     # Summary
-    summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info)
+    summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time)
     with open(output_path / "summary.json", 'w') as f:
         json.dump(summary_data, f, indent=2)
 
