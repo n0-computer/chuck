@@ -65,7 +65,7 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info):
         "checkpoints": [],
         "outcome": {
             "end_time": datetime.utcnow().isoformat() + "Z",
-            "result": {"Ok": []}
+            "result": {"Ok": None}
         }
     }
 
