@@ -9,7 +9,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1M",
+                    "cmd": "./bins/iroh-transfer provide --json-logs --metrics-output /tmp/metrics-$$.json --size=1M",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -20,7 +20,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --metrics-output /tmp/metrics-$$.json --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -39,7 +39,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1M",
+                    "cmd": "./bins/iroh-transfer provide --json-logs --metrics-output /tmp/metrics-$$.json --size=1M",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -50,7 +50,7 @@
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --metrics-output /tmp/metrics-$$.json --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -68,7 +68,7 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1M",
+                    "cmd": "./bins/iroh-transfer provide --json-logs --metrics-output /tmp/metrics-$$.json --size=1M",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -79,7 +79,7 @@
                 {
                     "name": "i_get",
                     "count": 2,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --metrics-output /tmp/metrics-$$.json --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -97,7 +97,7 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1M",
+                    "cmd": "./bins/iroh-transfer provide --json-logs --metrics-output /tmp/metrics-$$.json --size=1M",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -108,7 +108,7 @@
                 {
                     "name": "i_get",
                     "count": 4,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --metrics-output /tmp/metrics-$$.json --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
