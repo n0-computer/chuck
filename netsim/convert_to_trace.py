@@ -26,14 +26,18 @@ def extract_node_id_from_log(log_file):
                         return next_line[:64] if len(next_line) > 64 else next_line
     return None
 
-def convert_logs_to_jsonnd(prefix, output_path):
+def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
     log_files = list(Path("logs").glob(f"{prefix}__*.txt"))
     total_lines = 0
+
+    # Create node name to idx mapping
+    node_name_to_idx = {node["name"]: node["idx"] for node in nodes_info}
 
     with open(output_path, 'w') as outfile:
         for log_file in log_files:
             node_name = log_file.stem.replace(f"{prefix}__", "")
             node_id = extract_node_id_from_log(log_file)
+            node_idx = node_name_to_idx.get(node_name)
 
             with open(log_file) as infile:
                 for line in infile:
@@ -41,12 +45,16 @@ def convert_logs_to_jsonnd(prefix, output_path):
                     if not line or line.startswith('cmd:') or line.startswith('METRICS:') or line.startswith('PROGRESS:'):
                         continue
 
+                    span = {"name": "sim-node", "node_name": node_name}
+                    if node_idx is not None:
+                        span["idx"] = node_idx
+
                     log_entry = {
                         "timestamp": datetime.utcnow().isoformat() + "Z",
                         "level": "INFO",
                         "target": "netsim",
                         "fields": {"message": line, "node_name": node_name},
-                        "spans": [{"name": "sim-node", "node_name": node_name}]
+                        "spans": [span]
                     }
 
                     if node_id:
@@ -96,7 +104,7 @@ def extract_nodes_info(prefix):
         node_name = log_file.stem.replace(f"{prefix}__", "")
         node_id = extract_node_id_from_log(log_file)
         if node_id:
-            nodes.append({"idx": idx, "name": node_name, "node_id": node_id})
+            nodes.append({"idx": idx, "label": node_name, "node_id": node_id, "name": node_name})
     return nodes
 
 def convert_to_trace(prefix, output_dir):
@@ -110,7 +118,7 @@ def convert_to_trace(prefix, output_dir):
     print(f"Converting {prefix}: found {len(nodes_info)} nodes")
 
     # Logs
-    log_count = convert_logs_to_jsonnd(prefix, output_path / "logs.jsonnd")
+    log_count = convert_logs_to_jsonnd(prefix, output_path / "logs.jsonnd", nodes_info)
     print(f"  Logs: {log_count} lines")
 
     # Summary
@@ -130,7 +138,7 @@ def convert_to_trace(prefix, output_dir):
     # Events
     events_data = {
         "events": [],
-        "nodes": [{"idx": n["idx"], "label": n["name"], "node_id": n["node_id"]} for n in nodes_info]
+        "nodes": [{"idx": n["idx"], "label": n["label"], "node_idx": n["idx"]} for n in nodes_info]
     }
     with open(output_path / "events.json", 'w') as f:
         json.dump(events_data, f, indent=2)
