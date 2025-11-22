@@ -14,16 +14,26 @@ def extract_node_id_from_log(log_file):
     with open(log_file) as f:
         lines = f.readlines()
         for i, line in enumerate(lines):
-            # Check if line contains the NodeId directly
             match = re.search(r'(?:Node ID|Endpoint id):\s*([a-z0-9]{52})', line, re.IGNORECASE)
             if match:
                 return match.group(1)
-            # Check if line has "endpoint id:" and next line has the NodeId
             if re.search(r'(?:endpoint id|node id):\s*$', line, re.IGNORECASE):
                 if i + 1 < len(lines):
                     next_line = lines[i + 1].strip()
                     if re.match(r'^[a-z0-9]{52,}$', next_line, re.IGNORECASE):
                         return next_line[:64] if len(next_line) > 64 else next_line
+    return None
+
+def extract_timestamp_from_log_line(line):
+    """Extract timestamp from ANSI-formatted log line"""
+    # Match patterns like: [2m2025-11-22T13:47:15.718924Z[0m
+    match = re.search(r'\[2m(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\[0m', line)
+    if match:
+        return match.group(1)
+    # Also try without ANSI codes
+    match = re.search(r'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)', line)
+    if match:
+        return match.group(1)
     return None
 
 def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
@@ -45,12 +55,17 @@ def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
                     if not line or line.startswith('cmd:') or line.startswith('METRICS:') or line.startswith('PROGRESS:'):
                         continue
 
+                    # Extract timestamp from log line
+                    timestamp = extract_timestamp_from_log_line(line)
+                    if not timestamp:
+                        timestamp = datetime.utcnow().isoformat() + "Z"
+
                     span = {"name": "sim-node", "node_name": node_name}
                     if node_idx is not None:
                         span["idx"] = node_idx
 
                     log_entry = {
-                        "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "timestamp": timestamp,
                         "level": "INFO",
                         "target": "netsim",
                         "fields": {"message": line, "node_name": node_name},
