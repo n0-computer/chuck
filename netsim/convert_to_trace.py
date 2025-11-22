@@ -49,12 +49,24 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info):
     return {
         "session_id": session_id,
         "trace_id": trace_id,
-        "info": {"name": prefix, "description": f"Netsim: {prefix}", "expected_checkpoints": 0},
-        "stats": {"log_lines": count_log_lines(prefix), "nodes": len(nodes_info), "checkpoints": 0, "metric_updates": 0},
+        "info": {
+            "name": prefix,
+            "node_count": len(nodes_info),
+            "expected_checkpoints": None
+        },
+        "stats": {
+            "nodes": len(nodes_info),
+            "log_lines": count_log_lines(prefix),
+            "metric_updates": 0,
+            "events": 0
+        },
         "nodes": nodes_info,
         "start_time": datetime.utcnow().isoformat() + "Z",
         "checkpoints": [],
-        "outcome": {"end_time": datetime.utcnow().isoformat() + "Z", "result": {"Ok": None}}
+        "outcome": {
+            "end_time": datetime.utcnow().isoformat() + "Z",
+            "result": {"Ok": []}
+        }
     }
 
 def count_log_lines(prefix):
