@@ -113,20 +113,49 @@ def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
 
     return total_lines
 
-def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, event_count):
-    # Create a synthetic checkpoint for visualization
-    checkpoints = [{
+def create_checkpoints_from_events(nodes_info, events, start_time, end_time):
+    """Generate checkpoints from events for timeline playback"""
+    checkpoints = []
+
+    # Checkpoint 0: Start
+    checkpoints.append({
         "checkpoint_id": 0,
+        "label": "start",
+        "time": start_time,
+        "nodes": [{"node_idx": n["idx"], "time": start_time, "result": {"Ok": None}} for n in nodes_info]
+    })
+
+    # Create checkpoints from events
+    checkpoint_id = 1
+    event_types_seen = set()
+
+    for event in events:
+        event_label = event["type"].get("User", {}).get("label", "")
+
+        # Create checkpoints for key events (avoiding duplicates)
+        if event_label in ["ConnectionEstablished", "TransferStart", "TransferComplete"]:
+            if event_label not in event_types_seen:
+                checkpoints.append({
+                    "checkpoint_id": checkpoint_id,
+                    "label": event_label.lower(),
+                    "time": event["start"],
+                    "nodes": [{"node_idx": n["idx"], "time": event["start"], "result": {"Ok": None}} for n in nodes_info]
+                })
+                event_types_seen.add(event_label)
+                checkpoint_id += 1
+
+    # Checkpoint N: End
+    checkpoints.append({
+        "checkpoint_id": checkpoint_id,
         "label": "end",
         "time": end_time,
-        "nodes": [
-            {
-                "node_idx": n["idx"],
-                "time": end_time,
-                "result": {"Ok": None}
-            } for n in nodes_info
-        ]
-    }] if end_time else []
+        "nodes": [{"node_idx": n["idx"], "time": end_time, "result": {"Ok": None}} for n in nodes_info]
+    })
+
+    return checkpoints
+
+def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, event_count, events):
+    checkpoints = create_checkpoints_from_events(nodes_info, events, start_time, end_time)
 
     return {
         "session_id": session_id,
@@ -134,7 +163,7 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, en
         "info": {
             "name": prefix,
             "node_count": len(nodes_info),
-            "expected_checkpoints": None
+            "expected_checkpoints": len(checkpoints)
         },
         "stats": {
             "nodes": len(nodes_info),
@@ -214,7 +243,8 @@ def convert_to_trace(prefix, output_dir):
     print(f"  Events: {len(parsed_events)} captured")
 
     # Summary
-    summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, len(parsed_events))
+    summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, len(parsed_events), parsed_events)
+    print(f"  Checkpoints: {len(summary_data['checkpoints'])} created")
     with open(output_path / "summary.json", 'w') as f:
         json.dump(summary_data, f, indent=2)
 
