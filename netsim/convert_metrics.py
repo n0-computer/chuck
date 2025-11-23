@@ -39,17 +39,24 @@ def node_id_to_bytes(node_id_hex):
     return bytes.fromhex(node_id_hex)
 
 def flatten_metrics(obj, prefix='', result=None):
-    """Recursively flatten nested metric objects"""
+    """Recursively flatten nested metric objects, extracting 'value' fields"""
     if result is None:
         result = {}
 
     if isinstance(obj, dict):
-        for key, value in obj.items():
-            new_key = f"{prefix}_{key}" if prefix else key
-            if isinstance(value, dict):
-                flatten_metrics(value, new_key, result)
-            elif isinstance(value, (int, float)):
-                result[new_key] = value
+        # If object has 'value' field, extract it directly
+        if 'value' in obj and isinstance(obj['value'], (int, float)):
+            result[prefix] = obj['value']
+        else:
+            # Otherwise recurse into nested structure
+            for key, value in obj.items():
+                if key in ['timestamp', 'timestamp_rfc3339', 'node_id', 'buckets', 'counts', 'sum', 'count']:
+                    continue
+                new_key = f"{prefix}_{key}" if prefix else key
+                if isinstance(value, dict):
+                    flatten_metrics(value, new_key, result)
+                elif isinstance(value, (int, float)):
+                    result[new_key] = value
     return result
 
 def parse_metrics_from_logs(prefix):
