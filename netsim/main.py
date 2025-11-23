@@ -25,6 +25,7 @@ def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False, json_logs
     env_vars["RUST_LOG_STYLE"] = "never"
     env_vars["SSLKEYLOGFILE"] = f"./logs/keylog_{prefix}_{node_name}.txt"
     env_vars["IROH_DATA_DIR"] = f"{temp_dir}"
+    env_vars["HOSTNAME"] = f"{prefix}__{node_name}"
 
     if debug:
         env_vars["RUST_LOG"] = "debug"
