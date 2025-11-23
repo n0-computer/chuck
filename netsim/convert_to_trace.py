@@ -114,6 +114,13 @@ def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
     return total_lines
 
 def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, event_count):
+    # Create a synthetic checkpoint for visualization
+    checkpoints = [{
+        "checkpoint_id": 0,
+        "label": "end",
+        "time": end_time
+    }] if end_time else []
+
     return {
         "session_id": session_id,
         "trace_id": trace_id,
@@ -130,7 +137,7 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, en
         },
         "nodes": nodes_info,
         "start_time": start_time,
-        "checkpoints": [],
+        "checkpoints": checkpoints,
         "outcome": {
             "end_time": end_time,
             "result": {"Ok": None}
