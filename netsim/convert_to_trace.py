@@ -118,7 +118,14 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, en
     checkpoints = [{
         "checkpoint_id": 0,
         "label": "end",
-        "time": end_time
+        "time": end_time,
+        "nodes": [
+            {
+                "node_idx": n["idx"],
+                "time": end_time,
+                "result": {"Ok": None}
+            } for n in nodes_info
+        ]
     }] if end_time else []
 
     return {
