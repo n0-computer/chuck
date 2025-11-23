@@ -38,18 +38,48 @@ def create_metrics_db(db_path):
 def node_id_to_bytes(node_id_hex):
     return bytes.fromhex(node_id_hex)
 
+def flatten_metrics(obj, prefix='', result=None):
+    """Recursively flatten nested metric objects"""
+    if result is None:
+        result = {}
+
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            new_key = f"{prefix}_{key}" if prefix else key
+            if isinstance(value, dict):
+                flatten_metrics(value, new_key, result)
+            elif isinstance(value, (int, float)):
+                result[new_key] = value
+    return result
+
 def parse_metrics_from_logs(prefix):
     all_metrics = []
     for log_file in Path("logs").glob(f"{prefix}__*.txt"):
         node_name = log_file.stem.replace(f"{prefix}__", "")
         with open(log_file) as f:
             for line in f:
-                if line.startswith(('METRICS:', 'PROGRESS:')):
+                if line.startswith(('METRICS:', 'PROGRESS:', 'ENDPOINT_METRICS:')):
                     try:
-                        prefix_len = 8 if line.startswith('METRICS:') else 9
-                        metric_data = json.loads(line[prefix_len:])
-                        metric_data['_node_name'] = node_name
-                        all_metrics.append(metric_data)
+                        if line.startswith('METRICS:'):
+                            prefix_len = 8
+                            metric_data = json.loads(line[prefix_len:])
+                            metric_data['_node_name'] = node_name
+                            metric_data['_source'] = 'transfer'
+                            all_metrics.append(metric_data)
+                        elif line.startswith('PROGRESS:'):
+                            prefix_len = 9
+                            metric_data = json.loads(line[prefix_len:])
+                            metric_data['_node_name'] = node_name
+                            metric_data['_source'] = 'transfer'
+                            all_metrics.append(metric_data)
+                        elif line.startswith('ENDPOINT_METRICS:'):
+                            prefix_len = 17
+                            metric_data = json.loads(line[prefix_len:])
+                            # Flatten nested endpoint metrics
+                            flat_metrics = flatten_metrics(metric_data)
+                            flat_metrics['_node_name'] = node_name
+                            flat_metrics['_source'] = 'endpoint'
+                            all_metrics.append(flat_metrics)
                     except json.JSONDecodeError:
                         pass
     return all_metrics
@@ -70,20 +100,27 @@ def insert_metrics(conn, trace_id, metrics_list):
             continue
 
         timestamp = datetime.utcfromtimestamp(metric_data.get('timestamp')).isoformat() + "Z"
+        metric_source = metric_data.get('_source', 'transfer')
 
         for metric_name, value in metric_data.items():
-            if metric_name in ['timestamp', 'timestamp_rfc3339', 'node_id', '_node_name', '_type']:
+            if metric_name in ['timestamp', 'timestamp_rfc3339', 'node_id', '_node_name', '_type', '_source']:
                 continue
             if not isinstance(value, (int, float)):
                 continue
 
+            # Determine group from metric name (e.g., "magicsock_send_ipv4" -> group: "magicsock")
+            if '_' in metric_name and metric_source == 'endpoint':
+                group = metric_name.split('_')[0]
+                full_name = metric_name
+            else:
+                group = 'transfer'
+                full_name = f"transfer_{metric_name}"
+
             metric_key = (trace_id, metric_name, node_id_hex)
             if metric_key not in metrics_created:
                 metric_id = uuid.uuid5(uuid.NAMESPACE_DNS, f"{trace_id}:{metric_name}:{node_id_hex}").bytes
-                # Prefix metric name with group for UI compatibility
-                full_name = f"transfer_{metric_name}"
                 cursor.execute("INSERT OR IGNORE INTO metrics (id, name, group_name, project_id, node_id, description) VALUES (?, ?, ?, ?, ?, ?)",
-                    (metric_id, full_name, "transfer", trace_id_bytes, node_id_bytes, metric_name))
+                    (metric_id, full_name, group, trace_id_bytes, node_id_bytes, metric_name))
                 metrics_created.add(metric_key)
             else:
                 metric_id = uuid.uuid5(uuid.NAMESPACE_DNS, f"{trace_id}:{metric_name}:{node_id_hex}").bytes

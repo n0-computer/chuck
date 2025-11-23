@@ -85,7 +85,7 @@ def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
             with open(log_file) as infile:
                 for line in infile:
                     line = line.strip()
-                    if not line or line.startswith('cmd:') or line.startswith('METRICS:') or line.startswith('PROGRESS:'):
+                    if not line or line.startswith(('cmd:', 'METRICS:', 'PROGRESS:', 'ENDPOINT_METRICS:', 'EVENT:')):
                         continue
 
                     # Extract timestamp from log line
