@@ -10,6 +10,39 @@ from pathlib import Path
 from datetime import datetime
 import uuid
 
+def parse_events_from_logs(prefix, nodes_info):
+    """Extract EVENT: lines from log files"""
+    log_files = list(Path("logs").glob(f"{prefix}__*.txt"))
+    node_name_to_idx = {node["name"]: node["idx"] for node in nodes_info}
+    events = []
+
+    for log_file in log_files:
+        node_name = log_file.stem.replace(f"{prefix}__", "")
+        src_idx = node_name_to_idx.get(node_name, 0)
+
+        with open(log_file) as f:
+            for line in f:
+                if line.startswith('EVENT:'):
+                    try:
+                        event_data = json.loads(line[6:])
+                        event_type = event_data.get('type')
+                        timestamp_unix = event_data.get('timestamp')
+                        timestamp = datetime.utcfromtimestamp(timestamp_unix).isoformat() + "Z"
+
+                        # Map event types
+                        if event_type in ['ConnectionAttempt', 'ConnectionEstablished', 'TransferStart', 'TransferComplete']:
+                            events.append({
+                                "type": {"User": {"label": event_type}},
+                                "src_node": src_idx,
+                                "dst_node": src_idx,
+                                "id": None,
+                                "start": timestamp,
+                            })
+                    except (json.JSONDecodeError, KeyError):
+                        pass
+
+    return events
+
 def extract_node_id_from_log(log_file):
     with open(log_file) as f:
         lines = f.readlines()
@@ -80,7 +113,7 @@ def convert_logs_to_jsonnd(prefix, output_path, nodes_info):
 
     return total_lines
 
-def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time):
+def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, event_count):
     return {
         "session_id": session_id,
         "trace_id": trace_id,
@@ -93,7 +126,7 @@ def create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, en
             "nodes": len(nodes_info),
             "log_lines": count_log_lines(prefix),
             "metric_updates": 0,
-            "events": 0
+            "events": event_count
         },
         "nodes": nodes_info,
         "start_time": start_time,
@@ -162,8 +195,12 @@ def convert_to_trace(prefix, output_dir):
     log_count = convert_logs_to_jsonnd(prefix, output_path / "logs.jsonnd", nodes_info)
     print(f"  Logs: {log_count} lines")
 
+    # Events
+    parsed_events = parse_events_from_logs(prefix, nodes_info)
+    print(f"  Events: {len(parsed_events)} captured")
+
     # Summary
-    summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time)
+    summary_data = create_summary_json(prefix, trace_id, session_id, nodes_info, start_time, end_time, len(parsed_events))
     with open(output_path / "summary.json", 'w') as f:
         json.dump(summary_data, f, indent=2)
 
@@ -176,9 +213,9 @@ def convert_to_trace(prefix, output_dir):
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass
 
-    # Events
+    # Events - already parsed above, just write to file
     events_data = {
-        "events": [],
+        "events": parsed_events,
         "nodes": [{"idx": n["idx"], "label": n["label"], "node_idx": n["idx"]} for n in nodes_info]
     }
     with open(output_path / "events.json", 'w') as f:
