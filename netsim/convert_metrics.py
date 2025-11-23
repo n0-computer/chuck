@@ -82,8 +82,13 @@ def parse_metrics_from_logs(prefix):
                         elif line.startswith('ENDPOINT_METRICS:'):
                             prefix_len = 17
                             metric_data = json.loads(line[prefix_len:])
+                            # Preserve timestamp and node_id before flattening
+                            timestamp = metric_data.get('timestamp')
+                            node_id = metric_data.get('node_id')
                             # Flatten nested endpoint metrics
                             flat_metrics = flatten_metrics(metric_data)
+                            flat_metrics['timestamp'] = timestamp
+                            flat_metrics['node_id'] = node_id
                             flat_metrics['_node_name'] = node_name
                             flat_metrics['_source'] = 'endpoint'
                             all_metrics.append(flat_metrics)
