@@ -265,6 +265,16 @@ def convert_to_trace(prefix, output_dir):
     with open(output_path / "events.json", 'w') as f:
         json.dump(events_data, f, indent=2)
 
+    # Collect qlog files if they exist
+    qlog_dir = output_path / "qlogs"
+    qlog_files = list(Path("/tmp").glob("*.qlog"))
+    if qlog_files:
+        qlog_dir.mkdir(exist_ok=True)
+        for qlog_file in qlog_files:
+            import shutil
+            shutil.copy(qlog_file, qlog_dir / qlog_file.name)
+        print(f"  Qlogs: {len(qlog_files)} files collected")
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print(f"Usage: {sys.argv[0]} <sim_prefix> <output_dir>")

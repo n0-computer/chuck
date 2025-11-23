@@ -18,7 +18,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --json-logs --metrics-output /tmp/metrics-$$.json --env dev  --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --json-logs --qlog --metrics-output /tmp/metrics-$$.json --env dev  --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -29,7 +29,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --metrics-output /tmp/metrics-$$.json --env dev --relay-only --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --qlog --metrics-output /tmp/metrics-$$.json --env dev --relay-only --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -57,7 +57,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --json-logs --metrics-output /tmp/metrics-$$.json --env dev  --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
+                    "cmd": "./bins/iroh-transfer provide --json-logs --qlog --metrics-output /tmp/metrics-$$.json --env dev  --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -68,7 +68,7 @@
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --metrics-output /tmp/metrics-$$.json --env dev --relay-only --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "time ./bins/iroh-transfer fetch --json-logs --qlog --metrics-output /tmp/metrics-$$.json --env dev --relay-only --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
