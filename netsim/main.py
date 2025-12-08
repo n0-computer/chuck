@@ -280,10 +280,7 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     temp_dirs = []
 
     base_qlog_dir = os.path.abspath("qlogs")
-    qlog_dir = None
-    if os.path.isdir(base_qlog_dir):
-        qlog_dir = os.path.join(base_qlog_dir, prefix)
-        os.makedirs(qlog_dir, exist_ok=True)
+    qlog_enabled = os.path.isdir(base_qlog_dir)
 
     node_counts = {node["name"]: int(node["count"]) for node in nodes}
     node_ips = get_node_ips(net, nodes, runner_id)
@@ -304,7 +301,11 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
             temp_dirs.append(temp_dir)
 
             node_env = node.get("env", {})
-            env_vars = setup_env_vars(prefix, node_name, temp_dir.name, node_env, debug, qlog_dir)
+            node_qlog_dir = None
+            if qlog_enabled:
+                node_qlog_dir = os.path.join(base_qlog_dir, prefix, node_name)
+                os.makedirs(node_qlog_dir, exist_ok=True)
+            env_vars = setup_env_vars(prefix, node_name, temp_dir.name, node_env, debug, node_qlog_dir)
 
             p = execute_node_command(cmd, prefix, node_name, n, env_vars)
             if "process" in node and node["process"] == "short":
@@ -342,7 +343,7 @@ def run(case, runner_id, name, skiplist, args):
     if prefix in skiplist:
         print("Skipping:", prefix)
         return (None, None)
-    if args.filter and args.filter not in prefix:
+    if args.filter and case["name"] != args.filter and prefix != args.filter:
         print("Filtered out:", prefix)
         return (None, None)
     nodes = case["nodes"]
