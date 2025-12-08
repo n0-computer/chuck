@@ -341,10 +341,10 @@ def run(case, runner_id, name, skiplist, args):
     prefix = name + "__" + case["name"]
     if prefix in skiplist:
         print("Skipping:", prefix)
-        return
+        return (None, None)
     if args.filter and args.filter not in prefix:
         print("Filtered out:", prefix)
-        return
+        return (None, None)
     nodes = case["nodes"]
     viz = False
     if "visualize" in case:
