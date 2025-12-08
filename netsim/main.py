@@ -342,6 +342,9 @@ def run(case, runner_id, name, skiplist, args):
     if prefix in skiplist:
         print("Skipping:", prefix)
         return
+    if args.filter and args.filter not in prefix:
+        print("Filtered out:", prefix)
+        return
     nodes = case["nodes"]
     viz = False
     if "visualize" in case:
@@ -407,6 +410,7 @@ if __name__ == "__main__":
         default=False,
     )
     parser.add_argument("--skip", help="Comma separated list of tests to skip")
+    parser.add_argument("--filter", help="Only run tests matching this substring")
     parser.add_argument(
         "--debug", help="Enable full debug logging", action="store_true", default=True
     )
