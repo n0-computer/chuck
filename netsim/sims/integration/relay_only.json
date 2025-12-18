@@ -21,6 +21,7 @@
                     "cmd": "./bins/iroh-transfer provide --env dev  --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
+                    "env": {"RUST_LOG": "trace"},
                     "connect": {
                         "strategy": "none"
                     },
@@ -31,6 +32,7 @@
                     "count": 1,
                     "cmd": "time ./bins/iroh-transfer fetch --env dev --relay-only --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "public",
+                    "env": {"RUST_LOG": "trace"},
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
@@ -60,6 +62,7 @@
                     "cmd": "./bins/iroh-transfer provide --env dev  --relay-only --size=1G --relay-url=\"http://10.0.0.1:3340\"",
                     "type": "public",
                     "wait": 10,
+                    "env": {"RUST_LOG": "trace"},
                     "connect": {
                         "strategy": "none"
                     },
@@ -70,6 +73,7 @@
                     "count": 3,
                     "cmd": "time ./bins/iroh-transfer fetch --env dev --relay-only --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "public",
+                    "env": {"RUST_LOG": "trace"},
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
