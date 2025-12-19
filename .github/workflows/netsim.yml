@@ -49,7 +49,7 @@ jobs:
 
     - name: Fetch and build iroh
       run: |
-        git clone https://github.com/n0-computer/iroh.git
+        git clone --depth 1 https://github.com/n0-computer/iroh.git
         cd iroh
         cargo build --release --all-features -p iroh-relay -p iroh-dns-server
         cargo build --release --all-features -p iroh --examples
@@ -84,7 +84,7 @@ jobs:
         c='${{ steps.detect_comment_config.outputs.NETSIM_CONFIG }}'
         if [ -z "${c}" ];
         then
-          sudo python3 main.py sims/iroh
+          sudo python3 main.py --max-workers=4 sims/iroh
         else
           echo $c >> custom_sim.json
           sudo python3 main.py custom_sim.json

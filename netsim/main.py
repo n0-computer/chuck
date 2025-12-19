@@ -36,33 +36,34 @@ def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False):
 
 
 def parse_node_params(node, prefix, node_params, runner_id):
-    """Parse parameters from node logs with validation."""
+    """Parse parameters from node logs with validation using fast polling."""
     parsed_params = {}
-    wait_time = node.get("wait", 1)
+    max_wait = node.get("wait", 1)
     parser_type = node["param_parser"]
-    expected_nodes = []
+    poll_interval = 0.2
 
-    # Wait for parameters to be available
-    for _ in range(wait_time):
-        time.sleep(1)
-        for i in range(int(node["count"])):
-            node_name = f'{node["name"]}_{i}_r{runner_id}'
-            expected_nodes.append(node_name)
+    expected_nodes = [
+        f'{node["name"]}_{i}_r{runner_id}'
+        for i in range(int(node["count"]))
+    ]
+
+    max_iterations = max(1, int(max_wait / poll_interval))
+    for iteration in range(max_iterations):
+        for node_name in expected_nodes:
+            if node_name in parsed_params:
+                continue
+
             log_file = f"logs/{prefix}__{node_name}.txt"
-
             if not os.path.exists(log_file):
-                error(f"Warning: Log file not found: {log_file}")
                 continue
 
             try:
                 with open(log_file, "r") as f:
                     lines = f.readlines()
                     for idx, line in enumerate(lines):
-                        # Parser 1: Simple ticket (used in lossy/standard sims)
                         if parser_type == "iroh_ticket" and line.startswith("All-in-one ticket"):
                             parsed_params[node_name] = line[len("All-in-one ticket: "):].strip()
                             break
-                        # Parser 2: Endpoint with addresses (used in iroh/integration sims)
                         if parser_type == "iroh_endpoint_with_addrs" and line.startswith("Endpoint id:"):
                             if idx + 1 >= len(lines):
                                 break
@@ -82,7 +83,10 @@ def parse_node_params(node, prefix, node_params, runner_id):
             except Exception as e:
                 error(f"Error parsing parameters from {log_file}: {e}")
 
-    # Validate that all expected parameters were found
+        if all(n in parsed_params for n in expected_nodes):
+            break
+        time.sleep(poll_interval)
+
     missing_params = [n for n in expected_nodes if n not in parsed_params]
     if missing_params:
         error("\n" + "=" * 80 + "\n")
@@ -103,7 +107,7 @@ def terminate_processes(p_box):
         p.terminate()
 
     # Wait for processes to terminate gracefully
-    time.sleep(2)
+    time.sleep(0.5)
 
     # Force kill any remaining processes
     for p, cmd in p_box:
@@ -117,11 +121,12 @@ def monitor_short_processes(p_short_box, prefix):
     process_errors = []
     start_time = time.time()
 
-    # Monitor processes until all complete or timeout
-    for _ in range(TIMEOUT):
-        time.sleep(1)
+    # Monitor processes until all complete or timeout (poll every 200ms)
+    max_polls = TIMEOUT * 5
+    for _ in range(max_polls):
         if not any(p.poll() is None for (_, p, _) in p_short_box):
             break
+        time.sleep(0.2)
 
     elapsed_time = time.time() - start_time
 
@@ -133,7 +138,7 @@ def monitor_short_processes(p_short_box, prefix):
             error(f"\nProcess timed out after {elapsed_time:.1f}s for node {node_name}\n")
             error(f"Command was: {cmd}\n")
             p.terminate()
-            time.sleep(1)
+            time.sleep(0.2)
             if p.poll() is None:
                 error(f"Force killing timed out process for node {node_name}\n")
                 p.kill()
