@@ -387,7 +387,7 @@ def run(case, runner_id, name, args):
     viz = False
     if "visualize" in case:
         viz = case["visualize"] & args.visualize
-    print('Running "%s"...' % prefix)
+    print('Running "%s"...' % prefix, flush=True)
     n, s = (None, None)
     if not args.reports_only:
         (n, s) = run_case(nodes, runner_id, prefix, args, args.debug, viz)
@@ -410,7 +410,7 @@ def run_parallel(cases, name, skiplist, args, max_workers=4):
     for case in cases:
         prefix = name + "__" + case["name"]
         if prefix in skiplist:
-            print("Skipping:", prefix)
+            print("Skipping:", prefix, flush=True)
         else:
             filtered.append(case)
 
@@ -486,14 +486,14 @@ if __name__ == "__main__":
     else:
         paths.append(args.cfg)
 
-    print("Args:", args)
+    print("Args:", args, flush=True)
 
     for path in paths:
         config_f = open(path, "r")
         config = json.load(config_f)
         config_f.close()
         name = config["name"]
-        print(f"Start testing: %s\n" % path)
+        print(f"Start testing: %s" % path, flush=True)
         run_parallel(config["cases"], name, skiplist, args, args.max_workers)
 
     write_failure_summary()
