@@ -56,7 +56,7 @@ def cleanup_tmp_dirs(temp_dirs):
         temp_dir.cleanup()
 
 
-def eject(nodes, prefix, runner_id, temp_dirs):
+def eject(_nodes, prefix, _runner_id, temp_dirs):
     write_failure_summary()
     cleanup_tmp_dirs(temp_dirs)
     raise Exception("Netsim run failed: %s" % prefix)

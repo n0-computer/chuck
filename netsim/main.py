@@ -347,11 +347,8 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     return (net, sniffer)
 
 
-def run(case, runner_id, name, skiplist, args):
+def run(case, runner_id, name, args):
     prefix = name + "__" + case["name"]
-    if prefix in skiplist:
-        print("Skipping:", prefix)
-        return
     nodes = case["nodes"]
     viz = False
     if "visualize" in case:
@@ -374,13 +371,25 @@ def run(case, runner_id, name, skiplist, args):
 
 
 def run_parallel(cases, name, skiplist, args, max_workers=4):
+    # Filter skipped cases before chunking for optimal parallelism
+    filtered = []
+    for case in cases:
+        prefix = name + "__" + case["name"]
+        if prefix in skiplist:
+            print("Skipping:", prefix)
+        else:
+            filtered.append(case)
+
+    if not filtered:
+        return
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        chunks = [cases[i : i + max_workers] for i in range(0, len(cases), max_workers)]
+        chunks = [filtered[i : i + max_workers] for i in range(0, len(filtered), max_workers)]
         for chunk in chunks:
             futures = []
             r = []
             for i, case in enumerate(chunk):
-                futures.append(executor.submit(run, case, i, name, skiplist, args))
+                futures.append(executor.submit(run, case, i, name, args))
             for future in concurrent.futures.as_completed(futures):
                 try:
                     rx = future.result()
