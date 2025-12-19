@@ -39,8 +39,8 @@ jobs:
 
     - name: Fetch and build iroh
       run: |
-        git clone --depth 1 https://github.com/n0-computer/iroh.git
-        # git clone --depth 1 --branch update-quinn https://github.com/n0-computer/iroh.git
+        # git clone --depth 1 https://github.com/n0-computer/iroh.git
+        git clone --depth 1 --branch feat-improve-network-change https://github.com/n0-computer/iroh.git
         cd iroh
         cargo build --release --all-features -p iroh-relay -p iroh-dns-server
         cargo build --release --all-features -p iroh --examples
