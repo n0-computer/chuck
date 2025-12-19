@@ -43,7 +43,7 @@ jobs:
 
     - name: Fetch and build iroh
       run: |
-        git clone https://github.com/n0-computer/iroh.git
+        git clone --depth 1 https://github.com/n0-computer/iroh.git
         cd iroh
         cargo build --release --all-features -p iroh-relay -p iroh-dns-server
         cargo build --release --all-features -p iroh --examples
@@ -60,7 +60,7 @@ jobs:
         cd netsim
         sudo kill -9 $(pgrep ovs) || true
         sudo mn --clean
-        sudo python3 main.py --integration sims/integration
+        sudo python3 main.py --integration --max-workers=4 sims/integration
 
     - name: Setup Environment (PR)  
       if: ${{ github.event_name == 'pull_request' }}  
