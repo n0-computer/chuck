@@ -305,7 +305,7 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --env dev --size=50M --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
+                    "cmd": "./bins/iroh-transfer provide --env dev --size=25M --relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\"",
                     "type": "public",
                     "wait": 10,
                     "connect": {
@@ -328,7 +328,7 @@
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_cust_50M",
+                    "parser": "iroh_cust_25M",
                     "integration": "magic_iroh_client",
                     "mid_run_action": {
                         "delay_seconds": 6,
