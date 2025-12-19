@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import tempfile
+import threading
 import time
 
 from mininet.log import setLogLevel, info, error
@@ -271,6 +272,37 @@ def prep_net(net, prefix, sniff):
     return sniffer
 
 
+def schedule_mid_run_actions(net, nodes, node_counts, node_ips, runner_id, prefix):
+    """Schedule mid-run actions like blocking direct connections."""
+    for node in nodes:
+        if "mid_run_action" not in node:
+            continue
+        action = node["mid_run_action"]
+        for i in range(int(node["count"])):
+            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            if "block_direct_to" in action:
+                target = action["block_direct_to"]
+                target_cnt = node_counts.get(target, 1)
+                target_name = f'{target}_{i % target_cnt}_r{runner_id}'
+                target_ip = node_ips.get(target_name)
+                if not target_ip:
+                    continue
+                delay = action.get("delay_seconds", 5)
+                n = net.get(node_name)
+
+                def block_after_delay(node_ref, ip, delay_sec, log_prefix, src_name):
+                    time.sleep(delay_sec)
+                    node_ref.cmd(f"iptables -A OUTPUT -d {ip} -p udp -j DROP")
+                    info(f"[{log_prefix}] Blocked direct UDP to {ip} from {src_name}\n")
+
+                t = threading.Thread(
+                    target=block_after_delay,
+                    args=(n, target_ip, delay, prefix, node_name)
+                )
+                t.daemon = True
+                t.start()
+
+
 def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     topo = StarTopo(nodes=nodes, runner_id=runner_id)
     net = Mininet(topo=topo, waitConnected=True, link=TCLink)
@@ -313,6 +345,8 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
             time.sleep(int(node["wait"]))
 
     # CLI(net)
+
+    schedule_mid_run_actions(net, nodes, node_counts, node_ips, runner_id, prefix)
 
     process_errors = monitor_short_processes(p_short_box, prefix)
     if process_errors:
