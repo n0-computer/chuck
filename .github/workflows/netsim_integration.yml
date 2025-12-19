@@ -62,6 +62,14 @@ jobs:
         sudo mn --clean
         sudo python3 main.py --integration --max-workers=4 sims/integration
 
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: netsim-logs
+        path: netsim/logs/
+        retention-days: 7
+
     - name: Setup Environment (PR)  
       if: ${{ github.event_name == 'pull_request' }}  
       shell: bash  
