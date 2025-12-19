@@ -31,7 +31,8 @@
                     "integration": "magic_iroh_client",
                     "link": {
                         "bw": 4,
-                        "latency": 200
+                        "latency": 200,
+                        "loss": 0
                     }
                 }
             ]
@@ -122,7 +123,8 @@
                     "integration": "magic_iroh_client",
                     "link": {
                         "bw": 4,
-                        "latency": 200
+                        "latency": 200,
+                        "loss": 0
                     }
                 }
             ]
@@ -223,7 +225,8 @@
                     "integration": "magic_iroh_client",
                     "link": {
                         "bw": 4,
-                        "latency": 200
+                        "latency": 200,
+                        "loss": 0
                     }
                 }
             ]
