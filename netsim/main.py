@@ -15,7 +15,7 @@ from net.network import StarTopo
 from parsing.netsim import process_logs, process_integration_logs
 from sniffer.sniff import Sniffer
 from sniffer.process import run_viz
-from util import cleanup_tmp_dirs, eject
+from util import cleanup_tmp_dirs, eject, FAILED_TESTS, write_failure_summary
 
 TIMEOUT = 60 * 5
 
@@ -100,19 +100,17 @@ def parse_node_params(node, prefix, node_params, runner_id):
     return parsed_params
 
 
-def terminate_processes(p_box):
+def terminate_processes(p_box, prefix):
     """Gracefully terminate processes, then forcefully kill if needed."""
-    for p, cmd in p_box:
-        error(f"Terminating process: {p.pid} {cmd[:100]}\n")
+    for node_name, p, cmd in p_box:
+        error(f"Terminating [{prefix}__{node_name}]: {cmd[:80]}\n")
         p.terminate()
 
-    # Wait for processes to terminate gracefully
     time.sleep(0.5)
 
-    # Force kill any remaining processes
-    for p, cmd in p_box:
+    for node_name, p, cmd in p_box:
         if p.poll() is None:
-            error(f"Force killing hung process: {p.pid} {cmd[:100]}\n")
+            error(f"Force killing [{prefix}__{node_name}]: {cmd[:80]}\n")
             p.kill()
 
 
@@ -307,7 +305,7 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
             if "process" in node and node["process"] == "short":
                 p_short_box.append((node_name, p, cmd))
             else:
-                p_box.append((p, cmd))
+                p_box.append((node_name, p, cmd))
 
         if "param_parser" in node:
             node_params.update(parse_node_params(node, prefix, node_params, runner_id))
@@ -319,17 +317,32 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     process_errors = monitor_short_processes(p_short_box, prefix)
     if process_errors:
         error("\n" + "=" * 80 + "\n")
-        error("PROCESS ERRORS DETECTED:\n")
+        error(f"PROCESS ERRORS DETECTED in {prefix}:\n")
         error("=" * 80 + "\n")
         for err_msg in process_errors:
             error(err_msg + "\n")
         error("=" * 80 + "\n")
+        failure_entry = {"prefix": prefix, "errors": []}
+        for err_msg in process_errors:
+            if err_msg.startswith("TIMEOUT:"):
+                node = err_msg.split("'")[1]
+                reason = f"timeout after {TIMEOUT}s"
+            elif err_msg.startswith("FAILED:"):
+                node = err_msg.split("'")[1]
+                code_start = err_msg.find("code ") + 5
+                code_end = err_msg.find(".", code_start)
+                reason = f"exit code {err_msg[code_start:code_end]}"
+            else:
+                node = "unknown"
+                reason = err_msg[:50]
+            failure_entry["errors"].append({"node": node, "reason": reason})
+        FAILED_TESTS.append(failure_entry)
         if args.integration:
             eject(nodes, prefix, runner_id, temp_dirs)
         else:
             error("WARNING: Continuing despite errors (not in integration mode)\n")
 
-    terminate_processes(p_box)
+    terminate_processes(p_box, prefix)
     cleanup_tmp_dirs(temp_dirs)
     return (net, sniffer)
 
@@ -440,4 +453,5 @@ if __name__ == "__main__":
         print(f"Start testing: %s\n" % path)
         run_parallel(config["cases"], name, skiplist, args, args.max_workers)
 
+    write_failure_summary()
     print("Done")

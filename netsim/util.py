@@ -1,5 +1,32 @@
 import os
 
+FAILED_TESTS = []
+
+
+def write_failure_summary(output_path="logs/failed_tests.txt"):
+    if not FAILED_TESTS:
+        return
+    with open(output_path, "w") as f:
+        for failure in FAILED_TESTS:
+            prefix = failure["prefix"]
+            f.write(f"FAILED: {prefix}\n")
+            for node_err in failure["errors"]:
+                node_name = node_err["node"]
+                reason = node_err["reason"]
+                log_path = f"logs/{prefix}__{node_name}.txt"
+                f.write(f"  - {node_name}: {reason}\n")
+                f.write(f"    Log: {log_path}\n")
+                if os.path.isfile(log_path):
+                    f.write("    --- Last 10 lines ---\n")
+                    try:
+                        with open(log_path, "r") as lf:
+                            lines = lf.readlines()
+                            for line in lines[-10:]:
+                                f.write(f"    {line.rstrip()}\n")
+                    except Exception:
+                        f.write("    [failed to read log]\n")
+                f.write("\n")
+
 
 def logs_on_error(nodes, prefix, runner_id, code=1, message=None):
     node_counts = {}
@@ -30,6 +57,6 @@ def cleanup_tmp_dirs(temp_dirs):
 
 
 def eject(nodes, prefix, runner_id, temp_dirs):
-    logs_on_error(nodes, prefix, runner_id)
+    write_failure_summary()
     cleanup_tmp_dirs(temp_dirs)
     raise Exception("Netsim run failed: %s" % prefix)
