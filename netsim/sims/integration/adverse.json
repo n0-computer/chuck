@@ -15,7 +15,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 4,
+                        "latency": 200,
+                        "loss": 0
+                    }
                 },
                 {
                     "name": "i_get",
@@ -28,12 +33,7 @@
                     },
                     "process": "short",
                     "parser": "iroh_cust_10M",
-                    "integration": "magic_iroh_client",
-                    "link": {
-                        "bw": 4,
-                        "latency": 200,
-                        "loss": 0
-                    }
+                    "integration": "magic_iroh_client"
                 }
             ]
         },
@@ -51,7 +51,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 8,
+                        "latency": 200,
+                        "loss": 1
+                    }
                 },
                 {
                     "name": "i_get",
@@ -64,12 +69,7 @@
                     },
                     "process": "short",
                     "parser": "iroh_cust_10M",
-                    "integration": "magic_iroh_client",
-                    "link": {
-                        "loss": 1,
-                        "bw": 8,
-                        "latency": 200
-                    }
+                    "integration": "magic_iroh_client"
                 }
             ]
         },
@@ -107,7 +107,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 4,
+                        "latency": 200,
+                        "loss": 0
+                    }
                 },
                 {
                     "name": "i_get",
@@ -120,12 +125,7 @@
                     },
                     "process": "short",
                     "parser": "iroh_cust_10M",
-                    "integration": "magic_iroh_client",
-                    "link": {
-                        "bw": 4,
-                        "latency": 200,
-                        "loss": 0
-                    }
+                    "integration": "magic_iroh_client"
                 }
             ]
         },
@@ -163,7 +163,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 8,
+                        "latency": 200,
+                        "loss": 1
+                    }
                 },
                 {
                     "name": "i_get",
@@ -176,12 +181,7 @@
                     },
                     "process": "short",
                     "parser": "iroh_cust_10M",
-                    "integration": "magic_iroh_client",
-                    "link": {
-                        "loss": 1,
-                        "bw": 8,
-                        "latency": 200
-                    }
+                    "integration": "magic_iroh_client"
                 }
             ]
         },
@@ -209,7 +209,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 4,
+                        "latency": 200,
+                        "loss": 0
+                    }
                 },
                 {
                     "name": "i_get",
@@ -222,12 +227,7 @@
                     },
                     "process": "short",
                     "parser": "iroh_cust_10M",
-                    "integration": "magic_iroh_client",
-                    "link": {
-                        "bw": 4,
-                        "latency": 200,
-                        "loss": 0
-                    }
+                    "integration": "magic_iroh_client"
                 }
             ]
         },
@@ -255,7 +255,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 8,
+                        "latency": 200,
+                        "loss": 1
+                    }
                 },
                 {
                     "name": "i_get",
@@ -268,12 +273,7 @@
                     },
                     "process": "short",
                     "parser": "iroh_cust_10M",
-                    "integration": "magic_iroh_client",
-                    "link": {
-                        "loss": 1,
-                        "bw": 8,
-                        "latency": 200
-                    }
+                    "integration": "magic_iroh_client"
                 }
             ]
         },
@@ -311,7 +311,12 @@
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_with_addrs",
+                    "link": {
+                        "bw": 8,
+                        "latency": 50,
+                        "loss": 0
+                    }
                 },
                 {
                     "name": "i_get",
@@ -325,11 +330,6 @@
                     "process": "short",
                     "parser": "iroh_cust_50M",
                     "integration": "magic_iroh_client",
-                    "link": {
-                        "bw": 8,
-                        "latency": 50,
-                        "loss": 0
-                    },
                     "mid_run_action": {
                         "delay_seconds": 6,
                         "block_direct_to": "i_srv"
