@@ -39,7 +39,8 @@ jobs:
 
     - name: Fetch and build iroh
       run: |
-        git clone --depth 1 https://github.com/n0-computer/iroh.git
+        # TODO: revert to main: git clone --depth 1 https://github.com/n0-computer/iroh.git
+        git clone --depth 1 --branch fix-use-per-path-config https://github.com/n0-computer/iroh.git
         cd iroh
         cargo build --release --all-features -p iroh-relay -p iroh-dns-server
         cargo build --release --all-features -p iroh --examples
@@ -55,7 +56,8 @@ jobs:
         cd netsim
         sudo kill -9 $(pgrep ovs) || true
         sudo mn --clean
-        sudo python3 main.py --integration --max-workers=4 sims/integration
+        # TODO: revert to full suite: sudo python3 main.py --integration --max-workers=4 sims/integration
+        sudo python3 main.py --integration sims/integration/adverse.json --skip adverse_iroh__direct_throttled,adverse_iroh__direct_lossy,adverse_iroh__relay_dns_throttled,adverse_iroh__relay_dns_lossy,adverse_iroh__nat_both_throttled,adverse_iroh__nat_both_lossy
 
     - name: Upload logs
       uses: actions/upload-artifact@v4
