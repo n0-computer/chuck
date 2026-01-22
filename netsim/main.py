@@ -64,6 +64,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
                         if parser_type == "iroh_ticket" and line.startswith("All-in-one ticket"):
                             parsed_params[node_name] = line[len("All-in-one ticket: "):].strip()
                             break
+                        # DEPRECATED: use iroh_endpoint_json instead
                         if parser_type == "iroh_endpoint_with_addrs" and line.startswith("Endpoint id:"):
                             if idx + 1 >= len(lines):
                                 break
@@ -80,6 +81,17 @@ def parse_node_params(node, prefix, node_params, runner_id):
                                 "direct_addrs": direct_addrs
                             }
                             break
+                        if parser_type == "iroh_endpoint_json":
+                            try:
+                                data = json.loads(line.strip())
+                                if data.get("kind") == "EndpointBound":
+                                    parsed_params[node_name] = {
+                                        "endpoint_id": data["endpoint_id"],
+                                        "direct_addrs": data.get("direct_addresses", [])
+                                    }
+                                    break
+                            except json.JSONDecodeError:
+                                continue
             except Exception as e:
                 error(f"Error parsing parameters from {log_file}: {e}")
 

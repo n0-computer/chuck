@@ -8,25 +8,25 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -37,25 +37,25 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -66,25 +66,25 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 5,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -95,25 +95,25 @@
                 {
                     "name": "i_srv",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 10,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -124,25 +124,25 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 2,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -153,25 +153,25 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 4,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -182,25 +182,25 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 6,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         },
@@ -211,25 +211,25 @@
                 {
                     "name": "i_srv",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer provide --size=1G",
+                    "cmd": "./bins/iroh-transfer --output json provide",
                     "type": "public",
                     "wait": 20,
                     "connect": {
                         "strategy": "none"
                     },
-                    "param_parser": "iroh_endpoint_with_addrs"
+                    "param_parser": "iroh_endpoint_json"
                 },
                 {
                     "name": "i_get",
                     "count": 10,
-                    "cmd": "time ./bins/iroh-transfer fetch --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=1G --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_1gb"
+                    "parser": "iroh_json"
                 }
             ]
         }
