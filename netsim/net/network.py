@@ -86,6 +86,73 @@ class StarTopo(Topo):
                     else:
                         self.addLink(host, switch)
 
+            if node["type"] == "multi_nat":
+                kk += 1
+                for i in range(int(node["count"])):
+                    # NAT subnet indices - use high numbers to avoid collision
+                    nat1_subnet_idx = 100 + i * 2
+                    nat2_subnet_idx = 100 + i * 2 + 1
+
+                    # First NAT
+                    nat1_inetIntf = "n1_%s%dr%d-e0" % (node["name"], i, runner_id)
+                    nat1_localIntf = "n1_%s%dr%d-e1" % (node["name"], i, runner_id)
+                    nat1_localIP = "192.168.%d.1" % nat1_subnet_idx
+                    nat1_localSubnet = "192.168.%d.0/24" % nat1_subnet_idx
+                    nat1 = self.addNode(
+                        "n1_%s%dr%d" % (node["name"], i, runner_id),
+                        cls=NAT,
+                        subnet=nat1_localSubnet,
+                        inetIntf=nat1_inetIntf,
+                        localIntf=nat1_localIntf,
+                    )
+                    switch1 = self.addSwitch("ns1%s%dr%d" % (node["name"], i, runner_id))
+                    self.addLink(nat1, interconnect, intfName1=nat1_inetIntf)
+                    self.addLink(
+                        nat1, switch1,
+                        intfName1=nat1_localIntf,
+                        params1={"ip": "%s/24" % nat1_localIP},
+                    )
+
+                    # Second NAT
+                    nat2_inetIntf = "n2_%s%dr%d-e0" % (node["name"], i, runner_id)
+                    nat2_localIntf = "n2_%s%dr%d-e1" % (node["name"], i, runner_id)
+                    nat2_localIP = "192.168.%d.1" % nat2_subnet_idx
+                    nat2_localSubnet = "192.168.%d.0/24" % nat2_subnet_idx
+                    nat2 = self.addNode(
+                        "n2_%s%dr%d" % (node["name"], i, runner_id),
+                        cls=NAT,
+                        subnet=nat2_localSubnet,
+                        inetIntf=nat2_inetIntf,
+                        localIntf=nat2_localIntf,
+                    )
+                    switch2 = self.addSwitch("ns2%s%dr%d" % (node["name"], i, runner_id))
+                    self.addLink(nat2, interconnect, intfName1=nat2_inetIntf)
+                    self.addLink(
+                        nat2, switch2,
+                        intfName1=nat2_localIntf,
+                        params1={"ip": "%s/24" % nat2_localIP},
+                    )
+
+                    # Host with two interfaces - initially routed via NAT1
+                    host_ip1 = "192.168.%d.10/24" % nat1_subnet_idx
+                    host_ip2 = "192.168.%d.10/24" % nat2_subnet_idx
+                    host = self.addHost(
+                        "%s_%d_r%d" % (node["name"], i, runner_id),
+                        ip=host_ip1,
+                        defaultRoute="via %s" % nat1_localIP,
+                    )
+
+                    # Connect host to both NAT switches
+                    if "link" in node:
+                        loss = node["link"]["loss"]
+                        latency = node["link"]["latency"]
+                        bw = node["link"]["bw"]
+                        self.addLink(host, switch1, loss=loss, delay=latency, bw=bw)
+                        self.addLink(host, switch2, loss=loss, delay=latency, bw=bw)
+                    else:
+                        self.addLink(host, switch1)
+                        self.addLink(host, switch2)
+
         box = self.addHost(
             "zbox1-r" + str(runner_id),
             cls=EdgeNode,

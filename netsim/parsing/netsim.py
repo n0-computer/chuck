@@ -36,7 +36,12 @@ def parse_iroh_json_output(lines):
 
 def parse_magic_iroh_client_json(lines):
     """Parse iroh JSON output for integration test results."""
-    s = {"conn_upgrade": "false", "transfer_success": "false"}
+    s = {
+        "conn_upgrade": "false",
+        "transfer_success": "false",
+        "final_conn_direct": "false",
+        "conn_events": 0,
+    }
     for line in lines:
         try:
             data = json.loads(line.strip())
@@ -44,10 +49,15 @@ def parse_magic_iroh_client_json(lines):
             if kind == "DownloadComplete":
                 s["transfer_success"] = "true"
             elif kind == "ConnectionTypeChanged":
+                s["conn_events"] = s["conn_events"] + 1
                 status = data.get("status")
                 addr = data.get("addr")
-                if status == "Selected" and addr and "Ip" in addr:
+                is_direct = status == "Selected" and addr and "Ip" in addr
+                if is_direct:
                     s["conn_upgrade"] = "true"
+                    s["final_conn_direct"] = "true"
+                else:
+                    s["final_conn_direct"] = "false"
         except (json.JSONDecodeError, KeyError):
             continue
     return s

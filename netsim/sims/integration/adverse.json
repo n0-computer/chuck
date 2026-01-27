@@ -29,6 +29,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "bw": 4,
                         "latency": 200,
@@ -65,6 +69,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "loss": 1,
                         "bw": 8,
@@ -121,6 +129,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "bw": 4,
                         "latency": 200,
@@ -177,6 +189,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "loss": 1,
                         "bw": 8,
@@ -223,6 +239,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "bw": 4,
                         "latency": 200,
@@ -269,6 +289,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "loss": 1,
                         "bw": 8,
