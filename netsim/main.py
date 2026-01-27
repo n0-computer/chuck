@@ -20,6 +20,77 @@ from util import cleanup_tmp_dirs, eject, FAILED_TESTS, write_failure_summary
 TIMEOUT = 60 * 5
 
 
+def configure_multi_nat_hosts(net, nodes, runner_id):
+    """Configure second interface on multi_nat hosts after network start."""
+    for node in nodes:
+        if node["type"] != "multi_nat":
+            continue
+        for i in range(int(node["count"])):
+            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            n = net.get(node_name)
+            # Second interface needs IP configured
+            nat2_subnet_idx = 100 + i * 2 + 1
+            second_ip = f"192.168.{nat2_subnet_idx}.10/24"
+            intfs = n.intfNames()
+            if len(intfs) >= 2:
+                second_intf = intfs[1]
+                n.cmd(f"ip addr add {second_ip} dev {second_intf}")
+
+
+def execute_action(net, node_name, action, runner_id):
+    """Execute a network action on a node."""
+    n = net.get(node_name)
+    action_type = action["action"]
+    intfs = n.intfNames()
+
+    if action_type == "switch_route":
+        # Switch default route from one NAT to another
+        from_idx = action.get("from", 0)
+        to_idx = action.get("to", 1)
+        # Calculate NAT gateway IPs (based on node index extracted from name)
+        parts = node_name.rsplit("_", 2)
+        node_idx = int(parts[1])
+        nat1_subnet_idx = 100 + node_idx * 2
+        nat2_subnet_idx = 100 + node_idx * 2 + 1
+        gw_ips = [f"192.168.{nat1_subnet_idx}.1", f"192.168.{nat2_subnet_idx}.1"]
+        n.cmd("ip route del default")
+        n.cmd(f"ip route add default via {gw_ips[to_idx]}")
+        info(f"ACTION [{node_name}]: Switched route from {gw_ips[from_idx]} to {gw_ips[to_idx]}\n")
+
+    elif action_type == "link_down":
+        intf_idx = action.get("interface", 0)
+        if intf_idx < len(intfs):
+            n.cmd(f"ip link set {intfs[intf_idx]} down")
+            info(f"ACTION [{node_name}]: Brought down {intfs[intf_idx]}\n")
+
+    elif action_type == "link_up":
+        intf_idx = action.get("interface", 0)
+        if intf_idx < len(intfs):
+            n.cmd(f"ip link set {intfs[intf_idx]} up")
+            info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}\n")
+
+    elif action_type == "change_ip":
+        intf_idx = action.get("interface", 0)
+        new_ip = action["ip"]
+        if intf_idx < len(intfs):
+            n.cmd(f"ip addr flush dev {intfs[intf_idx]}")
+            n.cmd(f"ip addr add {new_ip} dev {intfs[intf_idx]}")
+            info(f"ACTION [{node_name}]: Changed {intfs[intf_idx]} IP to {new_ip}\n")
+
+
+def schedule_actions(net, nodes, runner_id):
+    """Return list of (delay, node_name, action) tuples sorted by delay."""
+    scheduled = []
+    for node in nodes:
+        if "actions" not in node:
+            continue
+        for i in range(int(node["count"])):
+            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            for action in node["actions"]:
+                scheduled.append((action["delay"], node_name, action))
+    return sorted(scheduled, key=lambda x: x[0])
+
+
 def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False):
     env_vars = os.environ.copy()
     env_vars["RUST_LOG_STYLE"] = "never"
@@ -126,14 +197,25 @@ def terminate_processes(p_box, prefix):
             p.kill()
 
 
-def monitor_short_processes(p_short_box, prefix):
+def monitor_short_processes(p_short_box, prefix, net=None, scheduled_actions=None, runner_id=0):
     """Monitor short-lived processes with timeout and detailed error reporting."""
     process_errors = []
     start_time = time.time()
+    scheduled_actions = scheduled_actions or []
+    executed_actions = set()
 
     # Monitor processes until all complete or timeout (poll every 200ms)
     max_polls = TIMEOUT * 5
     for _ in range(max_polls):
+        elapsed = time.time() - start_time
+
+        # Execute any scheduled actions whose delay has passed
+        for idx, (delay, node_name, action) in enumerate(scheduled_actions):
+            if idx not in executed_actions and elapsed >= delay:
+                if net:
+                    execute_action(net, node_name, action, runner_id)
+                executed_actions.add(idx)
+
         if not any(p.poll() is None for (_, p, _) in p_short_box):
             break
         time.sleep(0.2)
@@ -268,7 +350,8 @@ def get_node_ips(net, nodes, runner_id):
     return node_ips
 
 
-def prep_net(net, prefix, sniff):
+def prep_net(net, nodes, prefix, sniff, runner_id):
+    configure_multi_nat_hosts(net, nodes, runner_id)
     sniffer = Sniffer(net=net, output="logs/" + prefix + ".pcap")
     ti = sniffer.get_topoinfo()
     info("Testing network connectivity")
@@ -287,7 +370,7 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     topo = StarTopo(nodes=nodes, runner_id=runner_id)
     net = Mininet(topo=topo, waitConnected=True, link=TCLink)
     net.start()
-    sniffer = prep_net(net, prefix, args.sniff | visualize)
+    sniffer = prep_net(net, nodes, prefix, args.sniff | visualize, runner_id)
 
     p_box, p_short_box = [], []
     temp_dirs = []
@@ -326,7 +409,10 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
 
     # CLI(net)
 
-    process_errors = monitor_short_processes(p_short_box, prefix)
+    scheduled_actions = schedule_actions(net, nodes, runner_id)
+    process_errors = monitor_short_processes(
+        p_short_box, prefix, net, scheduled_actions, runner_id
+    )
     if process_errors:
         error("\n" + "=" * 80 + "\n")
         error(f"PROCESS ERRORS DETECTED in {prefix}:\n")
