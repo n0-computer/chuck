@@ -28,7 +28,11 @@
                     },
                     "process": "short",
                     "parser": "iroh_json",
-                    "integration": "magic_iroh_client_json"
+                    "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    }
                 }
             ]
         },
@@ -57,7 +61,12 @@
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_json"
+                    "parser": "iroh_json",
+                    "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    }
                 }
             ]
         },
@@ -86,7 +95,12 @@
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_json"
+                    "parser": "iroh_json",
+                    "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    }
                 }
             ]
         },
@@ -115,7 +129,12 @@
                         "node": "i_srv"
                     },
                     "process": "short",
-                    "parser": "iroh_json"
+                    "parser": "iroh_json",
+                    "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    }
                 }
             ]
         }
