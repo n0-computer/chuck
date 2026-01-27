@@ -12,8 +12,49 @@ invalid_results = {
 }
 
 
+def parse_iroh_json_output(lines):
+    """Parse iroh JSON output (NDJSON) and extract transfer stats."""
+    for line in lines:
+        try:
+            data = json.loads(line.strip())
+            if data.get("kind") == "DownloadComplete":
+                size = data["size"]
+                duration_us = data["duration"]
+                elapsed = duration_us / 1_000_000.0
+                mbits = (size * 8) / (elapsed * 1_000_000) if elapsed > 0 else 0
+                return {
+                    "data_len": size,
+                    "elapsed": elapsed,
+                    "mbits": mbits,
+                    "reported_mbits": mbits,
+                    "reported_time": elapsed,
+                }
+        except (json.JSONDecodeError, KeyError):
+            continue
+    raise Exception("No DownloadComplete event found in JSON output")
+
+
+def parse_magic_iroh_client_json(lines):
+    """Parse iroh JSON output for integration test results."""
+    s = {"conn_upgrade": "false", "transfer_success": "false"}
+    for line in lines:
+        try:
+            data = json.loads(line.strip())
+            kind = data.get("kind")
+            if kind == "DownloadComplete":
+                s["transfer_success"] = "true"
+            elif kind == "ConnectionTypeChanged":
+                status = data.get("status")
+                addr = data.get("addr")
+                if status == "Selected" and addr and "Ip" in addr:
+                    s["conn_upgrade"] = "true"
+        except (json.JSONDecodeError, KeyError):
+            continue
+    return s
+
+
 def parse_time_output(lines, size):
-    """Parse time output and calculate throughput."""
+    """Parse time output and calculate throughput. (DEPRECATED - use JSON parsers)"""
     for line in lines:
         if line.startswith("real"):
             k = line[5:].strip()
@@ -32,7 +73,7 @@ def parse_time_output(lines, size):
 
 
 def parse_iroh_output(lines, size):
-    """Parse iroh output and calculate throughput."""
+    """Parse iroh text output and calculate throughput. (DEPRECATED - use parse_iroh_json_output)"""
     transfer_lines = [
         line
         for line in lines
@@ -85,7 +126,7 @@ def parse_iperf(lines):
 
 
 def parse_magic_iroh_client(lines):
-    """Parse magic iroh client integration logs."""
+    """Parse magic iroh client integration logs. (DEPRECATED - use parse_magic_iroh_client_json)"""
     s = {"conn_upgrade": "false", "transfer_success": "false"}
     s["transfer_success"] = (
         "true"
@@ -120,29 +161,39 @@ def process_logs(nodes, prefix, runner_id):
     valid_parsers = {
         "iperf_server": parse_iperf,
         "iperf_udp_server": parse_iperf,
+        # DEPRECATED text-based parsers (kept for backwards compatibility)
         "time_1gb": lambda lines: [parse_time_output(lines, 1024 * 1024 * 1024)],
         "iroh_1gb": lambda lines: [parse_iroh_output(lines, 1024 * 1024 * 1024)],
         "iroh_1mb": lambda lines: [parse_iroh_output(lines, 1024 * 1024)],
         "iroh_cust_": lambda lines, size: [parse_iroh_output(lines, size)],
+        # JSON-based parsers (preferred)
+        "iroh_json": lambda lines: [parse_iroh_json_output(lines)],
     }
     for node in nodes:
-        if "parser" in node and (
-            node["parser"] in valid_parsers or node["parser"].startswith("iroh_cust_")
-        ):
+        parser_name = node.get("parser", "")
+        is_valid = (
+            parser_name in valid_parsers
+            or parser_name.startswith("iroh_cust_")
+            or parser_name.startswith("iroh_json")
+        )
+        if "parser" in node and is_valid:
             stats = []
             for i in range(int(node["count"])):
                 log_path = f'logs/{prefix}__{node["name"]}_{i}_r{runner_id}.txt'
                 try:
                     with open(log_path, "r") as f:
                         lines = f.readlines()
-                        if node["parser"].startswith("iroh_cust_"):
+                        if parser_name.startswith("iroh_cust_"):
                             size = humanfriendly.parse_size(
-                                node["parser"].split("_")[-1], binary=True
+                                parser_name.split("_")[-1], binary=True
                             )
                             parser_func = valid_parsers["iroh_cust_"]
                             stats.extend(parser_func(lines, size))
+                        elif parser_name.startswith("iroh_json"):
+                            parser_func = valid_parsers["iroh_json"]
+                            stats.extend(parser_func(lines))
                         else:
-                            parser_func = valid_parsers[node["parser"]]
+                            parser_func = valid_parsers[parser_name]
                             stats.extend(parser_func(lines))
                 except Exception as e:
                     print(f"Error processing {log_path}: {e}")
@@ -153,7 +204,10 @@ def process_logs(nodes, prefix, runner_id):
 def process_integration_logs(nodes, prefix, runner_id):
     """Process integration logs based on nodes and valid parsers."""
     valid_parsers = {
+        # DEPRECATED text-based parser (kept for backwards compatibility)
         "magic_iroh_client": parse_magic_iroh_client,
+        # JSON-based parser (preferred)
+        "magic_iroh_client_json": parse_magic_iroh_client_json,
     }
     for node in nodes:
         if "integration" in node and node["integration"] in valid_parsers:
