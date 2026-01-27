@@ -30,7 +30,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=100M --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=25M --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "multi_nat",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -44,7 +44,7 @@
                         "final_conn_direct": "true"
                     },
                     "link": {
-                        "bw": 8,
+                        "bw": 10,
                         "latency": 50,
                         "loss": 0
                     },
@@ -83,7 +83,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=100M --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=25M --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "nat",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -97,7 +97,7 @@
                         "final_conn_direct": "true"
                     },
                     "link": {
-                        "bw": 8,
+                        "bw": 10,
                         "latency": 50,
                         "loss": 0
                     },
@@ -137,7 +137,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=100M --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --size=25M --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "multi_nat",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -151,7 +151,7 @@
                         "final_conn_direct": "true"
                     },
                     "link": {
-                        "bw": 8,
+                        "bw": 10,
                         "latency": 50,
                         "loss": 0
                     },
