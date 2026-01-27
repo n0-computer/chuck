@@ -13,6 +13,7 @@ from mininet.net import Mininet
 from net.link import TCLink
 from net.network import StarTopo
 from parsing.netsim import process_logs, process_integration_logs
+import json as json_module
 from sniffer.sniff import Sniffer
 from sniffer.process import run_viz
 from util import cleanup_tmp_dirs, eject, FAILED_TESTS, write_failure_summary
@@ -445,6 +446,36 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     return (net, sniffer)
 
 
+def validate_integration_results(nodes, prefix, runner_id, args):
+    """Validate integration results against node requirements."""
+    for node in nodes:
+        if "integration_require" not in node:
+            continue
+        requirements = node["integration_require"]
+        report_path = f"report/integration_{prefix}__{node['name']}.json"
+        try:
+            with open(report_path, "r") as f:
+                results = json_module.load(f)
+            for result in results:
+                for field, expected in requirements.items():
+                    actual = result.get(field)
+                    if str(actual).lower() != str(expected).lower():
+                        node_name = result.get("node", node["name"])
+                        error(f"\nINTEGRATION CHECK FAILED [{node_name}]: {field}={actual}, expected={expected}\n")
+                        failure_entry = {
+                            "prefix": prefix,
+                            "errors": [{"node": node_name, "reason": f"{field}={actual}, expected={expected}"}]
+                        }
+                        FAILED_TESTS.append(failure_entry)
+                        if args.integration:
+                            raise Exception(f"Integration requirement failed: {field}={actual}, expected={expected}")
+        except FileNotFoundError:
+            error(f"Integration report not found: {report_path}\n")
+        except Exception as e:
+            error(f"Error validating integration results: {e}\n")
+            raise
+
+
 def run(case, runner_id, name, args):
     prefix = name + "__" + case["name"]
     nodes = case["nodes"]
@@ -457,6 +488,7 @@ def run(case, runner_id, name, args):
         (n, s) = run_case(nodes, runner_id, prefix, args, args.debug, viz)
     process_logs(nodes, prefix, runner_id)
     process_integration_logs(nodes, prefix, runner_id)
+    validate_integration_results(nodes, prefix, runner_id, args)
     if viz:
         viz_args = {
             "path": "logs/" + prefix + ".viz.pcap",

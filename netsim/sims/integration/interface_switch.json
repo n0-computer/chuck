@@ -39,6 +39,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "bw": 8,
                         "latency": 50,
@@ -88,6 +92,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "bw": 8,
                         "latency": 50,
@@ -138,6 +146,10 @@
                     "process": "short",
                     "parser": "iroh_json",
                     "integration": "magic_iroh_client_json",
+                    "integration_require": {
+                        "transfer_success": "true",
+                        "final_conn_direct": "true"
+                    },
                     "link": {
                         "bw": 8,
                         "latency": 50,
