@@ -20,7 +20,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=1M --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -54,7 +54,7 @@
                 {
                     "name": "i_get",
                     "count": 3,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=1M --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -88,7 +88,7 @@
                 {
                     "name": "i_get",
                     "count": 2,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=1M --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -122,7 +122,7 @@
                 {
                     "name": "i_get",
                     "count": 4,
-                    "cmd": "./bins/iroh-transfer --output json fetch --size=1M --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
