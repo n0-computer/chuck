@@ -20,7 +20,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=20 --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -60,7 +60,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=20 --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -120,7 +120,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=20 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -180,7 +180,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=20 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --pkarr-relay-url=\"http://10.0.0.2:8080/pkarr\" --dns-origin-domain=\"10.0.0.2:5300\" --remote-direct-address=\"%s\" %s",
                     "type": "public",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -230,7 +230,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=20 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "nat",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
@@ -280,7 +280,7 @@
                 {
                     "name": "i_get",
                     "count": 1,
-                    "cmd": "./bins/iroh-transfer --output json fetch --duration=10 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
+                    "cmd": "./bins/iroh-transfer --output json fetch --duration=20 --env dev --relay-url=\"http://10.0.0.1:3340\" --remote-relay-url=\"http://10.0.0.1:3340\" --remote-direct-address=\"%s\" %s",
                     "type": "nat",
                     "connect": {
                         "strategy": "params_with_parsed_addrs",
