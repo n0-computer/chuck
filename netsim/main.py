@@ -101,7 +101,7 @@ def setup_env_vars(prefix, node_name, temp_dir, node_env, debug=False):
         env_vars["RUST_LOG"] = "debug"
     if not "RUST_LOG" in env_vars:
         env_vars["RUST_LOG"] = "warn"
-    env_vars["RUST_LOG"] += ",iroh::_events::conn_type=trace"
+    env_vars["RUST_LOG"] += ",iroh::_events::conn_type=trace,iroh_quinn=trace,iroh=debug"
     for key, value in node_env.items():
         env_vars[key] = value
     return env_vars
