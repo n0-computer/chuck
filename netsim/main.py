@@ -506,9 +506,9 @@ def run_parallel(cases, name, skiplist, onlylist, args, max_workers=4):
     filtered = []
     for case in cases:
         prefix = name + "__" + case["name"]
-        if onlylist and prefix not in onlylist:
+        if onlylist and not any(f in prefix for f in onlylist):
             print("Skipping:", prefix)
-        elif prefix in skiplist:
+        elif any(f in prefix for f in skiplist):
             print("Skipping:", prefix)
         else:
             filtered.append(case)
