@@ -502,12 +502,13 @@ def run(case, runner_id, name, args):
     return (n, s)
 
 
-def run_parallel(cases, name, skiplist, args, max_workers=4):
-    # Filter skipped cases before chunking for optimal parallelism
+def run_parallel(cases, name, skiplist, onlylist, args, max_workers=4):
     filtered = []
     for case in cases:
         prefix = name + "__" + case["name"]
-        if prefix in skiplist:
+        if onlylist and prefix not in onlylist:
+            print("Skipping:", prefix)
+        elif prefix in skiplist:
             print("Skipping:", prefix)
         else:
             filtered.append(case)
@@ -558,6 +559,7 @@ if __name__ == "__main__":
         default=False,
     )
     parser.add_argument("--skip", help="Comma separated list of tests to skip")
+    parser.add_argument("--only", help="Comma separated list of tests to run exclusively")
     parser.add_argument(
         "--debug", help="Enable full debug logging", action="store_true", default=True
     )
@@ -575,6 +577,7 @@ if __name__ == "__main__":
     setLogLevel(args.netsim_log_level)
 
     skiplist = args.skip.split(",") if args.skip else []
+    onlylist = args.only.split(",") if args.only else []
 
     paths = []
     if os.path.isdir(args.cfg):
@@ -592,7 +595,7 @@ if __name__ == "__main__":
         config_f.close()
         name = config["name"]
         print(f"Start testing: %s\n" % path)
-        run_parallel(config["cases"], name, skiplist, args, args.max_workers)
+        run_parallel(config["cases"], name, skiplist, onlylist, args, args.max_workers)
 
     write_failure_summary()
     print("Done")
