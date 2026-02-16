@@ -5,10 +5,12 @@ from mininet.node import Node
 
 class StarTopo(Topo):
     """Single switch connected to n hosts.
+
     Default network layout:
-            h0    h1
-            \  /
-            s1 - hN..."""
+            h0   h1
+            |  /
+            s1 - hN...
+    """
 
     def build(
         self,
