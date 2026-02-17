@@ -98,7 +98,6 @@ def load_pcap(path, keylog=None, topo_path=None):
 
 
 class NetsimViz:
-
     HOVER_JS = """
     function pktAnalysisOnLoad(event) {
         console.log('pktAnalysisOnLoad');

@@ -1,36 +1,55 @@
 # Netsim
 
 ## Requirements
-- `sudo ./setup.sh`
-- Linux machine, tested on ubuntu 20.04 & 22.04
+- Linux machine (tested on Ubuntu 20.04 & 22.04)
+- Root access (`sudo`)
+- [uv](https://docs.astral.sh/uv/) for Python dependency management
 
-### Warning:
-- Requires root access
-- Dirties your system python dependencies 
+## Quick Setup
 
-## Locally
+```bash
+sudo ./setup.sh
+```
 
-You can also do this locally on a linux machine.  With a few modifications you don’t even need to do much as root:
+This runs the install scripts in `scripts/` which handle system packages, Python
+dependencies (via `uv`), and project fixtures.
 
-- clone [**iroh**](https://github.com/n0-computer/iroh) and [**chuck**](https://github.com/n0-computer/chuck) into the same directory.
-- Check `chuck/netsim/scripts/ubuntu_deps.sh`to find what the system dependencies are
-- `cd chuck/netsim`
-- Create a virtual environment:
-    - `python -m venv .venv`
-    - `source .venv/bin/activate`
-    - `./scripts/python_deps.sh`
-- Run `./scripts/project_deps` to configure the project structure and generate fixtures
-- Continue with in the iroh repo, build iroh and copy it into chuck/netsim/bins. I found building in release mode to be sufficient, not release-optimized like what CI does. `cargo build --release && cp ./target/release/iroh ../chuck/netsim/bins/`
-    - Do not run kill, these are services managed by systemd
-    - Run `main.py` as root, using the python from your virtualenv:
-        - `./venv/bin/python main.py --integrations sims/mini`
+## Local Setup
+
+For development on a local Linux machine without dirtying system Python:
+
+1. Clone [iroh](https://github.com/n0-computer/iroh) and [chuck](https://github.com/n0-computer/chuck) into the same directory.
+2. Install system dependencies listed in `scripts/ubuntu_deps.sh`.
+3. Set up Python deps:
+   ```bash
+   cd chuck/netsim
+   uv venv
+   source .venv/bin/activate
+   uv pip install -r scripts/requirements.txt
+   ```
+4. Configure project structure and generate fixtures:
+   ```bash
+   ./scripts/project_deps.sh
+   ```
+5. Build iroh and copy binaries:
+   ```bash
+   cd ../iroh
+   cargo build --release
+   cp target/release/iroh ../chuck/netsim/bins/
+   ```
+6. Run simulations (use the venv Python as root):
+   ```bash
+   sudo .venv/bin/python main.py --integration sims/mini
+   ```
 
 ## Run
 
-- `sudo python3 main.py sims/example.json`
-- `./cleanup.sh`
+```bash
+sudo python3 main.py sims/example.json
+./cleanup.sh
+```
 
 ## Notes
 
-- `https://github.com/mininet/mininet/wiki/Introduction-to-Mininet`
-- `sudo kill -9 $(pgrep ovs)` - when stuck with weird errors due to the process failing mid way on a simulation
+- Mininet docs: https://github.com/mininet/mininet/wiki/Introduction-to-Mininet
+- If stuck with errors from a failed simulation: `sudo kill -9 $(pgrep ovs)`

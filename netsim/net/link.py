@@ -1,5 +1,5 @@
 """
-Moved into the repo to allow for higher bandwidth limits and 
+Moved into the repo to allow for higher bandwidth limits and
 more control over the link parameters.
 
 ###############################################################################
@@ -39,7 +39,6 @@ from mininet.util import makeIntfPair
 
 
 class Intf(object):
-
     "Basic interface object that can configure itself."
 
     def __init__(self, name, node=None, port=None, link=None, mac=None, **params):
@@ -357,7 +356,7 @@ class TCIntf(Intf):
         enable_ecn=False,
         enable_red=False,
         max_queue_size=None,
-        **params
+        **params,
     ):
         """Configure the port and set its properties.
         bw: bandwidth in b/s (e.g. '10m')
@@ -466,7 +465,7 @@ class Link(object):
         params1=None,
         params2=None,
         fast=True,
-        **params
+        **params,
     ):
         """Create veth link to another node, making two new interfaces.
         node1: first node
