@@ -8,11 +8,14 @@ on:
 
 env:
   RUSTFLAGS: -Dwarnings
+  SCCACHE_CACHE_SIZE: "10G"
 
 jobs:
   rust:
     name: Rust lint & check
     runs-on: ubuntu-latest
+    env:
+      RUSTC_WRAPPER: "sccache"
     steps:
       - uses: actions/checkout@v4
 
@@ -20,7 +23,8 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - uses: Swatinem/rust-cache@v2
+      - name: Install sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
 
       - name: cargo fmt
         run: cargo fmt --all -- --check
@@ -43,8 +47,11 @@ jobs:
 
       - uses: astral-sh/setup-uv@v5
 
-      - name: uv pip install
-        run: uv pip install --system -r netsim/scripts/requirements.txt
+      - name: Create venv & install deps
+        run: |
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install -r netsim/scripts/requirements.txt
 
       - name: ruff check
         uses: astral-sh/ruff-action@v3
