@@ -9,6 +9,7 @@ on:
 env:
   RUSTFLAGS: -Dwarnings
   SCCACHE_CACHE_SIZE: "10G"
+  SCCACHE_GHA_ENABLED: "on"
 
 jobs:
   rust:

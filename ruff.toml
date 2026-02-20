@@ -1,5 +1,5 @@
 target-version = "py38"
-src = ["netsim", "netsim/parsing", "netsim/net", "netsim/sniffer"]
+src = ["netsim"]
 
 [lint]
 select = ["F", "E"]
