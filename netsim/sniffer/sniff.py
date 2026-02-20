@@ -1,9 +1,10 @@
 import socket
 import sys
 import threading
-import dpkt
-from struct import unpack
 from ipaddress import ip_address
+from struct import unpack
+
+import dpkt
 
 HOST_TYPES = ["Host", "CPULimitedHost", "NAT", "EdgeNode", "LinuxRouter"]
 SWITCH_TYPES = [
@@ -41,7 +42,6 @@ def parse_ips(packet):
 
 
 class Sniffer:
-
     def __init__(self, net, output="netsim.pcap"):
         self.output = output
 
@@ -112,9 +112,9 @@ class Sniffer:
         # if smi ip != sip then rewrite sip
         # if dmi ip != dip then rewrite dip
         # if src ip or dst ip not known then ignore
-        if not sip in self.node_ips:
+        if sip not in self.node_ips:
             return pkt
-        if not dip in self.node_ips:
+        if dip not in self.node_ips:
             return pkt
         epkt = dpkt.ethernet.Ethernet(pkt)
         if sip != smisnode["ip"]:
@@ -146,7 +146,7 @@ class Sniffer:
                 intf = self.intfExists(interface)
                 if not intf:
                     continue
-            except Exception as e:
+            except Exception:
                 continue
 
             direction = "incoming"
@@ -173,10 +173,10 @@ class Sniffer:
 
             sip, dip = parse_ips(packet)
 
-            link = self.intfExists(intf["link"])
-            src, dst = intf["node"], intf["link"].split("-")[0]
+            _link = self.intfExists(intf["link"])
+            src, _dst = intf["node"], intf["link"].split("-")[0]
             if direction == "incoming":
-                src, dst = intf["link"].split("-")[0], intf["node"]
+                src, _dst = intf["link"].split("-")[0], intf["node"]
 
             src_node = self.nodeExists(src)
 
@@ -184,7 +184,7 @@ class Sniffer:
             dmisnode = self.nodeExists(dmi["node"])
 
             if src_node:
-                if not src_node["type"] in SWITCH_TYPES:
+                if src_node["type"] not in SWITCH_TYPES:
                     pcapw.writepkt(packet)
                     wpkt = self.pkt_src_dest_rewrite(
                         packet, sip, smisnode, dip, dmisnode

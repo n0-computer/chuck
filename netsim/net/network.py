@@ -1,6 +1,6 @@
-from mininet.topo import Topo
-from mininet.nodelib import NAT
 from mininet.node import Node
+from mininet.nodelib import NAT
+from mininet.topo import Topo
 
 
 class StarTopo(Topo):
@@ -68,9 +68,7 @@ class StarTopo(Topo):
                         inetIntf=inetIntf,
                         localIntf=localIntf,
                     )
-                    switch = self.addSwitch(
-                        "ns%s%dr%d" % (node["name"], i, runner_id)
-                    )
+                    switch = self.addSwitch("ns%s%dr%d" % (node["name"], i, runner_id))
                     # connect NAT to inet and local switches
                     self.addLink(nat, interconnect, intfName1=inetIntf)
                     self.addLink(nat, switch, intfName1=localIntf, params1=natParams)
@@ -107,10 +105,13 @@ class StarTopo(Topo):
                         inetIntf=nat1_inetIntf,
                         localIntf=nat1_localIntf,
                     )
-                    switch1 = self.addSwitch("ns1%s%dr%d" % (node["name"], i, runner_id))
+                    switch1 = self.addSwitch(
+                        "ns1%s%dr%d" % (node["name"], i, runner_id)
+                    )
                     self.addLink(nat1, interconnect, intfName1=nat1_inetIntf)
                     self.addLink(
-                        nat1, switch1,
+                        nat1,
+                        switch1,
                         intfName1=nat1_localIntf,
                         params1={"ip": "%s/24" % nat1_localIP},
                     )
@@ -127,17 +128,20 @@ class StarTopo(Topo):
                         inetIntf=nat2_inetIntf,
                         localIntf=nat2_localIntf,
                     )
-                    switch2 = self.addSwitch("ns2%s%dr%d" % (node["name"], i, runner_id))
+                    switch2 = self.addSwitch(
+                        "ns2%s%dr%d" % (node["name"], i, runner_id)
+                    )
                     self.addLink(nat2, interconnect, intfName1=nat2_inetIntf)
                     self.addLink(
-                        nat2, switch2,
+                        nat2,
+                        switch2,
                         intfName1=nat2_localIntf,
                         params1={"ip": "%s/24" % nat2_localIP},
                     )
 
                     # Host with two interfaces - initially routed via NAT1
                     host_ip1 = "192.168.%d.10/24" % nat1_subnet_idx
-                    host_ip2 = "192.168.%d.10/24" % nat2_subnet_idx
+                    _host_ip2 = "192.168.%d.10/24" % nat2_subnet_idx
                     host = self.addHost(
                         "%s_%d_r%d" % (node["name"], i, runner_id),
                         ip=host_ip1,

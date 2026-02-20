@@ -1,1 +1,1 @@
-pip3 install -r scripts/requirements.txt
+uv pip install -r scripts/requirements.txt

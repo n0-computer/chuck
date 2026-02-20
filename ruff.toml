@@ -1,0 +1,14 @@
+target-version = "py38"
+src = ["netsim"]
+
+[lint]
+select = ["F", "E"]
+ignore = [
+    "E501",  # line length — handled by formatter
+    "F403",  # wildcard imports
+    "F405",  # undefined from wildcard import
+    "E741",  # ambiguous variable names (Mininet convention)
+]
+
+[lint.per-file-ignores]
+"netsim/net/link.py" = ["ALL"]  # vendored Mininet code

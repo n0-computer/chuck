@@ -1,0 +1,12 @@
+[project]
+name = "netsim"
+version = "0.0.1"
+description = "Network simulation tools for iroh"
+requires-python = ">=3.8"
+dependencies = [
+    "pyshark",
+    "drawsvg",
+    "dpkt",
+    "humanfriendly",
+    "mininet",
+]

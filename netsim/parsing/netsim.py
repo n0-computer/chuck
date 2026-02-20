@@ -1,6 +1,5 @@
 import json
 import re
-import os
 import humanfriendly
 
 invalid_results = {
@@ -87,7 +86,9 @@ def parse_iroh_output(lines, size):
     transfer_lines = [
         line
         for line in lines
-        if ("Transferred" in line or "Received" in line) and "in" in line and "/s" in line
+        if ("Transferred" in line or "Received" in line)
+        and "in" in line
+        and "/s" in line
     ]
     if not transfer_lines:
         raise Exception("bad run")
@@ -140,13 +141,13 @@ def parse_magic_iroh_client(lines):
     s = {"conn_upgrade": "false", "transfer_success": "false"}
     s["transfer_success"] = (
         "true"
-        if any(
-            "Received" in line and "in" in line and "/s" in line for line in lines
-        )
+        if any("Received" in line and "in" in line and "/s" in line for line in lines)
         else "false"
     )
     s["conn_upgrade"] = (
-        "true" if any(("conn_type::changed" in line and "Direct" in line) for line in lines) else "false"
+        "true"
+        if any(("conn_type::changed" in line and "Direct" in line) for line in lines)
+        else "false"
     )
     return s
 
@@ -189,7 +190,7 @@ def process_logs(nodes, prefix, runner_id):
         if "parser" in node and is_valid:
             stats = []
             for i in range(int(node["count"])):
-                log_path = f'logs/{prefix}__{node["name"]}_{i}_r{runner_id}.txt'
+                log_path = f"logs/{prefix}__{node['name']}_{i}_r{runner_id}.txt"
                 try:
                     with open(log_path, "r") as f:
                         lines = f.readlines()
@@ -223,7 +224,7 @@ def process_integration_logs(nodes, prefix, runner_id):
         if "integration" in node and node["integration"] in valid_parsers:
             stats = []
             for i in range(int(node["count"])):
-                log_path = f'logs/{prefix}__{node["name"]}_{i}_r{runner_id}.txt'
+                log_path = f"logs/{prefix}__{node['name']}_{i}_r{runner_id}.txt"
                 try:
                     with open(log_path, "r") as f:
                         lines = f.readlines()
