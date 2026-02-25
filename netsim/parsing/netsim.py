@@ -103,7 +103,7 @@ def parse_iroh_output(lines, size):
 
 def parse_humanized_output(line):
     """Convert human-readable size to megabits."""
-    x = re.search("\((.*)\/s", line)
+    x = re.search(r"\((.*)\/s", line)
     if x is None:
         raise Exception("Line does not match bytesize pattern")
 
