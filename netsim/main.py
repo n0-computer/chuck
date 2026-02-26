@@ -27,7 +27,7 @@ def configure_multi_nat_hosts(net, nodes, runner_id):
         if node["type"] != "multi_nat":
             continue
         for i in range(int(node["count"])):
-            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            node_name = f"{node['name']}_{i}_r{runner_id}"
             n = net.get(node_name)
             # Second interface needs IP configured
             nat2_subnet_idx = 100 + i * 2 + 1
@@ -56,7 +56,9 @@ def execute_action(net, node_name, action, runner_id):
         gw_ips = [f"192.168.{nat1_subnet_idx}.1", f"192.168.{nat2_subnet_idx}.1"]
         n.cmd("ip route del default")
         n.cmd(f"ip route add default via {gw_ips[to_idx]}")
-        info(f"ACTION [{node_name}]: Switched route from {gw_ips[from_idx]} to {gw_ips[to_idx]}\n")
+        info(
+            f"ACTION [{node_name}]: Switched route from {gw_ips[from_idx]} to {gw_ips[to_idx]}\n"
+        )
 
     elif action_type == "link_down":
         intf_idx = action.get("interface", 0)
@@ -86,7 +88,7 @@ def schedule_actions(net, nodes, runner_id):
         if "actions" not in node:
             continue
         for i in range(int(node["count"])):
-            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            node_name = f"{node['name']}_{i}_r{runner_id}"
             for action in node["actions"]:
                 scheduled.append((action["delay"], node_name, action))
     return sorted(scheduled, key=lambda x: x[0])
@@ -117,8 +119,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
     poll_interval = 0.2
 
     expected_nodes = [
-        f'{node["name"]}_{i}_r{runner_id}'
-        for i in range(int(node["count"]))
+        f"{node['name']}_{i}_r{runner_id}" for i in range(int(node["count"]))
     ]
 
     max_iterations = max(1, int(max_wait / poll_interval))
@@ -135,24 +136,33 @@ def parse_node_params(node, prefix, node_params, runner_id):
                 with open(log_file, "r") as f:
                     lines = f.readlines()
                     for idx, line in enumerate(lines):
-                        if parser_type == "iroh_ticket" and line.startswith("All-in-one ticket"):
-                            parsed_params[node_name] = line[len("All-in-one ticket: "):].strip()
+                        if parser_type == "iroh_ticket" and line.startswith(
+                            "All-in-one ticket"
+                        ):
+                            parsed_params[node_name] = line[
+                                len("All-in-one ticket: ") :
+                            ].strip()
                             break
                         # DEPRECATED: use iroh_endpoint_json instead
-                        if parser_type == "iroh_endpoint_with_addrs" and line.startswith("Endpoint id:"):
+                        if (
+                            parser_type == "iroh_endpoint_with_addrs"
+                            and line.startswith("Endpoint id:")
+                        ):
                             if idx + 1 >= len(lines):
                                 break
                             endpoint_id = lines[idx + 1].strip()
                             direct_addrs = []
                             j = idx + 2
-                            if j < len(lines) and lines[j].startswith("Direct addresses:"):
+                            if j < len(lines) and lines[j].startswith(
+                                "Direct addresses:"
+                            ):
                                 j += 1
                                 while j < len(lines) and lines[j].startswith("\t"):
                                     direct_addrs.append(lines[j].strip())
                                     j += 1
                             parsed_params[node_name] = {
                                 "endpoint_id": endpoint_id,
-                                "direct_addrs": direct_addrs
+                                "direct_addrs": direct_addrs,
                             }
                             break
                         if parser_type == "iroh_endpoint_json":
@@ -161,7 +171,9 @@ def parse_node_params(node, prefix, node_params, runner_id):
                                 if data.get("kind") == "EndpointBound":
                                     parsed_params[node_name] = {
                                         "endpoint_id": data["endpoint_id"],
-                                        "direct_addrs": data.get("direct_addresses", [])
+                                        "direct_addrs": data.get(
+                                            "direct_addresses", []
+                                        ),
                                     }
                                     break
                             except json.JSONDecodeError:
@@ -178,7 +190,7 @@ def parse_node_params(node, prefix, node_params, runner_id):
         error("\n" + "=" * 80 + "\n")
         error(f"ERROR: Failed to parse required parameters using '{parser_type}'\n")
         error(f"Missing parameters for nodes: {', '.join(missing_params)}\n")
-        error(f"Check the log files to ensure nodes are outputting expected format:\n")
+        error("Check the log files to ensure nodes are outputting expected format:\n")
         for node_name in missing_params:
             error(f"  - logs/{prefix}__{node_name}.txt\n")
         error("=" * 80 + "\n")
@@ -200,7 +212,9 @@ def terminate_processes(p_box, prefix):
             p.kill()
 
 
-def monitor_short_processes(p_short_box, prefix, net=None, scheduled_actions=None, runner_id=0):
+def monitor_short_processes(
+    p_short_box, prefix, net=None, scheduled_actions=None, runner_id=0
+):
     """Monitor short-lived processes with timeout and detailed error reporting."""
     process_errors = []
     start_time = time.time()
@@ -230,7 +244,9 @@ def monitor_short_processes(p_short_box, prefix, net=None, scheduled_actions=Non
         result = p.poll()
         if result is None:
             # Process timed out
-            error(f"\nProcess timed out after {elapsed_time:.1f}s for node {node_name}\n")
+            error(
+                f"\nProcess timed out after {elapsed_time:.1f}s for node {node_name}\n"
+            )
             error(f"Command was: {cmd}\n")
             p.terminate()
             time.sleep(0.2)
@@ -267,9 +283,15 @@ def handle_connection_strategy(node, node_counts, i, runner_id, node_ips, node_p
         return cmd
 
     strategy = node["connect"]["strategy"]
-    if strategy in ("plain", "plain_with_id", "params", "params_with_direct_addr", "params_with_parsed_addrs"):
+    if strategy in (
+        "plain",
+        "plain_with_id",
+        "params",
+        "params_with_direct_addr",
+        "params_with_parsed_addrs",
+    ):
         node_name = node["connect"]["node"]
-        if not (node_name in node_counts):
+        if node_name not in node_counts:
             raise ValueError(
                 f"Connection target node '{node_name}' not found in simulation. "
                 f"Available nodes: {', '.join(node_counts.keys())}"
@@ -347,7 +369,7 @@ def get_node_ips(net, nodes, runner_id):
     node_ips = {}
     for node in nodes:
         for i in range(int(node["count"])):
-            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            node_name = f"{node['name']}_{i}_r{runner_id}"
             n = net.get(node_name)
             node_ips[node_name] = n.IP()
     return node_ips
@@ -384,7 +406,7 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
 
     for node in nodes:
         for i in range(int(node["count"])):
-            node_name = f'{node["name"]}_{i}_r{runner_id}'
+            node_name = f"{node['name']}_{i}_r{runner_id}"
             n = net.get(node_name)
 
             cmd = handle_connection_strategy(
@@ -463,14 +485,23 @@ def validate_integration_results(nodes, prefix, runner_id, args):
                     actual = result.get(field)
                     if str(actual).lower() != str(expected).lower():
                         node_name = result.get("node", node["name"])
-                        error(f"\nINTEGRATION CHECK FAILED [{node_name}]: {field}={actual}, expected={expected}\n")
+                        error(
+                            f"\nINTEGRATION CHECK FAILED [{node_name}]: {field}={actual}, expected={expected}\n"
+                        )
                         failure_entry = {
                             "prefix": prefix,
-                            "errors": [{"node": node_name, "reason": f"{field}={actual}, expected={expected}"}]
+                            "errors": [
+                                {
+                                    "node": node_name,
+                                    "reason": f"{field}={actual}, expected={expected}",
+                                }
+                            ],
                         }
                         FAILED_TESTS.append(failure_entry)
                         if args.integration:
-                            raise Exception(f"Integration requirement failed: {field}={actual}, expected={expected}")
+                            raise Exception(
+                                f"Integration requirement failed: {field}={actual}, expected={expected}"
+                            )
         except FileNotFoundError:
             error(f"Integration report not found: {report_path}\n")
         except Exception as e:
@@ -517,7 +548,9 @@ def run_parallel(cases, name, skiplist, onlylist, args, max_workers=4):
         return
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        chunks = [filtered[i : i + max_workers] for i in range(0, len(filtered), max_workers)]
+        chunks = [
+            filtered[i : i + max_workers] for i in range(0, len(filtered), max_workers)
+        ]
         for chunk in chunks:
             futures = []
             r = []
@@ -559,7 +592,9 @@ if __name__ == "__main__":
         default=False,
     )
     parser.add_argument("--skip", help="Comma separated list of tests to skip")
-    parser.add_argument("--only", help="Comma separated list of tests to run exclusively")
+    parser.add_argument(
+        "--only", help="Comma separated list of tests to run exclusively"
+    )
     parser.add_argument(
         "--debug", help="Enable full debug logging", action="store_true", default=True
     )
@@ -594,7 +629,7 @@ if __name__ == "__main__":
         config = json.load(config_f)
         config_f.close()
         name = config["name"]
-        print(f"Start testing: %s\n" % path)
+        print("Start testing: %s\n" % path)
         run_parallel(config["cases"], name, skiplist, onlylist, args, args.max_workers)
 
     write_failure_summary()

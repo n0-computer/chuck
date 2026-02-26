@@ -50,7 +50,6 @@ def update_performance_results(json_data, res, name, case, prom_flag):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--commit", help="commit hash")
     parser.add_argument(

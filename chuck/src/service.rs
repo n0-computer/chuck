@@ -28,7 +28,7 @@ impl Server {
                 loop {
                     let n = match socket.read(&mut buf).await {
                         // socket closed
-                        Ok(n) if n == 0 => return,
+                        Ok(0) => return,
                         Ok(n) => n,
                         Err(e) => {
                             eprintln!("failed to read from socket; err = {:?}", e);
@@ -98,8 +98,8 @@ impl Client {
         let mut socket = tokio::net::TcpStream::connect(&self.host).await?;
         socket.write_all(&request.as_bytes()).await?;
         let mut buf = [0; DEFAULT_SERVICE_BUFFER_SIZE];
-        socket.read(&mut buf).await?;
-        println!("Response: {}", String::from_utf8_lossy(&buf));
+        let n = socket.read(&mut buf).await?;
+        println!("Response: {}", String::from_utf8_lossy(&buf[..n]));
         Ok(())
     }
 }

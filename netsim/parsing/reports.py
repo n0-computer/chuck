@@ -48,7 +48,7 @@ def res_to_table(res):
         sorted_cases = sorted(cases.items(), key=lambda x: case_sort_key(x[0]))
         for case, metrics in sorted_cases:
             print(
-                f'| {test_name} | {case} | {metrics["throughput"]:.2f} | {metrics["reported_throughput"]:.2f} |'
+                f"| {test_name} | {case} | {metrics['throughput']:.2f} | {metrics['reported_throughput']:.2f} |"
             )
 
 
@@ -88,9 +88,7 @@ def res_to_metro(res, commit, integration):
             if not integration:
                 val = metrics["throughput"]
 
-            r["metrics"].append(
-                create_metric(commit, bucket, name, tag, val, now)
-            )
+            r["metrics"].append(create_metric(commit, bucket, name, tag, val, now))
             if not integration:
                 r["metrics"].append(
                     create_metric(

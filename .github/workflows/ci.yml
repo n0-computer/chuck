@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  RUSTFLAGS: -Dwarnings
+  SCCACHE_CACHE_SIZE: "10G"
+  SCCACHE_GHA_ENABLED: "on"
+
+jobs:
+  rust:
+    name: Rust lint & check
+    runs-on: ubuntu-latest
+    env:
+      RUSTC_WRAPPER: "sccache"
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
+
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy
+        run: cargo clippy --all-targets
+
+      - name: cargo check
+        run: cargo check
+
+  python:
+    name: Python lint, format & deps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Create venv & install deps
+        run: |
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install -r netsim/scripts/requirements.txt
+
+      - name: ruff check
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: check netsim/
+
+      - name: ruff format
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: format --check netsim/
