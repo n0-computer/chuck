@@ -40,57 +40,58 @@ def configure_multi_nat_hosts(net, nodes, runner_id):
 
 def debug_network(net, nodes, runner_id):
     """Dump network configuration for debugging NAT traversal issues."""
-    info("=== DEBUG: Network Configuration ===\n")
-    for node in nodes:
-        if node["type"] not in ("nat", "multi_nat"):
-            continue
-        for i in range(int(node["count"])):
-            # Debug the NAT node(s)
-            if node["type"] == "nat":
-                nat_name = f'n_{node["name"]}{i}r{runner_id}'
-                host_name = f'{node["name"]}_{i}_r{runner_id}'
-                for name in [nat_name, host_name]:
-                    n = net.get(name)
-                    if n:
-                        info(f"\n--- {name} ---\n")
-                        info(f"interfaces: {n.cmd('ip -4 addr show')}\n")
-                        info(f"routes: {n.cmd('ip route show')}\n")
-                        info(f"iptables nat: {n.cmd('iptables -t nat -L -n -v')}\n")
-                        info(f"iptables filter: {n.cmd('iptables -L FORWARD -n -v')}\n")
-                        info(f"conntrack: {n.cmd('conntrack -L 2>/dev/null || echo no-conntrack')}\n")
-            elif node["type"] == "multi_nat":
-                host_name = f'{node["name"]}_{i}_r{runner_id}'
-                nat1_name = f'n1_{node["name"]}{i}r{runner_id}'
-                nat2_name = f'n2_{node["name"]}{i}r{runner_id}'
-                for name in [nat1_name, nat2_name, host_name]:
-                    n = net.get(name)
-                    if n:
-                        info(f"\n--- {name} ---\n")
-                        info(f"interfaces: {n.cmd('ip -4 addr show')}\n")
-                        info(f"routes: {n.cmd('ip route show')}\n")
-                        info(f"iptables nat: {n.cmd('iptables -t nat -L -n -v')}\n")
-                        info(f"iptables filter: {n.cmd('iptables -L FORWARD -n -v')}\n")
-
-    # Test connectivity between hosts
-    info("\n=== DEBUG: Connectivity Test ===\n")
-    host_names = []
-    for node in nodes:
-        if node["type"] in ("nat", "multi_nat"):
+    with open("logs/debug_network.txt", "w") as f:
+        f.write("=== Network Configuration ===\n")
+        for node in nodes:
+            if node["type"] not in ("nat", "multi_nat"):
+                continue
             for i in range(int(node["count"])):
-                host_names.append(f'{node["name"]}_{i}_r{runner_id}')
-    if len(host_names) >= 2:
-        h1 = net.get(host_names[0])
-        h2 = net.get(host_names[1])
-        if h1 and h2:
-            # Get public IPs by checking default route gateway
-            h1_gw = h1.cmd("ip route | grep default | awk '{print $3}'").strip()
-            h2_gw = h2.cmd("ip route | grep default | awk '{print $3}'").strip()
-            info(f"{host_names[0]} gateway: {h1_gw}\n")
-            info(f"{host_names[1]} gateway: {h2_gw}\n")
-            # Try pinging each other's gateways (public side of NAT)
-            info(f"{host_names[0]} ping relay: {h1.cmd('ping -c1 -W1 10.0.0.1')}\n")
-            info(f"{host_names[1]} ping relay: {h2.cmd('ping -c1 -W1 10.0.0.1')}\n")
-    info("=== END DEBUG ===\n")
+                if node["type"] == "nat":
+                    nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    for name in [nat_name, host_name]:
+                        n = net.get(name)
+                        if n:
+                            f.write(f"\n--- {name} ---\n")
+                            f.write(f"ip addr:\n{n.cmd('ip -4 addr show')}\n")
+                            f.write(f"routes:\n{n.cmd('ip route show')}\n")
+                            f.write(f"iptables nat:\n{n.cmd('iptables -t nat -L -n -v')}\n")
+                            f.write(f"iptables forward:\n{n.cmd('iptables -L FORWARD -n -v')}\n")
+                elif node["type"] == "multi_nat":
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    nat1_name = f'n1_{node["name"]}{i}r{runner_id}'
+                    nat2_name = f'n2_{node["name"]}{i}r{runner_id}'
+                    for name in [nat1_name, nat2_name, host_name]:
+                        n = net.get(name)
+                        if n:
+                            f.write(f"\n--- {name} ---\n")
+                            f.write(f"ip addr:\n{n.cmd('ip -4 addr show')}\n")
+                            f.write(f"routes:\n{n.cmd('ip route show')}\n")
+                            f.write(f"iptables nat:\n{n.cmd('iptables -t nat -L -n -v')}\n")
+                            f.write(f"iptables forward:\n{n.cmd('iptables -L FORWARD -n -v')}\n")
+
+        # Connectivity tests
+        f.write("\n=== Connectivity Tests ===\n")
+        all_hosts = []
+        for node in nodes:
+            for i in range(int(node["count"])):
+                name = f'{node["name"]}_{i}_r{runner_id}'
+                n = net.get(name)
+                if n:
+                    all_hosts.append((name, n))
+        for name, n in all_hosts:
+            f.write(f"\n{name} ping 10.0.0.1: {n.cmd('ping -c1 -W1 10.0.0.1')}\n")
+        # UDP connectivity test between NAT hosts
+        if len(all_hosts) >= 2:
+            h1_name, h1 = all_hosts[-2]
+            h2_name, h2 = all_hosts[-1]
+            # h2 listens, h1 sends
+            h2.cmd('timeout 2 nc -u -l -p 12345 > /tmp/udp_test 2>&1 &')
+            import time; time.sleep(0.1)
+            h1_out = h1.cmd('echo HELLO | nc -u -w1 10.0.0.1 12345 2>&1')
+            time.sleep(0.5)
+            h2_got = h2.cmd('cat /tmp/udp_test 2>/dev/null')
+            f.write(f"\nUDP test: {h1_name} -> 10.0.0.1:12345: sent={h1_out.strip()}, received={h2_got.strip()}\n")
 
 
 def execute_action(net, node_name, action, runner_id):
