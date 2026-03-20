@@ -120,22 +120,38 @@ def debug_network(net, nodes, runner_id):
             f.write(f"\nTest 1: {h1_name} -> {h2_pub}:55555 (no hole punch)\n")
             f.write(f"  tcpdump on {h2_nat_name}: {cap1}\n")
 
-            # Test 2: Simultaneous send - h1 sends to h2_pub, h2 sends to h1_pub
-            h1.cmd('rm -f /tmp/udp_sim_recv')
-            h2.cmd('rm -f /tmp/udp_sim_recv')
-            # Both listen
-            h1.cmd('timeout 3 python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.settimeout(2);print(s.recvfrom(100))" > /tmp/udp_sim_recv 2>&1 &')
-            h2.cmd('timeout 3 python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.settimeout(2);print(s.recvfrom(100))" > /tmp/udp_sim_recv 2>&1 &')
-            time.sleep(0.2)
-            # Both send simultaneously from port 44444
-            h1.cmd(f'python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.sendto(b\\\"FROM_H1\\\",(\\\"{h2_pub}\\\",44444))" &')
-            h2.cmd(f'python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.sendto(b\\\"FROM_H2\\\",(\\\"{h1_pub}\\\",44444))" &')
-            time.sleep(2)
+            # Test 2: Simultaneous UDP hole punch using single socket per host
+            # Each host uses one socket to both send and receive
+            sim_script = '''
+import socket, time, sys
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(("0.0.0.0", int(sys.argv[1])))
+s.settimeout(3)
+# Send to peer
+s.sendto(b"HELLO_FROM_" + sys.argv[3].encode(), (sys.argv[2], int(sys.argv[1])))
+time.sleep(0.05)
+s.sendto(b"HELLO_FROM_" + sys.argv[3].encode(), (sys.argv[2], int(sys.argv[1])))
+# Try to receive
+try:
+    data, addr = s.recvfrom(100)
+    print(f"GOT: {data} from {addr}")
+except socket.timeout:
+    print("TIMEOUT: no data received")
+'''
+            import tempfile, os
+            script_path = '/tmp/udp_sim.py'
+            with open(script_path, 'w') as sf:
+                sf.write(sim_script)
+
+            h1.cmd(f'python3 {script_path} 33333 {h2_pub} H1 > /tmp/udp_sim_recv 2>&1 &')
+            h2.cmd(f'python3 {script_path} 33333 {h1_pub} H2 > /tmp/udp_sim_recv 2>&1 &')
+            time.sleep(5)
             h1_got = h1.cmd('cat /tmp/udp_sim_recv 2>/dev/null').strip()
             h2_got = h2.cmd('cat /tmp/udp_sim_recv 2>/dev/null').strip()
-            f.write(f"\nTest 2: Simultaneous UDP (port 44444)\n")
-            f.write(f"  {h1_name} received: '{h1_got}'\n")
-            f.write(f"  {h2_name} received: '{h2_got}'\n")
+            f.write(f"\nTest 2: Simultaneous UDP hole punch (port 33333)\n")
+            f.write(f"  {h1_name} ({h1_pub}) -> {h2_pub}: {h1_got}\n")
+            f.write(f"  {h2_name} ({h2_pub}) -> {h1_pub}: {h2_got}\n")
 
             # Dump NAT conntrack after tests
             for nat_name, nat_n in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat)]:
