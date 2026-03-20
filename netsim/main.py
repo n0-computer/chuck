@@ -81,17 +81,66 @@ def debug_network(net, nodes, runner_id):
                     all_hosts.append((name, n))
         for name, n in all_hosts:
             f.write(f"\n{name} ping 10.0.0.1: {n.cmd('ping -c1 -W1 10.0.0.1')}\n")
-        # UDP connectivity test between NAT hosts
-        if len(all_hosts) >= 2:
-            h1_name, h1 = all_hosts[-2]
-            h2_name, h2 = all_hosts[-1]
-            # h2 listens, h1 sends
-            h2.cmd('timeout 2 nc -u -l -p 12345 > /tmp/udp_test 2>&1 &')
-            import time; time.sleep(0.1)
-            h1_out = h1.cmd('echo HELLO | nc -u -w1 10.0.0.1 12345 2>&1')
-            time.sleep(0.5)
-            h2_got = h2.cmd('cat /tmp/udp_test 2>/dev/null')
-            f.write(f"\nUDP test: {h1_name} -> 10.0.0.1:12345: sent={h1_out.strip()}, received={h2_got.strip()}\n")
+        # Get NAT public IPs
+        nat_nodes_info = []
+        for node in nodes:
+            if node["type"] == "nat":
+                for i in range(int(node["count"])):
+                    nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    nat_n = net.get(nat_name)
+                    host_n = net.get(host_name)
+                    if nat_n and host_n:
+                        # Get the NAT's public IP from its inet interface
+                        pub_ip = nat_n.cmd("ip -4 addr show | grep 10\\.0\\. | grep -oP 'inet \\K[^/]+'").strip()
+                        nat_nodes_info.append((host_name, host_n, pub_ip, nat_name, nat_n))
+            elif node["type"] == "multi_nat":
+                for i in range(int(node["count"])):
+                    nat1_name = f'n1_{node["name"]}{i}r{runner_id}'
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    nat_n = net.get(nat1_name)
+                    host_n = net.get(host_name)
+                    if nat_n and host_n:
+                        pub_ip = nat_n.cmd("ip -4 addr show | grep 10\\.0\\. | grep -oP 'inet \\K[^/]+'").strip()
+                        nat_nodes_info.append((host_name, host_n, pub_ip, nat1_name, nat_n))
+
+        import time
+        if len(nat_nodes_info) >= 2:
+            h1_name, h1, h1_pub, h1_nat_name, h1_nat = nat_nodes_info[0]
+            h2_name, h2, h2_pub, h2_nat_name, h2_nat = nat_nodes_info[1]
+            f.write(f"\n{h1_name} behind {h1_nat_name} (pub: {h1_pub})\n")
+            f.write(f"{h2_name} behind {h2_nat_name} (pub: {h2_pub})\n")
+
+            # Test 1: Can h1 send UDP to h2's NAT public IP? (without hole punch)
+            h2_nat.cmd(f'timeout 2 tcpdump -i any -c 5 udp port 55555 -w /tmp/cap1.pcap &')
+            time.sleep(0.2)
+            h1.cmd(f'echo TEST1 | nc -u -w1 {h2_pub} 55555 2>&1')
+            time.sleep(1)
+            cap1 = h2_nat.cmd('tcpdump -r /tmp/cap1.pcap 2>/dev/null').strip()
+            f.write(f"\nTest 1: {h1_name} -> {h2_pub}:55555 (no hole punch)\n")
+            f.write(f"  tcpdump on {h2_nat_name}: {cap1}\n")
+
+            # Test 2: Simultaneous send - h1 sends to h2_pub, h2 sends to h1_pub
+            h1.cmd('rm -f /tmp/udp_sim_recv')
+            h2.cmd('rm -f /tmp/udp_sim_recv')
+            # Both listen
+            h1.cmd('timeout 3 python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.settimeout(2);print(s.recvfrom(100))" > /tmp/udp_sim_recv 2>&1 &')
+            h2.cmd('timeout 3 python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.settimeout(2);print(s.recvfrom(100))" > /tmp/udp_sim_recv 2>&1 &')
+            time.sleep(0.2)
+            # Both send simultaneously from port 44444
+            h1.cmd(f'python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.sendto(b\\\"FROM_H1\\\",(\\\"{h2_pub}\\\",44444))" &')
+            h2.cmd(f'python3 -c "import socket;s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);s.bind((\\\"0.0.0.0\\\",44444));s.sendto(b\\\"FROM_H2\\\",(\\\"{h1_pub}\\\",44444))" &')
+            time.sleep(2)
+            h1_got = h1.cmd('cat /tmp/udp_sim_recv 2>/dev/null').strip()
+            h2_got = h2.cmd('cat /tmp/udp_sim_recv 2>/dev/null').strip()
+            f.write(f"\nTest 2: Simultaneous UDP (port 44444)\n")
+            f.write(f"  {h1_name} received: '{h1_got}'\n")
+            f.write(f"  {h2_name} received: '{h2_got}'\n")
+
+            # Dump NAT conntrack after tests
+            for nat_name, nat_n in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat)]:
+                ct = nat_n.cmd('conntrack -L 2>/dev/null || cat /proc/net/nf_conntrack 2>/dev/null || echo no-conntrack').strip()
+                f.write(f"\n{nat_name} conntrack:\n{ct}\n")
 
 
 def execute_action(net, node_name, action, runner_id):
