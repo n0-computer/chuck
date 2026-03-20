@@ -4,23 +4,23 @@ from mininet.node import Node
 
 
 class EasyNAT(NAT):
-    """NAT with endpoint-independent mapping (EIM / "easy" NAT).
+    """NAT with full-cone behavior (endpoint-independent filtering).
 
     Standard MASQUERADE/SNAT creates address-dependent mappings where each
-    destination gets a different external port (symmetric NAT). This breaks
-    UDP hole punching because the peer's NAT mapping won't match.
+    destination gets a different external port (symmetric NAT), and only
+    allows return traffic from the original destination. This breaks UDP
+    hole punching.
 
-    EasyNAT uses stateless 1:1 IP mapping via NETMAP, which always preserves
-    the source port regardless of destination. This simulates consumer
-    routers with endpoint-independent mapping (full-cone NAT) where UDP hole
-    punching works.
-
-    Since each private subnet has only one host, the 1:1 mapping is:
-        private_host_ip:port <-> public_nat_ip:port (port always preserved)
+    EasyNAT adds a DNAT rule that forwards ALL incoming traffic to the
+    public IP to the internal host, regardless of source. This simulates
+    full-cone NAT where any external host can send to the NATted address.
     """
 
+    def __init__(self, name, hostIP=None, **params):
+        super().__init__(name, **params)
+        self.hostIP = hostIP
+
     def config(self, **params):
-        """Configure NAT with endpoint-independent mapping via NETMAP."""
         if not self.localIntf:
             self.localIntf = self.defaultIntf()
 
@@ -52,21 +52,7 @@ class EasyNAT(NAT):
                              " | cut -d/ -f1").strip()
 
         if pubIP:
-            # Get the single host IP in this subnet
-            hostIP = self.cmd(
-                "arp -n -i %s" % self.localIntf +
-                " | grep -v Address | awk '{print $1}' | head -1"
-            ).strip()
-
-            if not hostIP:
-                # Fallback: ping the broadcast to populate ARP, then retry
-                import ipaddress
-                net = ipaddress.ip_network(self.subnet, strict=False)
-                self.cmd(f'ping -c1 -W1 -b {net.broadcast_address} > /dev/null 2>&1')
-                hostIP = self.cmd(
-                    "arp -n -i %s" % self.localIntf +
-                    " | grep -v Address | awk '{print $1}' | head -1"
-                ).strip()
+            hostIP = self.hostIP
 
             # Full-cone NAT via SNAT + DNAT:
             #
@@ -164,6 +150,7 @@ class StarTopo(Topo):
                     localIntf = "n_%s%dr%d-e1" % (node["name"], i, runner_id)
                     localIP = "192.168.%d.1" % i
                     localSubnet = "192.168.%d.0/24" % i
+                    hostIP = "192.168.%d.10%d" % (i, kk)
                     natParams = {"ip": "%s/24" % localIP}
                     # add NAT to topology
                     nat = self.addNode(
@@ -172,6 +159,7 @@ class StarTopo(Topo):
                         subnet=localSubnet,
                         inetIntf=inetIntf,
                         localIntf=localIntf,
+                        hostIP=hostIP,
                     )
                     switch = self.addSwitch(
                         "ns%s%dr%d" % (node["name"], i, runner_id)
@@ -205,12 +193,14 @@ class StarTopo(Topo):
                     nat1_localIntf = "n1_%s%dr%d-e1" % (node["name"], i, runner_id)
                     nat1_localIP = "192.168.%d.1" % nat1_subnet_idx
                     nat1_localSubnet = "192.168.%d.0/24" % nat1_subnet_idx
+                    nat1_hostIP = "192.168.%d.10" % nat1_subnet_idx
                     nat1 = self.addNode(
                         "n1_%s%dr%d" % (node["name"], i, runner_id),
                         cls=EasyNAT,
                         subnet=nat1_localSubnet,
                         inetIntf=nat1_inetIntf,
                         localIntf=nat1_localIntf,
+                        hostIP=nat1_hostIP,
                     )
                     switch1 = self.addSwitch("ns1%s%dr%d" % (node["name"], i, runner_id))
                     self.addLink(nat1, interconnect, intfName1=nat1_inetIntf)
@@ -225,12 +215,14 @@ class StarTopo(Topo):
                     nat2_localIntf = "n2_%s%dr%d-e1" % (node["name"], i, runner_id)
                     nat2_localIP = "192.168.%d.1" % nat2_subnet_idx
                     nat2_localSubnet = "192.168.%d.0/24" % nat2_subnet_idx
+                    nat2_hostIP = "192.168.%d.10" % nat2_subnet_idx
                     nat2 = self.addNode(
                         "n2_%s%dr%d" % (node["name"], i, runner_id),
                         cls=EasyNAT,
                         subnet=nat2_localSubnet,
                         inetIntf=nat2_inetIntf,
                         localIntf=nat2_localIntf,
+                        hostIP=nat2_hostIP,
                     )
                     switch2 = self.addSwitch("ns2%s%dr%d" % (node["name"], i, runner_id))
                     self.addLink(nat2, interconnect, intfName1=nat2_inetIntf)
