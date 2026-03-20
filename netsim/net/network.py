@@ -52,42 +52,45 @@ class EasyNAT(NAT):
                              " | cut -d/ -f1").strip()
 
         if pubIP:
-            # Stateless 1:1 NAT using SNAT/DNAT with conntrack disabled for
-            # endpoint-independent mapping. We use raw table NOTRACK to prevent
-            # conntrack from creating per-destination entries, then use static
-            # SNAT/DNAT for the IP translation.
-            #
-            # NOTRACK means conntrack won't interfere with port selection:
-            # the source port is always preserved (1:1 mapping).
-            self.cmd('iptables -t raw -A PREROUTING -j NOTRACK')
-            self.cmd('iptables -t raw -A OUTPUT -j NOTRACK')
+            # Get the single host IP in this subnet
+            hostIP = self.cmd(
+                "arp -n -i %s" % self.localIntf +
+                " | grep -v Address | awk '{print $1}' | head -1"
+            ).strip()
 
-            # SNAT outbound: private -> public IP (port preserved due to NOTRACK)
+            if not hostIP:
+                # Fallback: ping the broadcast to populate ARP, then retry
+                import ipaddress
+                net = ipaddress.ip_network(self.subnet, strict=False)
+                self.cmd(f'ping -c1 -W1 -b {net.broadcast_address} > /dev/null 2>&1')
+                hostIP = self.cmd(
+                    "arp -n -i %s" % self.localIntf +
+                    " | grep -v Address | awk '{print $1}' | head -1"
+                ).strip()
+
+            # Full-cone NAT via SNAT + DNAT:
+            #
+            # SNAT handles outbound (private -> public IP). Conntrack will
+            # try to preserve source ports but may remap for new destinations.
+            #
+            # DNAT handles ALL inbound to public IP -> host IP. This is the
+            # key for full-cone: incoming packets from ANY source are forwarded
+            # to the internal host, regardless of whether the host previously
+            # sent to that source. This makes hole punching work even with
+            # conntrack's per-destination port mapping, because the DNAT rule
+            # catches packets that don't match any conntrack entry.
             self.cmd('iptables -t nat -A POSTROUTING',
                      '-s', self.subnet, "'!'", '-d', self.subnet,
                      '-j SNAT --to-source', pubIP)
 
-            # DNAT inbound: public -> private IP for any incoming traffic
-            # This makes it a full-cone NAT: any external host can send to
-            # public_ip:port and it gets forwarded to private_host:port.
-            # Get the host IP (first host in subnet, e.g. 192.168.0.101)
-            hostIP = self.cmd(
-                "ip neigh show dev %s" % self.localIntf +
-                " | head -1 | awk '{print $1}'"
-            ).strip()
-            if not hostIP:
-                # Fallback: derive from subnet (e.g. 192.168.0.0/24 -> 192.168.0.101)
-                import ipaddress
-                net = ipaddress.ip_network(self.subnet, strict=False)
-                # Hosts typically at .10X offset
-                hostIP = str(list(net.hosts())[100]) if net.num_addresses > 101 else str(list(net.hosts())[-1])
-
             if hostIP:
                 self.cmd('iptables -t nat -A PREROUTING',
+                         '-i', inetIntf[0],
                          '-d', pubIP,
                          '-j DNAT --to-destination', hostIP)
-                # Also allow forwarding of incoming traffic to the host
+                # Allow forwarding of DNATted incoming traffic
                 self.cmd('iptables -A FORWARD',
+                         '-i', inetIntf[0],
                          '-d', hostIP, '-j ACCEPT')
         else:
             self.cmd('iptables -t nat -A POSTROUTING',
