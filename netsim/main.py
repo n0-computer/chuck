@@ -144,9 +144,11 @@ except socket.timeout:
             with open(script_path, 'w') as sf:
                 sf.write(sim_script)
 
-            # Start tcpdump on both NATs to trace packets
-            h1_nat.cmd('timeout 8 tcpdump -i any -nn udp port 33333 > /tmp/tcpdump_nat1.txt 2>&1 &')
-            h2_nat.cmd('timeout 8 tcpdump -i any -nn udp port 33333 > /tmp/tcpdump_nat2.txt 2>&1 &')
+            # Start tcpdump on both NATs and both hosts
+            h1_nat.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            h2_nat.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            h1.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            h2.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
             time.sleep(0.3)
 
             h1.cmd(f'python3 {script_path} 33333 {h2_pub} H1 > /tmp/udp_sim_recv 2>&1 &')
@@ -158,12 +160,12 @@ except socket.timeout:
             f.write(f"  {h1_name} ({h1_pub}) -> {h2_pub}: {h1_got}\n")
             f.write(f"  {h2_name} ({h2_pub}) -> {h1_pub}: {h2_got}\n")
 
-            # Dump tcpdump captures
+            # Dump tcpdump captures (each node writes to /tmp/tcpdump.txt in its own ns)
             time.sleep(1)
-            nat1_cap = h1_nat.cmd('cat /tmp/tcpdump_nat1.txt 2>/dev/null').strip()
-            nat2_cap = h2_nat.cmd('cat /tmp/tcpdump_nat2.txt 2>/dev/null').strip()
-            f.write(f"\n{h1_nat_name} tcpdump (port 33333):\n{nat1_cap}\n")
-            f.write(f"\n{h2_nat_name} tcpdump (port 33333):\n{nat2_cap}\n")
+            for label, node in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat),
+                                (h1_name, h1), (h2_name, h2)]:
+                cap = node.cmd('cat /tmp/tcpdump.txt 2>/dev/null').strip()
+                f.write(f"\n{label} tcpdump (port 33333):\n{cap}\n")
 
             # Dump conntrack
             for nat_name, nat_n in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat)]:
