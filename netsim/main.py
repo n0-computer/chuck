@@ -545,6 +545,18 @@ def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
     p_box, p_short_box = [], []
     temp_dirs = []
 
+    # Start tcpdump on NAT nodes to capture all UDP during test
+    for node in nodes:
+        if node["type"] in ("nat", "multi_nat"):
+            for i in range(int(node["count"])):
+                if node["type"] == "nat":
+                    nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                elif node["type"] == "multi_nat":
+                    nat_name = f'n1_{node["name"]}{i}r{runner_id}'
+                nat_n = net.get(nat_name)
+                if nat_n:
+                    nat_n.cmd(f'timeout 30 tcpdump -l -i any -nn udp -c 200 > logs/{prefix}__{nat_name}__tcpdump.txt 2>&1 &')
+
     node_counts = {node["name"]: int(node["count"]) for node in nodes}
     node_ips = get_node_ips(net, nodes, runner_id)
     node_params = {}
