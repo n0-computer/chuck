@@ -70,9 +70,14 @@ class EasyNAT(NAT):
                      '-j SNAT --to-source', pubIP)
 
             if hostIP:
+                # Only DNAT new connections (not already tracked by conntrack).
+                # This ensures return traffic for established connections (like
+                # the relay) is handled by conntrack normally, while truly new
+                # incoming traffic (hole punch probes) gets forwarded to the host.
                 self.cmd('iptables -t nat -A PREROUTING',
                          '-i', inetIntf[0],
                          '-d', pubIP,
+                         '-m conntrack --ctstate NEW',
                          '-j DNAT --to-destination', hostIP)
                 # Allow forwarding of DNATted incoming traffic
                 self.cmd('iptables -A FORWARD',
