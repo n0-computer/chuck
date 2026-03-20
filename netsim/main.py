@@ -151,6 +151,7 @@ except socket.timeout:
             h2.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
             time.sleep(0.3)
 
+            # Test with SAME port (like our raw test)
             h1.cmd(f'python3 {script_path} 33333 {h2_pub} H1 > /tmp/udp_sim_recv 2>&1 &')
             h2.cmd(f'python3 {script_path} 33333 {h1_pub} H2 > /tmp/udp_sim_recv 2>&1 &')
             time.sleep(5)
@@ -159,6 +160,36 @@ except socket.timeout:
             f.write(f"\nTest 2: Simultaneous UDP hole punch (port 33333)\n")
             f.write(f"  {h1_name} ({h1_pub}) -> {h2_pub}: {h1_got}\n")
             f.write(f"  {h2_name} ({h2_pub}) -> {h1_pub}: {h2_got}\n")
+
+            # Test 3: Asymmetric ports (like iroh uses)
+            asym_script = '''
+import socket, time, sys
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(("0.0.0.0", int(sys.argv[1])))
+s.settimeout(3)
+s.sendto(b"ASYM_FROM_" + sys.argv[4].encode(), (sys.argv[2], int(sys.argv[3])))
+time.sleep(0.05)
+s.sendto(b"ASYM_FROM_" + sys.argv[4].encode(), (sys.argv[2], int(sys.argv[3])))
+try:
+    data, addr = s.recvfrom(100)
+    print(f"GOT: {data} from {addr}")
+except socket.timeout:
+    print("TIMEOUT: no data received")
+'''
+            asym_path = '/tmp/udp_asym.py'
+            with open(asym_path, 'w') as sf:
+                sf.write(asym_script)
+
+            # h1 binds 44444, sends to h2_pub:55555. h2 binds 55555, sends to h1_pub:44444.
+            h1.cmd(f'python3 {asym_path} 44444 {h2_pub} 55555 H1 > /tmp/udp_asym_recv 2>&1 &')
+            h2.cmd(f'python3 {asym_path} 55555 {h1_pub} 44444 H2 > /tmp/udp_asym_recv 2>&1 &')
+            time.sleep(5)
+            h1_asym = h1.cmd('cat /tmp/udp_asym_recv 2>/dev/null').strip()
+            h2_asym = h2.cmd('cat /tmp/udp_asym_recv 2>/dev/null').strip()
+            f.write(f"\nTest 3: Asymmetric ports (h1:44444->h2:55555, h2:55555->h1:44444)\n")
+            f.write(f"  {h1_name}: {h1_asym}\n")
+            f.write(f"  {h2_name}: {h2_asym}\n")
 
             # Dump tcpdump captures (each node writes to /tmp/tcpdump.txt in its own ns)
             time.sleep(1)
