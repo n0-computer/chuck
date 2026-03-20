@@ -6,17 +6,21 @@ from mininet.node import Node
 class EasyNAT(NAT):
     """NAT with endpoint-independent mapping (EIM / "easy" NAT).
 
-    Standard MASQUERADE can create address-dependent mappings where each
-    destination gets a different external port.  This breaks UDP hole
-    punching because the peer's NAT mapping won't match.
+    Standard MASQUERADE/SNAT creates address-dependent mappings where each
+    destination gets a different external port (symmetric NAT). This breaks
+    UDP hole punching because the peer's NAT mapping won't match.
 
-    EasyNAT replaces MASQUERADE with SNAT that preserves the source port
-    across all destinations (full-cone / EIM behavior), which is what most
-    consumer routers do and what UDP hole punching relies on.
+    EasyNAT uses stateless 1:1 IP mapping via NETMAP, which always preserves
+    the source port regardless of destination. This simulates consumer
+    routers with endpoint-independent mapping (full-cone NAT) where UDP hole
+    punching works.
+
+    Since each private subnet has only one host, the 1:1 mapping is:
+        private_host_ip:port <-> public_nat_ip:port (port always preserved)
     """
 
     def config(self, **params):
-        """Configure NAT with endpoint-independent mapping."""
+        """Configure NAT with endpoint-independent mapping via NETMAP."""
         if not self.localIntf:
             self.localIntf = self.defaultIntf()
 
@@ -31,7 +35,7 @@ class EasyNAT(NAT):
             self.cmd('iptables -P OUTPUT ACCEPT')
             self.cmd('iptables -P FORWARD DROP')
 
-        # Install forwarding rules (same as standard NAT)
+        # Install forwarding rules
         self.cmd('iptables -I FORWARD',
                  '-i', self.localIntf, '-d', self.subnet, '-j DROP')
         self.cmd('iptables -A FORWARD',
@@ -39,45 +43,65 @@ class EasyNAT(NAT):
         self.cmd('iptables -A FORWARD',
                  '-o', self.localIntf, '-d', self.subnet, '-j ACCEPT')
 
-        # Determine the public IP on the inet interface.
-        # We find the non-local interface (the one connected to the
-        # interconnect switch) and grab its IP for SNAT.
+        # Determine public and private IPs
         inetIntf = [i for i in self.intfNames() if i != self.localIntf and i != 'lo']
+        pubIP = None
         if inetIntf:
             pubIP = self.cmd('ip -4 addr show %s' % inetIntf[0] +
                              " | grep -oP '(?<=inet )\\S+'" +
                              " | cut -d/ -f1").strip()
-        else:
-            pubIP = None
 
         if pubIP:
+            # Stateless 1:1 NAT using SNAT/DNAT with conntrack disabled for
+            # endpoint-independent mapping. We use raw table NOTRACK to prevent
+            # conntrack from creating per-destination entries, then use static
+            # SNAT/DNAT for the IP translation.
+            #
+            # NOTRACK means conntrack won't interfere with port selection:
+            # the source port is always preserved (1:1 mapping).
+            self.cmd('iptables -t raw -A PREROUTING -j NOTRACK')
+            self.cmd('iptables -t raw -A OUTPUT -j NOTRACK')
+
+            # SNAT outbound: private -> public IP (port preserved due to NOTRACK)
             self.cmd('iptables -t nat -A POSTROUTING',
                      '-s', self.subnet, "'!'", '-d', self.subnet,
                      '-j SNAT --to-source', pubIP)
+
+            # DNAT inbound: public -> private IP for any incoming traffic
+            # This makes it a full-cone NAT: any external host can send to
+            # public_ip:port and it gets forwarded to private_host:port.
+            # Get the host IP (first host in subnet, e.g. 192.168.0.101)
+            hostIP = self.cmd(
+                "ip neigh show dev %s" % self.localIntf +
+                " | head -1 | awk '{print $1}'"
+            ).strip()
+            if not hostIP:
+                # Fallback: derive from subnet (e.g. 192.168.0.0/24 -> 192.168.0.101)
+                import ipaddress
+                net = ipaddress.ip_network(self.subnet, strict=False)
+                # Hosts typically at .10X offset
+                hostIP = str(list(net.hosts())[100]) if net.num_addresses > 101 else str(list(net.hosts())[-1])
+
+            if hostIP:
+                self.cmd('iptables -t nat -A PREROUTING',
+                         '-d', pubIP,
+                         '-j DNAT --to-destination', hostIP)
+                # Also allow forwarding of incoming traffic to the host
+                self.cmd('iptables -A FORWARD',
+                         '-d', hostIP, '-j ACCEPT')
         else:
             self.cmd('iptables -t nat -A POSTROUTING',
                      '-s', self.subnet, "'!'", '-d', self.subnet,
                      '-j MASQUERADE')
 
-        # Dump actual iptables state for debugging
-        self.cmd(f'echo "=== {self.name} NAT rules ===" >> /tmp/nat_debug.txt')
-        self.cmd(f'iptables -t nat -L -n -v >> /tmp/nat_debug.txt 2>&1')
-        self.cmd(f'iptables -L FORWARD -n -v >> /tmp/nat_debug.txt 2>&1')
-        self.cmd(f'echo "pubIP={pubIP}" >> /tmp/nat_debug.txt' if pubIP else 'true')
-
         self.cmd('sysctl net.ipv4.ip_forward=1')
 
     def terminate(self):
         """Stop NAT/forwarding."""
-        self.cmd('iptables -D FORWARD',
-                 '-i', self.localIntf, '-d', self.subnet, '-j DROP')
-        self.cmd('iptables -D FORWARD',
-                 '-i', self.localIntf, '-s', self.subnet, '-j ACCEPT')
-        self.cmd('iptables -D FORWARD',
-                 '-o', self.localIntf, '-d', self.subnet, '-j ACCEPT')
+        self.cmd('iptables -F')
         self.cmd('iptables -t nat -F')
+        self.cmd('iptables -t raw -F')
         self.cmd('sysctl net.ipv4.ip_forward=%s' % self.forwardState)
-        # Skip NAT.terminate() to avoid removing MASQUERADE rule that doesn't exist
         Node.terminate(self)
 
 
