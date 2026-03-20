@@ -51,16 +51,19 @@ class EasyNAT(NAT):
             pubIP = None
 
         if pubIP:
-            # SNAT with fixed source IP preserves ports across destinations
-            # (endpoint-independent mapping). This is what consumer routers do.
             self.cmd('iptables -t nat -A POSTROUTING',
                      '-s', self.subnet, "'!'", '-d', self.subnet,
                      '-j SNAT --to-source', pubIP)
         else:
-            # Fallback to MASQUERADE if we can't determine the public IP
             self.cmd('iptables -t nat -A POSTROUTING',
                      '-s', self.subnet, "'!'", '-d', self.subnet,
                      '-j MASQUERADE')
+
+        # Dump actual iptables state for debugging
+        self.cmd(f'echo "=== {self.name} NAT rules ===" >> /tmp/nat_debug.txt')
+        self.cmd(f'iptables -t nat -L -n -v >> /tmp/nat_debug.txt 2>&1')
+        self.cmd(f'iptables -L FORWARD -n -v >> /tmp/nat_debug.txt 2>&1')
+        self.cmd(f'echo "pubIP={pubIP}" >> /tmp/nat_debug.txt' if pubIP else 'true')
 
         self.cmd('sysctl net.ipv4.ip_forward=1')
 

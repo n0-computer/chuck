@@ -144,6 +144,11 @@ except socket.timeout:
             with open(script_path, 'w') as sf:
                 sf.write(sim_script)
 
+            # Start tcpdump on both NATs to trace packets
+            h1_nat.cmd('timeout 8 tcpdump -i any -nn udp port 33333 > /tmp/tcpdump_nat1.txt 2>&1 &')
+            h2_nat.cmd('timeout 8 tcpdump -i any -nn udp port 33333 > /tmp/tcpdump_nat2.txt 2>&1 &')
+            time.sleep(0.3)
+
             h1.cmd(f'python3 {script_path} 33333 {h2_pub} H1 > /tmp/udp_sim_recv 2>&1 &')
             h2.cmd(f'python3 {script_path} 33333 {h1_pub} H2 > /tmp/udp_sim_recv 2>&1 &')
             time.sleep(5)
@@ -153,10 +158,17 @@ except socket.timeout:
             f.write(f"  {h1_name} ({h1_pub}) -> {h2_pub}: {h1_got}\n")
             f.write(f"  {h2_name} ({h2_pub}) -> {h1_pub}: {h2_got}\n")
 
-            # Dump NAT conntrack after tests
+            # Dump tcpdump captures
+            time.sleep(1)
+            nat1_cap = h1_nat.cmd('cat /tmp/tcpdump_nat1.txt 2>/dev/null').strip()
+            nat2_cap = h2_nat.cmd('cat /tmp/tcpdump_nat2.txt 2>/dev/null').strip()
+            f.write(f"\n{h1_nat_name} tcpdump (port 33333):\n{nat1_cap}\n")
+            f.write(f"\n{h2_nat_name} tcpdump (port 33333):\n{nat2_cap}\n")
+
+            # Dump conntrack
             for nat_name, nat_n in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat)]:
-                ct = nat_n.cmd('conntrack -L 2>/dev/null || cat /proc/net/nf_conntrack 2>/dev/null || echo no-conntrack').strip()
-                f.write(f"\n{nat_name} conntrack:\n{ct}\n")
+                ct = nat_n.cmd('cat /proc/net/nf_conntrack 2>/dev/null | grep 33333 || echo no-conntrack-entries').strip()
+                f.write(f"\n{nat_name} conntrack (port 33333):\n{ct}\n")
 
 
 def execute_action(net, node_name, action, runner_id):
