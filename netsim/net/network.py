@@ -3,6 +3,81 @@ from mininet.nodelib import NAT
 from mininet.node import Node
 
 
+class EasyNAT(NAT):
+    """NAT with endpoint-independent mapping (EIM / "easy" NAT).
+
+    Standard MASQUERADE can create address-dependent mappings where each
+    destination gets a different external port.  This breaks UDP hole
+    punching because the peer's NAT mapping won't match.
+
+    EasyNAT replaces MASQUERADE with SNAT that preserves the source port
+    across all destinations (full-cone / EIM behavior), which is what most
+    consumer routers do and what UDP hole punching relies on.
+    """
+
+    def config(self, **params):
+        """Configure NAT with endpoint-independent mapping."""
+        if not self.localIntf:
+            self.localIntf = self.defaultIntf()
+
+        self.setManualConfig(self.localIntf)
+        super(NAT, self).config(**params)
+
+        if self.flush:
+            self.cmd('sysctl net.ipv4.ip_forward=0')
+            self.cmd('iptables -F')
+            self.cmd('iptables -t nat -F')
+            self.cmd('iptables -P INPUT ACCEPT')
+            self.cmd('iptables -P OUTPUT ACCEPT')
+            self.cmd('iptables -P FORWARD DROP')
+
+        # Install forwarding rules (same as standard NAT)
+        self.cmd('iptables -I FORWARD',
+                 '-i', self.localIntf, '-d', self.subnet, '-j DROP')
+        self.cmd('iptables -A FORWARD',
+                 '-i', self.localIntf, '-s', self.subnet, '-j ACCEPT')
+        self.cmd('iptables -A FORWARD',
+                 '-o', self.localIntf, '-d', self.subnet, '-j ACCEPT')
+
+        # Determine the public IP on the inet interface.
+        # We find the non-local interface (the one connected to the
+        # interconnect switch) and grab its IP for SNAT.
+        inetIntf = [i for i in self.intfNames() if i != self.localIntf and i != 'lo']
+        if inetIntf:
+            pubIP = self.cmd('ip -4 addr show %s' % inetIntf[0] +
+                             " | grep -oP '(?<=inet )\\S+'" +
+                             " | cut -d/ -f1").strip()
+        else:
+            pubIP = None
+
+        if pubIP:
+            # SNAT with fixed source IP preserves ports across destinations
+            # (endpoint-independent mapping). This is what consumer routers do.
+            self.cmd('iptables -t nat -A POSTROUTING',
+                     '-s', self.subnet, "'!'", '-d', self.subnet,
+                     '-j SNAT --to-source', pubIP)
+        else:
+            # Fallback to MASQUERADE if we can't determine the public IP
+            self.cmd('iptables -t nat -A POSTROUTING',
+                     '-s', self.subnet, "'!'", '-d', self.subnet,
+                     '-j MASQUERADE')
+
+        self.cmd('sysctl net.ipv4.ip_forward=1')
+
+    def terminate(self):
+        """Stop NAT/forwarding."""
+        self.cmd('iptables -D FORWARD',
+                 '-i', self.localIntf, '-d', self.subnet, '-j DROP')
+        self.cmd('iptables -D FORWARD',
+                 '-i', self.localIntf, '-s', self.subnet, '-j ACCEPT')
+        self.cmd('iptables -D FORWARD',
+                 '-o', self.localIntf, '-d', self.subnet, '-j ACCEPT')
+        self.cmd('iptables -t nat -F')
+        self.cmd('sysctl net.ipv4.ip_forward=%s' % self.forwardState)
+        # Skip NAT.terminate() to avoid removing MASQUERADE rule that doesn't exist
+        Node.terminate(self)
+
+
 class StarTopo(Topo):
     """Single switch connected to n hosts.
 
@@ -63,7 +138,7 @@ class StarTopo(Topo):
                     # add NAT to topology
                     nat = self.addNode(
                         "n_%s%dr%d" % (node["name"], i, runner_id),
-                        cls=NAT,
+                        cls=EasyNAT,
                         subnet=localSubnet,
                         inetIntf=inetIntf,
                         localIntf=localIntf,
@@ -102,7 +177,7 @@ class StarTopo(Topo):
                     nat1_localSubnet = "192.168.%d.0/24" % nat1_subnet_idx
                     nat1 = self.addNode(
                         "n1_%s%dr%d" % (node["name"], i, runner_id),
-                        cls=NAT,
+                        cls=EasyNAT,
                         subnet=nat1_localSubnet,
                         inetIntf=nat1_inetIntf,
                         localIntf=nat1_localIntf,
@@ -122,7 +197,7 @@ class StarTopo(Topo):
                     nat2_localSubnet = "192.168.%d.0/24" % nat2_subnet_idx
                     nat2 = self.addNode(
                         "n2_%s%dr%d" % (node["name"], i, runner_id),
-                        cls=NAT,
+                        cls=EasyNAT,
                         subnet=nat2_localSubnet,
                         inetIntf=nat2_inetIntf,
                         localIntf=nat2_localIntf,
