@@ -529,9 +529,10 @@ def get_node_ips(net, nodes, runner_id):
     return node_ips
 
 
-def prep_net(net, nodes, prefix, sniff, runner_id):
+def prep_net(net, nodes, prefix, sniff, runner_id, debug=False):
     configure_multi_nat_hosts(net, nodes, runner_id)
-    debug_network(net, nodes, runner_id)
+    if debug:
+        debug_network(net, nodes, runner_id)
     sniffer = Sniffer(net=net, output="logs/" + prefix + ".pcap")
     ti = sniffer.get_topoinfo()
     info("Testing network connectivity")
@@ -546,26 +547,27 @@ def prep_net(net, nodes, prefix, sniff, runner_id):
     return sniffer
 
 
-def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
+def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False, net_debug=False):
     topo = StarTopo(nodes=nodes, runner_id=runner_id)
     net = Mininet(topo=topo, waitConnected=True, link=TCLink)
     net.start()
-    sniffer = prep_net(net, nodes, prefix, args.sniff | visualize, runner_id)
+    sniffer = prep_net(net, nodes, prefix, args.sniff | visualize, runner_id, debug=net_debug)
 
     p_box, p_short_box = [], []
     temp_dirs = []
 
-    # Start tcpdump on NAT nodes to capture all UDP during test
-    for node in nodes:
-        if node["type"] in ("nat", "multi_nat"):
-            for i in range(int(node["count"])):
-                if node["type"] == "nat":
-                    nat_name = f'n_{node["name"]}{i}r{runner_id}'
-                elif node["type"] == "multi_nat":
-                    nat_name = f'n1_{node["name"]}{i}r{runner_id}'
-                nat_n = net.get(nat_name)
-                if nat_n:
-                    nat_n.cmd(f'timeout 30 tcpdump -l -i any -nn udp -c 200 > logs/{prefix}__{nat_name}__tcpdump.txt 2>&1 &')
+    if net_debug:
+        # Start tcpdump on NAT nodes to capture UDP during test
+        for node in nodes:
+            if node["type"] in ("nat", "multi_nat"):
+                for i in range(int(node["count"])):
+                    if node["type"] == "nat":
+                        nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                    elif node["type"] == "multi_nat":
+                        nat_name = f'n1_{node["name"]}{i}r{runner_id}'
+                    nat_n = net.get(nat_name)
+                    if nat_n:
+                        nat_n.cmd(f'timeout 30 tcpdump -l -i any -nn udp -c 200 > logs/{prefix}__{nat_name}__tcpdump.txt 2>&1 &')
 
     node_counts = {node["name"]: int(node["count"]) for node in nodes}
     node_ips = get_node_ips(net, nodes, runner_id)
@@ -676,7 +678,7 @@ def run(case, runner_id, name, args):
     print('Running "%s"...' % prefix)
     n, s = (None, None)
     if not args.reports_only:
-        (n, s) = run_case(nodes, runner_id, prefix, args, args.debug, viz)
+        (n, s) = run_case(nodes, runner_id, prefix, args, args.debug, viz, net_debug=args.net_debug)
     process_logs(nodes, prefix, runner_id)
     process_integration_logs(nodes, prefix, runner_id)
     validate_integration_results(nodes, prefix, runner_id, args)
@@ -754,6 +756,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--visualize", help="Enable visualization", action="store_true", default=False
+    )
+    parser.add_argument(
+        "--net-debug", help="Enable NAT debug tooling (tcpdump, connectivity tests)", action="store_true", default=False
     )
     parser.add_argument(
         "--max-workers", help="Max workers for parallel execution", type=int, default=1
