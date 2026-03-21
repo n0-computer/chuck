@@ -241,7 +241,7 @@ def execute_action(net, node_name, action, runner_id):
             if host_ip:
                 # Gateway is .1 on the same subnet
                 gw_ip = ".".join(host_ip.split(".")[:3]) + ".1"
-                n.cmd(f"ip route replace default via {gw_ip}")
+                n.cmd(f"ip route replace default via {gw_ip} dev {intfs[intf_idx]}")
                 info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}, restored route via {gw_ip}\n")
             else:
                 info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}, no IP found to restore route\n")
