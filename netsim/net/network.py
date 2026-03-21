@@ -3,6 +3,102 @@ from mininet.nodelib import NAT
 from mininet.node import Node
 
 
+class EasyNAT(NAT):
+    """NAT with full-cone behavior (endpoint-independent filtering).
+
+    Standard MASQUERADE/SNAT creates address-dependent mappings where each
+    destination gets a different external port (symmetric NAT), and only
+    allows return traffic from the original destination. This breaks UDP
+    hole punching.
+
+    EasyNAT adds a DNAT rule that forwards ALL incoming traffic to the
+    public IP to the internal host, regardless of source. This simulates
+    full-cone NAT where any external host can send to the NATted address.
+    """
+
+    def __init__(self, name, hostIP=None, **params):
+        super().__init__(name, **params)
+        self.hostIP = hostIP
+
+    def config(self, **params):
+        if not self.localIntf:
+            self.localIntf = self.defaultIntf()
+
+        self.setManualConfig(self.localIntf)
+        super(NAT, self).config(**params)
+
+        if self.flush:
+            self.cmd('sysctl net.ipv4.ip_forward=0')
+            self.cmd('iptables -F')
+            self.cmd('iptables -t nat -F')
+            self.cmd('iptables -P INPUT ACCEPT')
+            self.cmd('iptables -P OUTPUT ACCEPT')
+            self.cmd('iptables -P FORWARD DROP')
+
+        # Install forwarding rules
+        self.cmd('iptables -I FORWARD',
+                 '-i', self.localIntf, '-d', self.subnet, '-j DROP')
+        self.cmd('iptables -A FORWARD',
+                 '-i', self.localIntf, '-s', self.subnet, '-j ACCEPT')
+        self.cmd('iptables -A FORWARD',
+                 '-o', self.localIntf, '-d', self.subnet, '-j ACCEPT')
+
+        # Determine public and private IPs
+        inetIntf = [i for i in self.intfNames() if i != self.localIntf and i != 'lo']
+        pubIP = None
+        if inetIntf:
+            pubIP = self.cmd('ip -4 addr show %s' % inetIntf[0] +
+                             " | grep -oP '(?<=inet )\\S+'" +
+                             " | cut -d/ -f1").strip()
+
+        if pubIP:
+            hostIP = self.hostIP
+
+            # Full-cone NAT via SNAT + DNAT:
+            #
+            # SNAT handles outbound (private -> public IP). Conntrack will
+            # try to preserve source ports but may remap for new destinations.
+            #
+            # DNAT handles ALL inbound to public IP -> host IP. This is the
+            # key for full-cone: incoming packets from ANY source are forwarded
+            # to the internal host, regardless of whether the host previously
+            # sent to that source. This makes hole punching work even with
+            # conntrack's per-destination port mapping, because the DNAT rule
+            # catches packets that don't match any conntrack entry.
+            self.cmd('iptables -t nat -A POSTROUTING',
+                     '-s', self.subnet, "'!'", '-d', self.subnet,
+                     '-j SNAT --to-source', pubIP)
+
+            if hostIP:
+                # Only DNAT new connections (not already tracked by conntrack).
+                # This ensures return traffic for established connections (like
+                # the relay) is handled by conntrack normally, while truly new
+                # incoming traffic (hole punch probes) gets forwarded to the host.
+                self.cmd('iptables -t nat -A PREROUTING',
+                         '-i', inetIntf[0],
+                         '-d', pubIP,
+                         '-m conntrack --ctstate NEW',
+                         '-j DNAT --to-destination', hostIP)
+                # Allow forwarding of DNATted incoming traffic
+                self.cmd('iptables -A FORWARD',
+                         '-i', inetIntf[0],
+                         '-d', hostIP, '-j ACCEPT')
+        else:
+            self.cmd('iptables -t nat -A POSTROUTING',
+                     '-s', self.subnet, "'!'", '-d', self.subnet,
+                     '-j MASQUERADE')
+
+        self.cmd('sysctl net.ipv4.ip_forward=1')
+
+    def terminate(self):
+        """Stop NAT/forwarding."""
+        self.cmd('iptables -F')
+        self.cmd('iptables -t nat -F')
+        self.cmd('iptables -t raw -F')
+        self.cmd('sysctl net.ipv4.ip_forward=%s' % self.forwardState)
+        Node.terminate(self)
+
+
 class StarTopo(Topo):
     """Single switch connected to n hosts.
 
@@ -59,14 +155,16 @@ class StarTopo(Topo):
                     localIntf = "n_%s%dr%d-e1" % (node["name"], i, runner_id)
                     localIP = "192.168.%d.1" % i
                     localSubnet = "192.168.%d.0/24" % i
+                    hostIP = "192.168.%d.10%d" % (i, kk)
                     natParams = {"ip": "%s/24" % localIP}
                     # add NAT to topology
                     nat = self.addNode(
                         "n_%s%dr%d" % (node["name"], i, runner_id),
-                        cls=NAT,
+                        cls=EasyNAT,
                         subnet=localSubnet,
                         inetIntf=inetIntf,
                         localIntf=localIntf,
+                        hostIP=hostIP,
                     )
                     switch = self.addSwitch(
                         "ns%s%dr%d" % (node["name"], i, runner_id)
@@ -100,12 +198,14 @@ class StarTopo(Topo):
                     nat1_localIntf = "n1_%s%dr%d-e1" % (node["name"], i, runner_id)
                     nat1_localIP = "192.168.%d.1" % nat1_subnet_idx
                     nat1_localSubnet = "192.168.%d.0/24" % nat1_subnet_idx
+                    nat1_hostIP = "192.168.%d.10" % nat1_subnet_idx
                     nat1 = self.addNode(
                         "n1_%s%dr%d" % (node["name"], i, runner_id),
-                        cls=NAT,
+                        cls=EasyNAT,
                         subnet=nat1_localSubnet,
                         inetIntf=nat1_inetIntf,
                         localIntf=nat1_localIntf,
+                        hostIP=nat1_hostIP,
                     )
                     switch1 = self.addSwitch("ns1%s%dr%d" % (node["name"], i, runner_id))
                     self.addLink(nat1, interconnect, intfName1=nat1_inetIntf)
@@ -120,12 +220,14 @@ class StarTopo(Topo):
                     nat2_localIntf = "n2_%s%dr%d-e1" % (node["name"], i, runner_id)
                     nat2_localIP = "192.168.%d.1" % nat2_subnet_idx
                     nat2_localSubnet = "192.168.%d.0/24" % nat2_subnet_idx
+                    nat2_hostIP = "192.168.%d.10" % nat2_subnet_idx
                     nat2 = self.addNode(
                         "n2_%s%dr%d" % (node["name"], i, runner_id),
-                        cls=NAT,
+                        cls=EasyNAT,
                         subnet=nat2_localSubnet,
                         inetIntf=nat2_inetIntf,
                         localIntf=nat2_localIntf,
+                        hostIP=nat2_hostIP,
                     )
                     switch2 = self.addSwitch("ns2%s%dr%d" % (node["name"], i, runner_id))
                     self.addLink(nat2, interconnect, intfName1=nat2_inetIntf)

@@ -38,6 +38,172 @@ def configure_multi_nat_hosts(net, nodes, runner_id):
                 n.cmd(f"ip addr add {second_ip} dev {second_intf}")
 
 
+def debug_network(net, nodes, runner_id):
+    """Dump network configuration for debugging NAT traversal issues."""
+    with open("logs/debug_network.txt", "w") as f:
+        f.write("=== Network Configuration ===\n")
+        for node in nodes:
+            if node["type"] not in ("nat", "multi_nat"):
+                continue
+            for i in range(int(node["count"])):
+                if node["type"] == "nat":
+                    nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    for name in [nat_name, host_name]:
+                        n = net.get(name)
+                        if n:
+                            f.write(f"\n--- {name} ---\n")
+                            f.write(f"ip addr:\n{n.cmd('ip -4 addr show')}\n")
+                            f.write(f"routes:\n{n.cmd('ip route show')}\n")
+                            f.write(f"iptables nat:\n{n.cmd('iptables -t nat -L -n -v')}\n")
+                            f.write(f"iptables forward:\n{n.cmd('iptables -L FORWARD -n -v')}\n")
+                elif node["type"] == "multi_nat":
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    nat1_name = f'n1_{node["name"]}{i}r{runner_id}'
+                    nat2_name = f'n2_{node["name"]}{i}r{runner_id}'
+                    for name in [nat1_name, nat2_name, host_name]:
+                        n = net.get(name)
+                        if n:
+                            f.write(f"\n--- {name} ---\n")
+                            f.write(f"ip addr:\n{n.cmd('ip -4 addr show')}\n")
+                            f.write(f"routes:\n{n.cmd('ip route show')}\n")
+                            f.write(f"iptables nat:\n{n.cmd('iptables -t nat -L -n -v')}\n")
+                            f.write(f"iptables forward:\n{n.cmd('iptables -L FORWARD -n -v')}\n")
+
+        # Connectivity tests
+        f.write("\n=== Connectivity Tests ===\n")
+        all_hosts = []
+        for node in nodes:
+            for i in range(int(node["count"])):
+                name = f'{node["name"]}_{i}_r{runner_id}'
+                n = net.get(name)
+                if n:
+                    all_hosts.append((name, n))
+        for name, n in all_hosts:
+            f.write(f"\n{name} ping 10.0.0.1: {n.cmd('ping -c1 -W1 10.0.0.1')}\n")
+        # Get NAT public IPs
+        nat_nodes_info = []
+        for node in nodes:
+            if node["type"] == "nat":
+                for i in range(int(node["count"])):
+                    nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    nat_n = net.get(nat_name)
+                    host_n = net.get(host_name)
+                    if nat_n and host_n:
+                        # Get the NAT's public IP from its inet interface
+                        pub_ip = nat_n.cmd("ip -4 addr show | grep 10\\.0\\. | grep -oP 'inet \\K[^/]+'").strip()
+                        nat_nodes_info.append((host_name, host_n, pub_ip, nat_name, nat_n))
+            elif node["type"] == "multi_nat":
+                for i in range(int(node["count"])):
+                    nat1_name = f'n1_{node["name"]}{i}r{runner_id}'
+                    host_name = f'{node["name"]}_{i}_r{runner_id}'
+                    nat_n = net.get(nat1_name)
+                    host_n = net.get(host_name)
+                    if nat_n and host_n:
+                        pub_ip = nat_n.cmd("ip -4 addr show | grep 10\\.0\\. | grep -oP 'inet \\K[^/]+'").strip()
+                        nat_nodes_info.append((host_name, host_n, pub_ip, nat1_name, nat_n))
+
+        import time
+        if len(nat_nodes_info) >= 2:
+            h1_name, h1, h1_pub, h1_nat_name, h1_nat = nat_nodes_info[0]
+            h2_name, h2, h2_pub, h2_nat_name, h2_nat = nat_nodes_info[1]
+            f.write(f"\n{h1_name} behind {h1_nat_name} (pub: {h1_pub})\n")
+            f.write(f"{h2_name} behind {h2_nat_name} (pub: {h2_pub})\n")
+
+            # Test 1: Can h1 send UDP to h2's NAT public IP? (without hole punch)
+            h2_nat.cmd(f'timeout 2 tcpdump -i any -c 5 udp port 55555 -w /tmp/cap1.pcap &')
+            time.sleep(0.2)
+            h1.cmd(f'echo TEST1 | nc -u -w1 {h2_pub} 55555 2>&1')
+            time.sleep(1)
+            cap1 = h2_nat.cmd('tcpdump -r /tmp/cap1.pcap 2>/dev/null').strip()
+            f.write(f"\nTest 1: {h1_name} -> {h2_pub}:55555 (no hole punch)\n")
+            f.write(f"  tcpdump on {h2_nat_name}: {cap1}\n")
+
+            # Test 2: Simultaneous UDP hole punch using single socket per host
+            # Each host uses one socket to both send and receive
+            sim_script = '''
+import socket, time, sys
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(("0.0.0.0", int(sys.argv[1])))
+s.settimeout(3)
+# Send to peer
+s.sendto(b"HELLO_FROM_" + sys.argv[3].encode(), (sys.argv[2], int(sys.argv[1])))
+time.sleep(0.05)
+s.sendto(b"HELLO_FROM_" + sys.argv[3].encode(), (sys.argv[2], int(sys.argv[1])))
+# Try to receive
+try:
+    data, addr = s.recvfrom(100)
+    print(f"GOT: {data} from {addr}")
+except socket.timeout:
+    print("TIMEOUT: no data received")
+'''
+            import tempfile, os
+            script_path = '/tmp/udp_sim.py'
+            with open(script_path, 'w') as sf:
+                sf.write(sim_script)
+
+            # Start tcpdump on both NATs and both hosts
+            h1_nat.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            h2_nat.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            h1.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            h2.cmd('timeout 8 tcpdump -l -i any -nn udp port 33333 > /tmp/tcpdump.txt 2>&1 &')
+            time.sleep(0.3)
+
+            # Test with SAME port (like our raw test)
+            h1.cmd(f'python3 {script_path} 33333 {h2_pub} H1 > /tmp/udp_sim_recv 2>&1 &')
+            h2.cmd(f'python3 {script_path} 33333 {h1_pub} H2 > /tmp/udp_sim_recv 2>&1 &')
+            time.sleep(5)
+            h1_got = h1.cmd('cat /tmp/udp_sim_recv 2>/dev/null').strip()
+            h2_got = h2.cmd('cat /tmp/udp_sim_recv 2>/dev/null').strip()
+            f.write(f"\nTest 2: Simultaneous UDP hole punch (port 33333)\n")
+            f.write(f"  {h1_name} ({h1_pub}) -> {h2_pub}: {h1_got}\n")
+            f.write(f"  {h2_name} ({h2_pub}) -> {h1_pub}: {h2_got}\n")
+
+            # Test 3: Asymmetric ports (like iroh uses)
+            asym_script = '''
+import socket, time, sys
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind(("0.0.0.0", int(sys.argv[1])))
+s.settimeout(3)
+s.sendto(b"ASYM_FROM_" + sys.argv[4].encode(), (sys.argv[2], int(sys.argv[3])))
+time.sleep(0.05)
+s.sendto(b"ASYM_FROM_" + sys.argv[4].encode(), (sys.argv[2], int(sys.argv[3])))
+try:
+    data, addr = s.recvfrom(100)
+    print(f"GOT: {data} from {addr}")
+except socket.timeout:
+    print("TIMEOUT: no data received")
+'''
+            asym_path = '/tmp/udp_asym.py'
+            with open(asym_path, 'w') as sf:
+                sf.write(asym_script)
+
+            # h1 binds 44444, sends to h2_pub:55555. h2 binds 55555, sends to h1_pub:44444.
+            h1.cmd(f'python3 {asym_path} 44444 {h2_pub} 55555 H1 > /tmp/udp_asym_recv 2>&1 &')
+            h2.cmd(f'python3 {asym_path} 55555 {h1_pub} 44444 H2 > /tmp/udp_asym_recv 2>&1 &')
+            time.sleep(5)
+            h1_asym = h1.cmd('cat /tmp/udp_asym_recv 2>/dev/null').strip()
+            h2_asym = h2.cmd('cat /tmp/udp_asym_recv 2>/dev/null').strip()
+            f.write(f"\nTest 3: Asymmetric ports (h1:44444->h2:55555, h2:55555->h1:44444)\n")
+            f.write(f"  {h1_name}: {h1_asym}\n")
+            f.write(f"  {h2_name}: {h2_asym}\n")
+
+            # Dump tcpdump captures (each node writes to /tmp/tcpdump.txt in its own ns)
+            time.sleep(1)
+            for label, node in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat),
+                                (h1_name, h1), (h2_name, h2)]:
+                cap = node.cmd('cat /tmp/tcpdump.txt 2>/dev/null').strip()
+                f.write(f"\n{label} tcpdump (port 33333):\n{cap}\n")
+
+            # Dump conntrack
+            for nat_name, nat_n in [(h1_nat_name, h1_nat), (h2_nat_name, h2_nat)]:
+                ct = nat_n.cmd('cat /proc/net/nf_conntrack 2>/dev/null | grep 33333 || echo no-conntrack-entries').strip()
+                f.write(f"\n{nat_name} conntrack (port 33333):\n{ct}\n")
+
+
 def execute_action(net, node_name, action, runner_id):
     """Execute a network action on a node."""
     n = net.get(node_name)
@@ -68,7 +234,17 @@ def execute_action(net, node_name, action, runner_id):
         intf_idx = action.get("interface", 0)
         if intf_idx < len(intfs):
             n.cmd(f"ip link set {intfs[intf_idx]} up")
-            info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}\n")
+            # Restore the default route via the NAT gateway. When the interface
+            # went down, Linux removed the route. It's not automatically restored
+            # on link up. Derive the gateway from the host's IP on this interface.
+            host_ip = n.cmd(f"ip -4 addr show {intfs[intf_idx]} | grep -oP 'inet \\K[\\d.]+'").strip()
+            if host_ip:
+                # Gateway is .1 on the same subnet
+                gw_ip = ".".join(host_ip.split(".")[:3]) + ".1"
+                n.cmd(f"ip route replace default via {gw_ip} dev {intfs[intf_idx]}")
+                info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}, restored route via {gw_ip}\n")
+            else:
+                info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}, no IP found to restore route\n")
 
     elif action_type == "change_ip":
         intf_idx = action.get("interface", 0)
@@ -353,8 +529,10 @@ def get_node_ips(net, nodes, runner_id):
     return node_ips
 
 
-def prep_net(net, nodes, prefix, sniff, runner_id):
+def prep_net(net, nodes, prefix, sniff, runner_id, debug=False):
     configure_multi_nat_hosts(net, nodes, runner_id)
+    if debug:
+        debug_network(net, nodes, runner_id)
     sniffer = Sniffer(net=net, output="logs/" + prefix + ".pcap")
     ti = sniffer.get_topoinfo()
     info("Testing network connectivity")
@@ -369,14 +547,27 @@ def prep_net(net, nodes, prefix, sniff, runner_id):
     return sniffer
 
 
-def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False):
+def run_case(nodes, runner_id, prefix, args, debug=False, visualize=False, net_debug=False):
     topo = StarTopo(nodes=nodes, runner_id=runner_id)
     net = Mininet(topo=topo, waitConnected=True, link=TCLink)
     net.start()
-    sniffer = prep_net(net, nodes, prefix, args.sniff | visualize, runner_id)
+    sniffer = prep_net(net, nodes, prefix, args.sniff | visualize, runner_id, debug=net_debug)
 
     p_box, p_short_box = [], []
     temp_dirs = []
+
+    if net_debug:
+        # Start tcpdump on NAT nodes to capture UDP during test
+        for node in nodes:
+            if node["type"] in ("nat", "multi_nat"):
+                for i in range(int(node["count"])):
+                    if node["type"] == "nat":
+                        nat_name = f'n_{node["name"]}{i}r{runner_id}'
+                    elif node["type"] == "multi_nat":
+                        nat_name = f'n1_{node["name"]}{i}r{runner_id}'
+                    nat_n = net.get(nat_name)
+                    if nat_n:
+                        nat_n.cmd(f'timeout 30 tcpdump -l -i any -nn udp -c 200 > logs/{prefix}__{nat_name}__tcpdump.txt 2>&1 &')
 
     node_counts = {node["name"]: int(node["count"]) for node in nodes}
     node_ips = get_node_ips(net, nodes, runner_id)
@@ -487,7 +678,7 @@ def run(case, runner_id, name, args):
     print('Running "%s"...' % prefix)
     n, s = (None, None)
     if not args.reports_only:
-        (n, s) = run_case(nodes, runner_id, prefix, args, args.debug, viz)
+        (n, s) = run_case(nodes, runner_id, prefix, args, args.debug, viz, net_debug=args.net_debug)
     process_logs(nodes, prefix, runner_id)
     process_integration_logs(nodes, prefix, runner_id)
     validate_integration_results(nodes, prefix, runner_id, args)
@@ -565,6 +756,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--visualize", help="Enable visualization", action="store_true", default=False
+    )
+    parser.add_argument(
+        "--net-debug", help="Enable NAT debug tooling (tcpdump, connectivity tests)", action="store_true", default=False
     )
     parser.add_argument(
         "--max-workers", help="Max workers for parallel execution", type=int, default=1
