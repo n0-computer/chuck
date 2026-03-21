@@ -234,7 +234,17 @@ def execute_action(net, node_name, action, runner_id):
         intf_idx = action.get("interface", 0)
         if intf_idx < len(intfs):
             n.cmd(f"ip link set {intfs[intf_idx]} up")
-            info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}\n")
+            # Restore the default route via the NAT gateway. When the interface
+            # went down, Linux removed the route. It's not automatically restored
+            # on link up. Derive the gateway from the host's IP on this interface.
+            host_ip = n.cmd(f"ip -4 addr show {intfs[intf_idx]} | grep -oP 'inet \\K[\\d.]+'").strip()
+            if host_ip:
+                # Gateway is .1 on the same subnet
+                gw_ip = ".".join(host_ip.split(".")[:3]) + ".1"
+                n.cmd(f"ip route replace default via {gw_ip}")
+                info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}, restored route via {gw_ip}\n")
+            else:
+                info(f"ACTION [{node_name}]: Brought up {intfs[intf_idx]}, no IP found to restore route\n")
 
     elif action_type == "change_ip":
         intf_idx = action.get("interface", 0)
